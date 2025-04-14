@@ -1,102 +1,171 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
+  <q-layout view="lHh Lpr fff" class="bg-white">
+    <q-header elevated class="GPL__page-container bg-dark text-white" height-hint="64">
+      <q-toolbar class="GPL__toolbar" style="height: 64px">
+        <CompletBrand />
+
+        <menu-bar
+          v-for="(routeLinks, index) in linkesRoutes"
+          :key="index"
+          class="q-ml-sm"
+          :items="routeLinks.items"
+          :icon="routeLinks.icon"
+          :name="routeLinks.name"
+          :color="routeLinks.color"
+          :size="routeLinks.size"
+          :toPrimary="routeLinks.toPrimary"
         />
 
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <q-space />
+        <q-badge outline color="primary" class="q-pa-sm">
+          <q-icon name="img:icons/user.svg" size="0.8rem" class="q-pr-xs" />
+          <span class="text-grey">Clientes:</span>
+          <span class="text-white text-bold"> 180</span>
+        </q-badge>
+        <div class="q-gutter-sm row items-center no-wrap">
+          <div class="text-small q-px-md">
+            <span class="text-grey">Voce está em:</span>
+            <span class="text-white text-bold"> Painel de Dados </span>
+          </div>
+          <q-btn round dense flat color="white" icon="fa-regular fa-bell" class="q-mx-lg">
+            <q-badge color="red" text-color="white" floating> 2 </q-badge>
+            <q-tooltip>Notifications</q-tooltip>
+          </q-btn>
+          <q-btn round dense color="white">
+            <q-avatar size="2rem" icon="img:icons/user.svg" colo="white" />
+            <q-tooltip>Account</q-tooltip>
+          </q-btn>
+        </div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
-
-    <q-page-container>
+    <q-page-container class="GPL__page-container">
       <router-view />
     </q-page-container>
   </q-layout>
 </template>
 
-<script setup>
+<script>
+import CompletBrand from 'src/components/brand/CompletBrand.vue'
+import MenuBar from 'src/components/navbar/menuBar.vue'
 import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-]
+export default {
+  name: 'GooglePhotosLayout',
+  components: { CompletBrand, MenuBar },
+  setup() {
+    const leftDrawerOpen = ref(false)
+    const search = ref('')
+    const storage = ref(0.26)
 
-const leftDrawerOpen = ref(false)
+    function toggleLeftDrawer() {
+      leftDrawerOpen.value = !leftDrawerOpen.value
+    }
+    const linkesRoutes = [
+      {
+        name: 'Contratos',
+        icon: 'fa-solid fa-file-invoice-dollar',
+        color: 'primary',
+        size: 'small',
+        items: [
+          { text: 'Contratos', icon: '', to: '/contracts' },
+          { text: 'Lógica de Contratos', icon: 'copy', to: '/contracts/logic' },
+          { text: 'Lógica de Dividendos', icon: 'paste', to: '/contracts/dividends' },
+        ],
+      },
+      {
+        name: 'Gestão de Dados',
+        icon: 'fa-solid fa-file-invoice-dollar',
+        color: 'primary',
+        size: 'small',
+        toPrimary: 'dataManagement',
+        items: [
+          { text: 'Clientes', icon: '', to: '/dataManagement' },
+          { text: 'Assessores', icon: 'copy', to: '/dataManagement/assessores' },
+          { text: 'Leads', icon: 'paste', to: '/dataManagement/leads' },
+        ],
+      },
+    ]
 
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value
+    return {
+      leftDrawerOpen,
+      search,
+      storage,
+
+      linkesRoutes,
+      links1: [
+        { icon: 'photo', text: 'Photos' },
+        { icon: 'photo_album', text: 'Albums' },
+        { icon: 'assistant', text: 'Assistant' },
+        { icon: 'people', text: 'Sharing' },
+        { icon: 'book', text: 'Photo books' },
+      ],
+      links2: [
+        { icon: 'archive', text: 'Archive' },
+        { icon: 'delete', text: 'Trash' },
+      ],
+      links3: [
+        { icon: 'settings', text: 'Settings' },
+        { icon: 'help', text: 'Help & Feedback' },
+        { icon: 'get_app', text: 'App Downloads' },
+      ],
+      createMenu: [
+        { icon: 'photo_album', text: 'Album' },
+        { icon: 'people', text: 'Shared Album' },
+        { icon: 'movie', text: 'Movie' },
+        { icon: 'library_books', text: 'Animation' },
+        { icon: 'dashboard', text: 'Collage' },
+        { icon: 'book', text: 'Photo book' },
+      ],
+
+      toggleLeftDrawer,
+    }
+  },
 }
 </script>
+
+<style lang="sass">
+.text-small
+  font-size: 0.7rem
+.GPL
+
+  &__toolbar
+    height: 64px
+
+  &__toolbar-input
+    width: 35%
+
+  &__drawer-item
+    line-height: 24px
+    border-radius: 0 24px 24px 0
+    margin-right: 12px
+
+    .q-item__section--avatar
+      padding-left: 12px
+      .q-icon
+        color: #5f6368
+
+    .q-item__label:not(.q-item__label--caption)
+      color: #3c4043
+      letter-spacing: .01785714em
+      font-size: .875rem
+      font-weight: 500
+      line-height: 1.25rem
+
+    &--storage
+      border-radius: 0
+      margin-right: 0
+      padding-top: 24px
+      padding-bottom: 24px
+
+  &__side-btn
+    &__label
+      font-size: 12px
+      line-height: 24px
+      letter-spacing: .01785714em
+      font-weight: 500
+
+  @media (min-width: 1024px)
+    &__page-container
+      padding-left: 94px
+</style>
