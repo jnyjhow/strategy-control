@@ -4,6 +4,27 @@
       <q-toolbar class="GPL__toolbar" style="height: 64px">
         <CompletBrand />
 
+        <div
+          class="align-center items-center row no-wrap q-ml-sm"
+          :class="route.name == 'home' ? 'border-active' : ''"
+        >
+          <!-- name="fa-solid fa-file-invoice-dollar" -->
+          <q-btn flat color="primary" to="/" no-caps unelevated padding="0px" ripple stretch>
+            <q-icon
+              name="img:icons/transfer.svg"
+              size="small"
+              color="primary"
+              class="col self-ceter"
+            />
+            <span
+              class="text-small q-ml-sm"
+              :class="route.name == 'home' ? 'text-primary' : 'text-white'"
+            >
+              Transações
+            </span>
+          </q-btn>
+        </div>
+
         <menu-bar
           v-for="(routeLinks, index) in linkesRoutes"
           :key="index"
@@ -40,7 +61,11 @@
     </q-header>
 
     <q-page-container class="GPL__page-container">
-      <router-view />
+      <router-view v-slot="{ Component }">
+        <transition name="fade" mode="out-in">
+          <component :is="Component" :key="route.path"></component>
+        </transition>
+      </router-view>
     </q-page-container>
   </q-layout>
 </template>
@@ -48,12 +73,14 @@
 <script>
 import CompletBrand from 'src/components/brand/CompletBrand.vue'
 import MenuBar from 'src/components/navbar/menuBar.vue'
+import { useRoute } from 'vue-router'
 import { ref } from 'vue'
 
 export default {
-  name: 'GooglePhotosLayout',
+  name: 'MainLayout',
   components: { CompletBrand, MenuBar },
   setup() {
+    const route = useRoute()
     const leftDrawerOpen = ref(false)
     const search = ref('')
     const storage = ref(0.26)
@@ -75,7 +102,7 @@ export default {
       },
       {
         name: 'Gestão de Dados',
-        icon: 'fa-solid fa-file-invoice-dollar',
+        icon: 'img:icons/user-scan.svg',
         color: 'primary',
         size: 'small',
         toPrimary: 'dataManagement',
@@ -88,6 +115,7 @@ export default {
     ]
 
     return {
+      route,
       leftDrawerOpen,
       search,
       storage,
@@ -125,6 +153,16 @@ export default {
 </script>
 
 <style lang="sass">
+.fade-enter-active,
+.fade-leave-active
+  transition: opacity 355ms
+.fade-enter,
+.fade-leave-to
+  opacity: 0
+.border-active
+  border-left: 2px solid #00a3ff
+  border-radius: 2px
+  padding: 0.7rem
 .text-small
   font-size: 0.7rem
 .GPL
@@ -167,5 +205,5 @@ export default {
 
   @media (min-width: 1024px)
     &__page-container
-      padding-left: 94px
+      padding-left: 0px
 </style>

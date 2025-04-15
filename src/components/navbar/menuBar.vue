@@ -1,12 +1,8 @@
 <template>
   <div class="q-ml-md cursor-pointer non-selectable menuBar">
     <div class="align-center items-center row no-wrap" :class="includesTo() ? 'border-active' : ''">
-      <q-icon
-        name="fa-solid fa-file-invoice-dollar"
-        size="small"
-        color="primary"
-        class="col self-ceter"
-      />
+      <!-- name="fa-solid fa-file-invoice-dollar" -->
+      <q-icon :name="icon" size="small" color="primary" class="col self-ceter" />
       <span class="text-small q-ml-sm" :class="includesTo() ? 'text-primary' : ''">
         {{ name }}
       </span>
@@ -19,7 +15,12 @@
       :offset="[0, 25]"
       dark
     >
-      <q-list dense style="min-width: 100px; min-width: 12rem" class="q-my-xs">
+      <q-list
+        dense
+        style="min-width: 100px; min-width: 12rem"
+        class="q-my-xs"
+        :v-if="items.length > 0"
+      >
         <q-item v-for="(item, index) in items" :key="index" dense class="row">
           <q-btn
             :to="item.to"
@@ -51,12 +52,6 @@ export default defineComponent({
     toPrimary: { String, default: 'contracts' },
     items: {
       type: Array,
-      default: () => [
-        { text: 'Cut', icon: 'cut', to: '/' },
-        { text: 'Copy', icon: 'copy', to: '/' },
-        { text: 'Paste', icon: 'paste', to: '/' },
-        { text: 'Select All', icon: 'select_all', to: '/' },
-      ],
     },
   },
   setup(props) {
