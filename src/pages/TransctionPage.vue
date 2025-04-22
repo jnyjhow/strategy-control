@@ -46,12 +46,11 @@
             <wallet-layout />
           </q-tab-panel>
 
-          <q-tab-panel name="alarms">
-            <div class="text-h6">Alarms</div>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          <q-tab-panel name="disponivel">
+            <available-for-movement-layout />
           </q-tab-panel>
 
-          <q-tab-panel name="movies">
+          <q-tab-panel name="contratos">
             <div class="text-h6">Movies</div>
             Lorem ipsum dolor sit amet consectetur adipisicing elit.
           </q-tab-panel>
@@ -64,7 +63,7 @@
 <script setup>
 import TitlePage from 'src/components/TitlePage.vue'
 import WalletLayout from 'src/layouts/Transaction/WalletLayout.vue'
-
+import AvailableForMovementLayout from 'src/layouts/Transaction/AvailableForMovementLayout.vue'
 import { ref } from 'vue'
 
 const tab = ref('carteiras')
