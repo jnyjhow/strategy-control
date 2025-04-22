@@ -51,8 +51,7 @@
           </q-tab-panel>
 
           <q-tab-panel name="contratos">
-            <div class="text-h6">Movies</div>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            <contratcts-invesments-layout />
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -64,6 +63,7 @@
 import TitlePage from 'src/components/TitlePage.vue'
 import WalletLayout from 'src/layouts/Transaction/WalletLayout.vue'
 import AvailableForMovementLayout from 'src/layouts/Transaction/AvailableForMovementLayout.vue'
+import ContratctsInvesmentsLayout from 'src/layouts/Transaction/ContractsInvesmentsLayout.vue'
 import { ref } from 'vue'
 
 const tab = ref('carteiras')

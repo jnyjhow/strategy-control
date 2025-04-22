@@ -16,7 +16,6 @@
       @update:pagination="updatePagination"
       :loading="loading"
     >
-      <template v-slot:title> teste </template>
       <!-- Filtros avançados -->
       <template v-slot:top>
         <div class="col-12 row q-mb-md">
@@ -118,24 +117,11 @@
                 use-chips
               />
             </div>
-            <div class="col self-end items-end" style="text-align-last: end">
-              <q-btn flat color="grey" no-caps label="Limpar Filtros" @click="clearFilters" />
-              <!-- class="float-right" -->
-            </div>
           </div>
         </div>
         <div class="row col-12 justify-between">
-          <div class="col-4 text-start">
-            <p class="text-h6">Histórico de Transações</p>
-          </div>
           <div class="col self-end items-end" style="text-align-last: end">
-            <q-btn
-              color="primary"
-              icon="fa-solid fa-plus"
-              label="Solicitar Depósito"
-              flat
-              size="sm"
-            />
+            <q-btn flat color="grey" no-caps label="Limpar Filtros" @click="clearFilters" />
           </div>
         </div>
       </template>
@@ -161,6 +147,14 @@
               </q-item-label>
             </q-item-section>
           </q-item>
+          <!-- <q-btn
+            size="xs"
+            outline
+            padding="xs"
+            class="custom-btn-muted"
+            :label="props.row.cliente.name"
+            no-caps
+          /> -->
         </q-td>
       </template>
       <!-- Coluna de status personalizada -->
@@ -244,6 +238,7 @@ export default defineComponent({
       rowsPerPage: 5,
       rowsNumber: 0,
     })
+
     // Modelos para filtros
     const filters = ref({
       tipo: [],
@@ -414,6 +409,8 @@ export default defineComponent({
     }
     return {
       selected,
+      columnsMovement,
+      rowsMovement,
       filteredRows,
       paginatedRows,
       pagination,
@@ -437,8 +434,7 @@ export default defineComponent({
       clearSolicitado,
       clearLimitado,
       getClasseStatus,
-      rowsMovement,
-      columnsMovement,
+
       getSelectedString() {
         return selected.value.length === 0
           ? ''
