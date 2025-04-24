@@ -135,6 +135,7 @@
               label="Solicitar Depósito"
               flat
               size="sm"
+              @click="dialogSolicitar = true"
             />
           </div>
         </div>
@@ -222,6 +223,17 @@
         />
       </div>
     </div>
+
+    <q-dialog
+      v-model="dialogSolicitar"
+      position="right"
+      full-height
+      full-width
+      maximized
+      class="control-width"
+    >
+      <open-deposit-layout />
+    </q-dialog>
   </div>
 </template>
 
@@ -229,9 +241,13 @@
 import { ref, computed, defineComponent } from 'vue'
 import useVariablesGlobal from 'src/composables/Fakes/useVariablesGlobal'
 import useMovement from 'src/composables/Fakes/useMovement'
+import OpenDepositLayout from 'src/layouts/Transaction/OpenDepositLayout.vue'
 
 export default defineComponent({
   name: 'TransactionHistoric',
+  components: {
+    OpenDepositLayout,
+  },
   setup() {
     const { tiposOptions, statusOptions } = useVariablesGlobal()
     const { rowsMovement, columnsMovement } = useMovement()
@@ -239,6 +255,7 @@ export default defineComponent({
     const filter = ref('')
     const loading = ref(false)
     const filterExpanded = ref(true)
+    const dialogSolicitar = ref(false)
     const pagination = ref({
       page: 1,
       rowsPerPage: 5,
@@ -439,6 +456,7 @@ export default defineComponent({
       getClasseStatus,
       rowsMovement,
       columnsMovement,
+      dialogSolicitar,
       getSelectedString() {
         return selected.value.length === 0
           ? ''
@@ -511,4 +529,7 @@ export default defineComponent({
   width: 0.4em
   min-width: 0.1em
   height: 0.4em
+.control-width
+  .q-dialog__inner
+    max-width: 60% !important
 </style>

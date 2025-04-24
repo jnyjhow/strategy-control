@@ -117,11 +117,10 @@
                 use-chips
               />
             </div>
-          </div>
-        </div>
-        <div class="row col-12 justify-between">
-          <div class="col self-end items-end" style="text-align-last: end">
-            <q-btn flat color="grey" no-caps label="Limpar Filtros" @click="clearFilters" />
+            <div class="col self-end items-end" style="text-align-last: end">
+              <q-btn flat color="grey" no-caps label="Limpar Filtros" @click="clearFilters" />
+              <!-- class="float-right" -->
+            </div>
           </div>
         </div>
       </template>
