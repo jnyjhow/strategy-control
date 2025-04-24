@@ -128,13 +128,35 @@
           label="Enviar Solicitação de Depósito"
           color="primary"
           class="q-mt-md"
-          @click="submitForm"
           no-caps
           style="border-radius: 8px"
           icon="add"
+          @click="sendPasswordAction = true"
         />
       </div>
     </div>
+    <q-dialog v-model="sendPasswordAction" persistent>
+      <q-card class="q-dialog q-px-md">
+        <q-card-section class="row justify-between" style="padding-inline: 0px">
+          <div class="text-h7">Forneça sua Senha de Acesso para executar essa ação</div>
+          <q-btn v-close-popup flat icon="close" size="sm" rounded color="grey-6" />
+        </q-card-section>
+        <q-separator />
+
+        <div class="text-subtitle2 text-grey-6 q-mt-xs">
+          Somente usuários permitidos podem executar essa ação.
+        </div>
+        <q-card-section style="padding-inline: 0px">
+          <label-form textLabel="Senha para Edição" class="q-mt-md">
+            <q-input outlined v-model="password" type="password" dense />
+          </label-form>
+        </q-card-section>
+        <q-card-actions class="justify-end">
+          <q-btn label="Cancelar" color="primary" flat @click="sendPasswordAction = false" />
+          <q-btn label="Enviar" color="primary" @click="submitForm" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-card>
 </template>
 
@@ -150,6 +172,8 @@ const selectedClient = ref(null)
 const selectedBank = ref(null)
 const selectedDestination = ref('movimentar')
 const uploadedFiles = ref([])
+const sendPasswordAction = ref(false)
+const password = ref('')
 
 // Clientes fictícios
 const clients = [
