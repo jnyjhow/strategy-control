@@ -136,32 +136,21 @@
       </div>
     </div>
     <q-dialog v-model="sendPasswordAction" persistent>
-      <q-card class="q-dialog q-px-md">
-        <q-card-section class="row justify-between" style="padding-inline: 0px">
-          <div class="text-h7">Forneça sua Senha de Acesso para executar essa ação</div>
-          <q-btn v-close-popup flat icon="close" size="sm" rounded color="grey-6" />
-        </q-card-section>
-        <q-separator />
-
-        <div class="text-subtitle2 text-grey-6 q-mt-xs">
-          Somente usuários permitidos podem executar essa ação.
-        </div>
-        <q-card-section style="padding-inline: 0px">
-          <label-form textLabel="Senha para Edição" class="q-mt-md">
-            <q-input outlined v-model="password" type="password" dense />
-          </label-form>
-        </q-card-section>
-        <q-card-actions class="justify-end">
-          <q-btn label="Cancelar" color="primary" flat @click="sendPasswordAction = false" />
-          <q-btn label="Enviar" color="primary" @click="submitForm" />
-        </q-card-actions>
-      </q-card>
+      <password-confirm
+        title="Confirmação de Senha"
+        description="Por favor, insira sua senha para confirmar a solicitação de depósito."
+        @passwordSubmitted="submitForm"
+        @cancel="sendPasswordAction = false"
+      />
     </q-dialog>
   </q-card>
 </template>
 
 <script setup>
 import { ref, defineComponent } from 'vue'
+import PasswordConfirm from 'components/Auth/PasswordConfirm.vue'
+import { useLayoutStore } from 'src/stores/layout'
+const layoutStore = useLayoutStore()
 defineComponent({
   name: 'OpenDepositLayout',
 })
@@ -173,7 +162,6 @@ const selectedBank = ref(null)
 const selectedDestination = ref('movimentar')
 const uploadedFiles = ref([])
 const sendPasswordAction = ref(false)
-const password = ref('')
 
 // Clientes fictícios
 const clients = [
@@ -256,5 +244,13 @@ const submitForm = () => {
     selectedDestination: selectedDestination.value,
     uploadedFiles: uploadedFiles.value,
   })
+  sendPasswordAction.value = false
+  layoutStore.setDialogTransactionDeposit(false)
+  layoutStore.setDialogConfirmAction(true)
+  layoutStore.setDialogactionHeaderBody(
+    true,
+    'Solicitação de Depósito registrada!',
+    'A solicitação de depósito foi registrada com sucesso no sistema.',
+  )
 }
 </script>

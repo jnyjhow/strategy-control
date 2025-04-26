@@ -135,7 +135,7 @@
               label="Solicitar Depósito"
               flat
               size="sm"
-              @click="dialogSolicitar = true"
+              @click="setDialogSolicitar(true)"
             />
           </div>
         </div>
@@ -225,7 +225,7 @@
     </div>
 
     <q-dialog
-      v-model="dialogSolicitar"
+      v-model="dialogTransictionDeposit"
       position="right"
       full-height
       full-width
@@ -239,12 +239,13 @@
 
 <script>
 import { ref, computed, defineComponent } from 'vue'
+import { storeToRefs } from 'pinia'
 import useVariablesGlobal from 'src/composables/Fakes/useVariablesGlobal'
 import useMovement from 'src/composables/Fakes/useMovement'
 import OpenDepositLayout from 'src/layouts/Transaction/OpenDepositLayout.vue'
-
+import { useLayoutStore } from 'src/stores/layout'
 export default defineComponent({
-  name: 'TransactionHistoric',
+  name: 'MovementHistoric',
   components: {
     OpenDepositLayout,
   },
@@ -255,7 +256,9 @@ export default defineComponent({
     const filter = ref('')
     const loading = ref(false)
     const filterExpanded = ref(true)
-    const dialogSolicitar = ref(false)
+    const layoutStore = useLayoutStore()
+    const { dialogTransictionDeposit } = storeToRefs(layoutStore)
+    // const dialogSolicitar = ref(false)
     const pagination = ref({
       page: 1,
       rowsPerPage: 5,
@@ -456,7 +459,8 @@ export default defineComponent({
       getClasseStatus,
       rowsMovement,
       columnsMovement,
-      dialogSolicitar,
+      dialogTransictionDeposit,
+      setDialogSolicitar: layoutStore.setDialogTransactionDeposit,
       getSelectedString() {
         return selected.value.length === 0
           ? ''

@@ -67,89 +67,49 @@
         </transition>
       </router-view>
     </q-page-container>
+    <q-dialog v-model="dialogConfirmAction"> <request-success /> </q-dialog>
   </q-layout>
 </template>
 
-<script>
+<script setup>
 import CompletBrand from 'src/components/brand/CompletBrand.vue'
 import MenuBar from 'src/components/navbar/menuBar.vue'
+import RequestSuccess from 'src/components/Card/RequestSuccess.vue'
 import { useRoute } from 'vue-router'
-import { ref } from 'vue'
-
-export default {
+import { defineComponent } from 'vue'
+import { useLayoutStore } from 'src/stores/layout'
+import { storeToRefs } from 'pinia'
+defineComponent({
   name: 'MainLayout',
-  components: { CompletBrand, MenuBar },
-  setup() {
-    const route = useRoute()
-    const leftDrawerOpen = ref(false)
-    const search = ref('')
-    const storage = ref(0.26)
-
-    function toggleLeftDrawer() {
-      leftDrawerOpen.value = !leftDrawerOpen.value
-    }
-    const linkesRoutes = [
-      {
-        name: 'Contratos',
-        icon: 'fa-solid fa-file-invoice-dollar',
-        color: 'primary',
-        size: 'small',
-        items: [
-          { text: 'Contratos', icon: '', to: '/contracts' },
-          { text: 'Lógica de Contratos', icon: 'copy', to: '/contracts/logic' },
-          { text: 'Lógica de Dividendos', icon: 'paste', to: '/contracts/dividends' },
-        ],
-      },
-      {
-        name: 'Gestão de Dados',
-        icon: 'img:icons/user-scan.svg',
-        color: 'primary',
-        size: 'small',
-        toPrimary: 'dataManagement',
-        items: [
-          { text: 'Clientes', icon: '', to: '/dataManagement' },
-          { text: 'Assessores', icon: 'copy', to: '/dataManagement/assessores' },
-          { text: 'Leads', icon: 'paste', to: '/dataManagement/leads' },
-        ],
-      },
-    ]
-
-    return {
-      route,
-      leftDrawerOpen,
-      search,
-      storage,
-
-      linkesRoutes,
-      links1: [
-        { icon: 'photo', text: 'Photos' },
-        { icon: 'photo_album', text: 'Albums' },
-        { icon: 'assistant', text: 'Assistant' },
-        { icon: 'people', text: 'Sharing' },
-        { icon: 'book', text: 'Photo books' },
-      ],
-      links2: [
-        { icon: 'archive', text: 'Archive' },
-        { icon: 'delete', text: 'Trash' },
-      ],
-      links3: [
-        { icon: 'settings', text: 'Settings' },
-        { icon: 'help', text: 'Help & Feedback' },
-        { icon: 'get_app', text: 'App Downloads' },
-      ],
-      createMenu: [
-        { icon: 'photo_album', text: 'Album' },
-        { icon: 'people', text: 'Shared Album' },
-        { icon: 'movie', text: 'Movie' },
-        { icon: 'library_books', text: 'Animation' },
-        { icon: 'dashboard', text: 'Collage' },
-        { icon: 'book', text: 'Photo book' },
-      ],
-
-      toggleLeftDrawer,
-    }
+})
+const route = useRoute()
+const layoutStore = useLayoutStore()
+const { dialogConfirmAction } = storeToRefs(layoutStore)
+const linkesRoutes = [
+  {
+    name: 'Contratos',
+    icon: 'fa-solid fa-file-invoice-dollar',
+    color: 'primary',
+    size: 'small',
+    items: [
+      { text: 'Contratos', icon: '', to: '/contracts' },
+      { text: 'Lógica de Contratos', icon: 'copy', to: '/contracts/logic' },
+      { text: 'Lógica de Dividendos', icon: 'paste', to: '/contracts/dividends' },
+    ],
   },
-}
+  {
+    name: 'Gestão de Dados',
+    icon: 'img:icons/user-scan.svg',
+    color: 'primary',
+    size: 'small',
+    toPrimary: 'dataManagement',
+    items: [
+      { text: 'Clientes', icon: '', to: '/dataManagement' },
+      { text: 'Assessores', icon: 'copy', to: '/dataManagement/assessores' },
+      { text: 'Leads', icon: 'paste', to: '/dataManagement/leads' },
+    ],
+  },
+]
 </script>
 
 <style lang="sass">
