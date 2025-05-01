@@ -16,5 +16,12 @@ const actions = {
     this.dialogConfirmHeader = header
     this.dialogConfirmBody = body
   },
+  setDataSolicitacao(payload) {
+    console.log('setDataSolicitacao', payload)
+    this.dataSolicitacao = payload
+  },
+  setDialogOpengHeader(payload) {
+    this.dialogOpengHeader = payload
+  },
 }
 export default { ...actions }

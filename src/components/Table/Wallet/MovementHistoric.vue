@@ -16,7 +16,6 @@
       @update:pagination="updatePagination"
       :loading="loading"
     >
-      <template v-slot:title> teste </template>
       <!-- Filtros avançados -->
       <template v-slot:top>
         <div class="col-12 row q-mb-md">
@@ -97,7 +96,7 @@
             <div class="col-xs-12 col-sm-4 col-md-2">
               <q-select
                 v-model="filters.tipo"
-                :options="tiposOptions"
+                :options="tiposOptionsDeposito"
                 label="Tipo de Movimentação"
                 outlined
                 dense
@@ -195,6 +194,20 @@
           <span v-else class="text-muted" style="font-size: 10px">{{ props.row.documentos }}</span>
         </q-td>
       </template>
+      <!-- Coluna actions -->
+      <template v-slot:body-cell-actions="props">
+        <q-td :props="props">
+          <q-btn
+            v-if="props.row.documentos == 'Sem anexo'"
+            size="xs"
+            padding="xs"
+            color="primary"
+            no-caps
+            icon="fa-solid fa-check"
+            @click="setDialogConfirmDeposit(props.row.id)"
+          />
+        </q-td>
+      </template>
     </q-table>
 
     <div class="row justify-between items-center q-mt-md">
@@ -250,8 +263,8 @@ export default defineComponent({
     OpenDepositLayout,
   },
   setup() {
-    const { tiposOptions, statusOptions } = useVariablesGlobal()
-    const { rowsMovement, columnsMovement } = useMovement()
+    const { tiposOptions, statusOptions, tiposOptionsDeposito } = useVariablesGlobal()
+    const { rowsMovement, columnsMovement, getRowsMovement } = useMovement()
     const selected = ref([])
     const filter = ref('')
     const loading = ref(false)
@@ -432,6 +445,17 @@ export default defineComponent({
         dateRangeInput.value[field] = ''
       }
     }
+    const setDialogConfirmDeposit = (id) => {
+      layoutStore.setDialogTransactionDeposit(true)
+      layoutStore.setDataSolicitacao(getRowsMovement(id))
+      console.log(getRowsMovement(id))
+      layoutStore.setDialogOpengHeader('Aprovar Solicitação de Depósito')
+    }
+    const setDialogSolicitar = () => {
+      layoutStore.setDialogTransactionDeposit(true)
+      layoutStore.setDialogOpengHeader('Solicitação de Depósito')
+      layoutStore.setDataSolicitacao({ bank: '', type: 'deposit', destination: 'movimentar' })
+    }
     return {
       selected,
       filteredRows,
@@ -442,6 +466,7 @@ export default defineComponent({
       filters,
       dateRange,
       tiposOptions,
+      tiposOptionsDeposito,
       statusOptions,
       filterExpanded,
       loading,
@@ -460,7 +485,9 @@ export default defineComponent({
       rowsMovement,
       columnsMovement,
       dialogTransictionDeposit,
-      setDialogSolicitar: layoutStore.setDialogTransactionDeposit,
+      setDialogSolicitar,
+      getRowsMovement,
+      setDialogConfirmDeposit,
       getSelectedString() {
         return selected.value.length === 0
           ? ''

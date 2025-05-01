@@ -37,7 +37,7 @@ export default function useMovement() {
     {
       name: 'valor',
       label: 'Valor Movimentação R$',
-      field: 'valor',
+      field: 'transactionValue',
       sortable: true,
       format: (val) =>
         `R$ ${val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
@@ -51,6 +51,11 @@ export default function useMovement() {
       name: 'documentos',
       label: 'Documentos',
       field: 'documentos',
+    },
+    {
+      name: 'actions',
+      label: '',
+      field: 'actions',
     },
   ]
   const rowsMovement = [
@@ -66,7 +71,8 @@ export default function useMovement() {
       },
       origem: 'Itaú',
       destino: 'N/A',
-      valor: 4500.0,
+      destination: 'movimentar',
+      transactionValue: 4500.0,
       status: 'Concluído: 10/04/2025 - 14:35',
       documentos: 'comprovante.pdf',
     },
@@ -82,7 +88,8 @@ export default function useMovement() {
       },
       origem: 'Bradesco',
       destino: 'Santander',
-      valor: 3200.5,
+      destination: 'movimentar',
+      transactionValue: 3200.5,
       status: 'Concluído: 11/04/2025 - 09:20',
       documentos: 'comprovante.pdf',
     },
@@ -98,7 +105,8 @@ export default function useMovement() {
       },
       origem: 'Banco do Brasil',
       destino: 'N/A',
-      valor: 1500.0,
+      destination: 'movimentar',
+      transactionValue: 1500.0,
       status: 'Pendente',
       documentos: 'Sem anexo',
     },
@@ -114,7 +122,8 @@ export default function useMovement() {
       },
       origem: 'Nubank',
       destino: 'N/A',
-      valor: 7800.75,
+      destination: 'movimentar',
+      transactionValue: 7800.75,
       status: 'Concluído: 13/04/2025 - 11:25',
       documentos: 'extrato.pdf',
     },
@@ -130,9 +139,10 @@ export default function useMovement() {
       },
       origem: 'Caixa Econômica',
       destino: 'Inter',
-      valor: 4200.0,
+      destination: 'movimentar',
+      transactionValue: 4200.5,
       status: 'Atrasado: 2 dias',
-      documentos: 'contrato.docx',
+      documentos: 'Sem anexo',
     },
     {
       id: 6,
@@ -146,7 +156,8 @@ export default function useMovement() {
       },
       origem: 'Santander',
       destino: 'N/A',
-      valor: 6300.25,
+      destination: 'movimentar',
+      transactionValue: 6300.25,
       status: 'Concluído: 15/04/2025 - 10:10',
       documentos: 'comprovante.pdf',
     },
@@ -162,7 +173,8 @@ export default function useMovement() {
       },
       origem: 'Itaú',
       destino: 'N/A',
-      valor: 2000.0,
+      destination: 'movimentar',
+      transactionValue: 2000.0,
       status: 'Pendente',
       documentos: 'Sem anexo',
     },
@@ -178,7 +190,8 @@ export default function useMovement() {
       },
       origem: 'Bradesco',
       destino: 'Banco do Brasil',
-      valor: 5100.8,
+      destination: 'movimentar',
+      transactionValue: 5100.8,
       status: 'Concluído: 17/05/2025 - 08:50',
       documentos: 'comprovante.pdf',
     },
@@ -194,7 +207,8 @@ export default function useMovement() {
       },
       origem: 'Inter',
       destino: 'N/A',
-      valor: 9200.0,
+      destination: 'movimentar',
+      transactionValue: 9200.0,
       status: 'Concluído: 18/04/2025 - 14:25',
       documentos: 'extrato.pdf',
     },
@@ -210,7 +224,8 @@ export default function useMovement() {
       },
       origem: 'Nubank',
       destino: 'N/A',
-      valor: 3500.5,
+      destination: 'movimentar',
+      transactionValue: 3500.5,
       status: 'Concluído: 19/04/2025 - 11:20',
       documentos: 'identidade.jpg',
     },
@@ -226,9 +241,10 @@ export default function useMovement() {
       },
       origem: 'Caixa Econômica',
       destino: 'Itaú',
-      valor: 2800.0,
+      destination: 'movimentar',
+      transactionValue: 2800.0,
       status: 'Atrasado: 1 dia',
-      documentos: 'contrato.docx',
+      documentos: 'Sem anexo',
     },
     {
       id: 12,
@@ -242,13 +258,75 @@ export default function useMovement() {
       },
       origem: 'Santander',
       destino: 'N/A',
-      valor: 1200.0,
+      destination: 'movimentar',
+      transactionValue: 1200.0,
       status: 'Pendente',
       documentos: 'Sem anexo',
     },
   ]
+  const getRowsMovement = (id) => {
+    return rowsMovement.find((row) => row.id === id)
+  }
+  const getNameClients = (id = null) => {
+    if (id) {
+      const row = rowsMovement.find((row) => row.id === id)
+      return [
+        {
+          value: row.id,
+          label: row.cliente.name,
+        },
+      ]
+    }
+    // Se não passar o id, retorna todos os clientes
+    return rowsMovement.map((row) => {
+      return {
+        value: row.id,
+        label: row.cliente.name,
+      }
+    })
+  }
+  const tiposOptionsDeposito = [
+    { value: 'deposit', label: 'Depósito' },
+    { value: 'transferencia', label: 'Transferência' },
+    { value: 'saque', label: 'Saque' },
+    { value: 'saldo', label: 'Saldo' },
+  ]
+  const banks = [
+    { label: 'Selecione uma opção', value: null },
+    { label: 'Banco Inter', value: 'banco_inter' },
+    { label: 'Banco Original', value: 'banco_original' },
+    { label: 'Banco Pan', value: 'banco_pan' },
+    { label: 'Banco Safra', value: 'banco_safra' },
+    { label: 'Banco do Brasil', value: 'banco_do_brasil' },
+    { label: 'Itaú', value: 'itau' },
+    { label: 'Santander', value: 'santander' },
+    { label: 'Caixa Econômica Federal', value: 'caixa' },
+    { label: 'Banco do Nordeste', value: 'banco_do_nordeste' },
+    { label: 'Banco da Amazônia', value: 'banco_da_amazonia' },
+    { label: 'Banco Votorantim', value: 'banco_votorantim' },
+    { label: 'Banco BMG', value: 'banco_bmg' },
+    { label: 'Banco ModalMais', value: 'banco_modalmais' },
+    { label: 'Banco Daycoval', value: 'banco_daycoval' },
+    { label: 'Banco Fibra', value: 'banco_fibra' },
+    { label: 'Banco Mercantil do Brasil', value: 'banco_mercantil_do_brasil' },
+    { label: 'Banco Rendimento', value: 'banco_rendimento' },
+    { label: 'Banco Indusval', value: 'banco_indusval' },
+    { label: 'Banco Alfa', value: 'banco_alfa' },
+    { label: 'Banco Bonsucesso', value: 'banco_bonsucesso' },
+    { label: 'Banco C6 Bank', value: 'c6_bank' },
+    { label: 'Banco Neon', value: 'banco_neon' },
+    { label: 'Banco Agibank', value: 'banco_agibank' },
+    { label: 'Banco Intermedium', value: 'banco_intermedium' },
+    { label: 'Banco Original', value: 'banco_original' },
+    { label: 'Banco Panamericano', value: 'banco_panamericano' },
+    { label: 'Bradesco', value: 'bradesco' },
+  ]
   return {
     columnsMovement,
     rowsMovement,
+    getRowsMovement,
+    getNameClients,
+    tiposOptionsDeposito,
+    banks,
   }
 }

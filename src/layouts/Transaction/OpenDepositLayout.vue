@@ -1,7 +1,7 @@
 <template>
   <q-card class="OpenDepositLayout">
     <q-card-section class="row justify-between">
-      <div class="text-h6">Abrir Solicitação de Depósito</div>
+      <div class="text-h6">{{ dialogOpengHeader }}</div>
       <q-btn v-close-popup flat icon="close" size="sm" rounded color="grey-6" />
     </q-card-section>
     <q-separator />
@@ -10,14 +10,25 @@
       <label-form className="q-mt-md q-px-sm col-md-6 col-12" textLabel="Tipo de Movimentação">
         <q-select
           outlined
-          v-model="transactionType"
-          :options="[{ label: 'Depósito', value: 'deposit' }]"
+          v-if="dialogOpengHeader === 'Solicitação de Depósito'"
+          v-model="dataSolicitacao.type"
+          :options="tiposOptionsDeposito"
           emit-value
           map-options
           dense
           disable
           bg-color="grey-2"
           dropdown-icon="keyboard_arrow_down"
+        />
+        <q-input
+          v-else
+          outlined
+          v-model="dataSolicitacao.tipo"
+          type="text"
+          dense
+          bg-color="grey-2"
+          disable
+          readonly
         />
       </label-form>
       <!-- Valor de Movimentação -->
@@ -27,38 +38,73 @@
       >
         <q-input
           outlined
-          v-model="transactionValue"
+          v-if="dialogOpengHeader === 'Solicitação de Depósito'"
+          v-model="dataSolicitacao.transactionValue"
           type="text"
           dense
           mask="###.###.###.###,##"
           reverse-fill-mask
           unmasked-value
           @update:model-value="onInput"
+          :value="formatCurrency(dataSolicitacao.transactionValue)"
+        />
+        <q-input
+          v-else
+          outlined
+          v-model="dataSolicitacao.transactionValue"
+          type="text"
+          dense
+          disable
+          readonly
+          :value="formatCurrency(dataSolicitacao.transactionValue)"
         />
       </label-form>
 
       <!-- Cliente -->
       <label-form className="q-mt-md q-px-sm col-12" textLabel="Cliente">
         <q-select
+          v-if="dialogOpengHeader === 'Solicitação de Depósito'"
           outlined
-          v-model="selectedClient"
+          v-model="dataSolicitacao.client"
           :options="clients"
+          options-cover
           emit-value
           map-options
           dense
           dropdown-icon="keyboard_arrow_down"
+        />
+        <q-input
+          v-else
+          outlined
+          v-model="dataSolicitacao.cliente.name"
+          type="text"
+          dense
+          disable
+          readonly
         />
       </label-form>
 
       <!-- Origem -->
       <label-form className="q-mt-md q-px-sm col-6" textLabel="Origem">
         <q-select
+          v-if="dialogOpengHeader === 'Solicitação de Depósito'"
           outlined
-          v-model="selectedBank"
+          v-model="dataSolicitacao.bank"
           :options="banks"
           emit-value
           map-options
           dense
+          dropdown-icon="keyboard_arrow_down"
+        />
+        <q-select
+          v-else
+          outlined
+          v-model="dataSolicitacao.origem"
+          :options="getOrigemDeposit"
+          emit-value
+          map-options
+          dense
+          disable
           dropdown-icon="keyboard_arrow_down"
         />
       </label-form>
@@ -67,7 +113,7 @@
       <label-form className="q-mt-md col-6" textLabel="Destino">
         <q-select
           outlined
-          v-model="selectedDestination"
+          v-model="dataSolicitacao.destination"
           :options="[{ label: 'Carteira Disponível para Movimentar', value: 'movimentar' }]"
           emit-value
           map-options
@@ -125,12 +171,23 @@
       <div class="row justify-end">
         <q-btn label="Voltar" color="primary" flat class="q-mt-md q-mr-sm" v-close-popup no-caps />
         <q-btn
+          v-if="dialogOpengHeader === 'Solicitação de Depósito'"
           label="Enviar Solicitação de Depósito"
           color="primary"
           class="q-mt-md"
           no-caps
           style="border-radius: 8px"
           icon="add"
+          @click="sendPasswordAction = true"
+        />
+        <q-btn
+          v-else
+          label="Aprovar Solicitação de Depósito"
+          color="primary"
+          class="q-mt-md"
+          no-caps
+          style="border-radius: 8px"
+          icon="check"
           @click="sendPasswordAction = true"
         />
       </div>
@@ -147,65 +204,34 @@
 </template>
 
 <script setup>
-import { ref, defineComponent } from 'vue'
-import PasswordConfirm from 'components/Auth/PasswordConfirm.vue'
+import { ref, defineComponent, computed } from 'vue'
 import { useLayoutStore } from 'src/stores/layout'
-const layoutStore = useLayoutStore()
+import { storeToRefs } from 'pinia'
+import PasswordConfirm from 'components/Auth/PasswordConfirm.vue'
+import LabelForm from 'components/Form/LabelForm.vue'
+import useMovement from 'src/composables/Fakes/useMovement'
 defineComponent({
   name: 'OpenDepositLayout',
 })
-import LabelForm from 'components/Form/LabelForm.vue'
+const layoutStore = useLayoutStore()
+const { dataSolicitacao, dialogOpengHeader, getOrigemDeposit } = storeToRefs(layoutStore)
 const transactionType = ref('deposit')
+const selectedDestination = ref('movimentar')
 const transactionValue = ref(null)
 const selectedClient = ref(null)
 const selectedBank = ref(null)
-const selectedDestination = ref('movimentar')
 const uploadedFiles = ref([])
 const sendPasswordAction = ref(false)
+const { tiposOptionsDeposito, getNameClients, banks } = useMovement()
 
-// Clientes fictícios
-const clients = [
-  { label: 'Cliente 1', value: 'client1' },
-  { label: 'Cliente 2', value: 'client2' },
-  { label: 'Cliente 3', value: 'client3' },
-]
-
-// Bancos tradicionais brasileiros
-const banks = [
-  { label: 'Selecione uma opção', value: null },
-  { label: 'Banco Inter', value: 'banco_inter' },
-  { label: 'Banco Original', value: 'banco_original' },
-  { label: 'Banco Pan', value: 'banco_pan' },
-  { label: 'Banco Safra', value: 'banco_safra' },
-  { label: 'Banco do Brasil', value: 'banco_do_brasil' },
-  { label: 'Itaú', value: 'itau' },
-  { label: 'Santander', value: 'santander' },
-  { label: 'Caixa Econômica Federal', value: 'caixa' },
-  { label: 'Banco do Nordeste', value: 'banco_do_nordeste' },
-  { label: 'Banco da Amazônia', value: 'banco_da_amazonia' },
-  { label: 'Banco Votorantim', value: 'banco_votorantim' },
-  { label: 'Banco BMG', value: 'banco_bmg' },
-  { label: 'Banco ModalMais', value: 'banco_modalmais' },
-  { label: 'Banco Daycoval', value: 'banco_daycoval' },
-  { label: 'Banco Fibra', value: 'banco_fibra' },
-  { label: 'Banco Mercantil do Brasil', value: 'banco_mercantil_do_brasil' },
-  { label: 'Banco Rendimento', value: 'banco_rendimento' },
-  { label: 'Banco Indusval', value: 'banco_indusval' },
-  { label: 'Banco Alfa', value: 'banco_alfa' },
-  { label: 'Banco Bonsucesso', value: 'banco_bonsucesso' },
-  { label: 'Banco C6 Bank', value: 'c6_bank' },
-  { label: 'Banco Neon', value: 'banco_neon' },
-  { label: 'Banco Agibank', value: 'banco_agibank' },
-  { label: 'Banco Intermedium', value: 'banco_intermedium' },
-  { label: 'Banco Original', value: 'banco_original' },
-  { label: 'Banco Panamericano', value: 'banco_panamericano' },
-  { label: 'Banco do Brasil', value: 'banco_do_brasil' },
-  { label: 'Bradesco', value: 'bradesco' },
-]
+// clientes
+const clients = computed(() => {
+  console.log('dataSolicitacao.value.id', dataSolicitacao.value.id)
+  return getNameClients(dataSolicitacao.value.id)
+})
 
 // Destinos (preenchidos pelo usuário)
 // const destinations = ref([])
-
 // Função para aplicar a máscara de moeda
 const onInput = (event) => {
   let value = event.replace(/\D/g, '') // Remove caracteres não numéricos
@@ -218,6 +244,23 @@ const onInput = (event) => {
     .toString()
     .replace('.', ',') // Substitui ponto por vírgula
     .replace(/\B(?=(\d{3})+(?!\d))/g, '.') // Adiciona pontos como separadores de milhar
+}
+
+// Função para formatar o valor como moeda
+const formatCurrency = (value) => {
+  if (!value) return ''
+
+  // Converte para número e garante que temos 2 casas decimais
+  const num = typeof value === 'string' ? parseFloat(value.replace(',', '.')) : Number(value)
+
+  // Verifica se é um número válido
+  if (isNaN(num)) return ''
+
+  // Formata o número
+  return num.toLocaleString('pt-BR', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
 }
 // Função para disparar o clique no input de arquivo
 const triggerFileInput = () => {
@@ -247,10 +290,18 @@ const submitForm = () => {
   sendPasswordAction.value = false
   layoutStore.setDialogTransactionDeposit(false)
   layoutStore.setDialogConfirmAction(true)
-  layoutStore.setDialogactionHeaderBody(
-    true,
-    'Solicitação de Depósito registrada!',
-    'A solicitação de depósito foi registrada com sucesso no sistema.',
-  )
+  if (dialogOpengHeader.value === 'Solicitação de Depósito') {
+    layoutStore.setDialogactionHeaderBody(
+      true,
+      'Solicitação de Depósito registrada!',
+      'A solicitação de depósito foi registrada com sucesso no sistema.',
+    )
+  } else {
+    layoutStore.setDialogactionHeaderBody(
+      true,
+      'Depósito concluído!',
+      'A conclusão do depósito foi registrada com sucesso no sistema.',
+    )
+  }
 }
 </script>
