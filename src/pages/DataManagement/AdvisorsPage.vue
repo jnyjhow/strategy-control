@@ -1,11 +1,16 @@
 <template>
-  <div class="q-pa-md">
-    <q-card class="my-card">
-      <q-card-section class="q-pa-none">
-        <div class="text-h6">Assessores</div>
-      </q-card-section>
-      <q-separator />
-    </q-card>
+  <div class="AdvisorsPage">
+    <title-page title="Assessores" :breadcrumbs />
   </div>
 </template>
-<script setup></script>
+<script setup>
+import TitlePage from 'src/components/TitlePage.vue'
+const breadcrumbs = [
+  {
+    label: 'Clientes',
+  },
+  {
+    label: 'Assessores',
+  },
+]
+</script>
