@@ -499,22 +499,6 @@ export default defineComponent({
 </script>
 
 <style lang="sass">
-.custom-btn-warning
-  background-color: #FFD2881c !important
-  color: #000 !important
-  border: 1px solid #FFD288 !important
-.custom-btn-primary
-  background-color: #21ba451c !important
-  color: #000 !important
-  border: 1px solid #F1FDE8 !important
-.custom-btn-negative
-  background-color: #FF3D001c !important
-  color: #000 !important
-  border: 1px solid #FF3D00 !important
-.custom-btn-muted
-  background-color: #bdb4b41c !important
-  color: #000 !important
-  border: 1px solid #bdb4b4 !important
 .q-btn--outline:before
   background-color: transparent !important
   border: 1px solid transparent !important
