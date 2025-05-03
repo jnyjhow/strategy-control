@@ -10,7 +10,7 @@
           active-color="primary"
           indicator-color="primary"
           inline-label
-          align="start"
+          align="left"
         >
           <q-tab
             no-caps

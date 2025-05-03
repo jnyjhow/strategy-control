@@ -23,5 +23,8 @@ const actions = {
   setDialogOpengHeader(payload) {
     this.dialogOpengHeader = payload
   },
+  setParamentros(payload) {
+    this.paramentros = payload
+  },
 }
 export default { ...actions }

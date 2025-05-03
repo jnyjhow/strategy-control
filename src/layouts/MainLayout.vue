@@ -49,7 +49,7 @@
             <span class="text-white text-bold"> Painel de Dados </span>
           </div>
           <q-btn round dense flat color="white" icon="fa-regular fa-bell" class="q-mx-lg">
-            <q-badge color="red" text-color="white" floating> 2 </q-badge>
+            <!-- <q-badge color="red" text-color="white" floating> 2 </q-badge> -->
             <q-tooltip>Notifications</q-tooltip>
           </q-btn>
           <q-btn round dense color="white">

@@ -10,7 +10,7 @@
           active-color="primary"
           indicator-color="primary"
           inline-label
-          align="start"
+          align="left"
         >
           <q-tab no-caps name="expansao" label="Expansão de Patrimônio" />
           <q-tab no-caps name="aposentadoria" label="Fundo de Aposentadoria" />
