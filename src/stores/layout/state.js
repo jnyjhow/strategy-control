@@ -11,7 +11,8 @@ const state = () => {
       type: 'deposit',
       destination: 'movimentar',
     },
-    paramentros: false,
+    projection: false,
+    paramentroLogic: false,
   }
 }
 

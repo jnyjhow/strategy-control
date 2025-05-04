@@ -50,3 +50,7 @@ const breadcrumbs = [
   },
 ]
 </script>
+<style lang="sass">
+.border-selected
+  border: 1px solid blue !important
+</style>

@@ -23,8 +23,11 @@ const actions = {
   setDialogOpengHeader(payload) {
     this.dialogOpengHeader = payload
   },
-  setParamentros(payload) {
-    this.paramentros = payload
+  setParamentroLogic(payload) {
+    this.paramentroLogic = payload
+  },
+  setProjection(payload) {
+    this.projection = payload
   },
 }
 export default { ...actions }
