@@ -2,7 +2,12 @@
   <div class="q-ml-md cursor-pointer non-selectable menuBar">
     <div class="align-center items-center row no-wrap" :class="includesTo() ? 'border-active' : ''">
       <!-- name="fa-solid fa-file-invoice-dollar" -->
-      <q-icon :name="icon" size="small" color="primary" class="col self-ceter" />
+      <q-icon
+        :name="$filtersString.resolveUrl(icon)"
+        size="small"
+        color="primary"
+        class="col self-ceter"
+      />
       <span class="text-small q-ml-sm" :class="includesTo() ? 'text-primary' : ''">
         {{ name }}
       </span>
@@ -51,7 +56,7 @@ export default defineComponent({
     size: { String, default: 'small' },
     toPrimary: { String, default: 'contracts' },
     items: {
-      type: Array,
+      type: [Array, Object],
     },
   },
   setup(props) {

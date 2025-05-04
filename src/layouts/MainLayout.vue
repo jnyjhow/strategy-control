@@ -11,10 +11,10 @@
           <!-- name="fa-solid fa-file-invoice-dollar" -->
           <q-btn flat color="primary" to="/" no-caps unelevated padding="0px" ripple stretch>
             <q-icon
-              name="img:icons/transfer.svg"
+              :name="$filtersString.resolveUrl('img:icons/transfer.svg')"
               size="small"
               color="primary"
-              class="col self-ceter"
+              class="col self-center"
             />
             <span
               class="text-small q-ml-sm"
@@ -39,7 +39,11 @@
 
         <q-space />
         <q-badge outline color="primary" class="q-pa-sm">
-          <q-icon name="img:icons/user.svg" size="0.8rem" class="q-pr-xs" />
+          <q-icon
+            :name="$filtersString.resolveUrl('img:icons/user.svg')"
+            size="0.8rem"
+            class="q-pr-xs"
+          />
           <span class="text-grey">Clientes:</span>
           <span class="text-white text-bold"> 180</span>
         </q-badge>
@@ -53,7 +57,11 @@
             <q-tooltip>Notifications</q-tooltip>
           </q-btn>
           <q-btn round dense color="white">
-            <q-avatar size="2rem" icon="img:icons/user.svg" colo="white" />
+            <q-avatar
+              size="2rem"
+              :icon="$filtersString.resolveUrl('img:icons/user.svg')"
+              colo="white"
+            />
             <q-tooltip>Account</q-tooltip>
           </q-btn>
         </div>
@@ -85,6 +93,7 @@ defineComponent({
 const route = useRoute()
 const layoutStore = useLayoutStore()
 const { dialogConfirmAction } = storeToRefs(layoutStore)
+
 const linkesRoutes = [
   {
     name: 'Contratos',
