@@ -12,6 +12,7 @@ const state = () => {
       destination: 'movimentar',
     },
     projection: false,
+    projectionStatus: 1,
     paramentroLogic: false,
   }
 }

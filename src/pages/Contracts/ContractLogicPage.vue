@@ -21,7 +21,7 @@
 
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="expansao">
-            <logic-contracts-layout />
+            <logics-contracts-layout />
           </q-tab-panel>
 
           <q-tab-panel name="aposentadoria">
@@ -39,7 +39,7 @@
 <script setup>
 import { ref } from 'vue'
 import TitlePage from 'src/components/TitlePage.vue'
-import LogicContractsLayout from 'src/layouts/Contracts/logicContractsLayout.vue'
+import LogicsContractsLayout from 'src/layouts/Contracts/LogicsContractsLayout.vue'
 const tab = ref('expansao')
 const breadcrumbs = [
   {

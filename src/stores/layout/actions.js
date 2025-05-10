@@ -29,5 +29,8 @@ const actions = {
   setProjection(payload) {
     this.projection = payload
   },
+  setProjectionStatus(payload) {
+    this.projectionStatus = payload
+  },
 }
 export default { ...actions }
