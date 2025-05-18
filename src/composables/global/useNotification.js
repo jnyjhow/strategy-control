@@ -27,7 +27,9 @@ export default function useNotification() {
     $q.notify({
       position: positionNot,
       message: message || 'Tudo certo!',
-      actions: [actions],
+      icon: 'check_circle',
+      iconColor: 'green-4',
+      iconSize: '16px',
       timeout: getTime,
       classes: 'notify-success',
     })

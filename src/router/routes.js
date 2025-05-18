@@ -2,6 +2,10 @@ const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
+    props: true,
+    meta: {
+      requiresAuth: true,
+    },
     children: [
       { path: '', name: 'home', component: () => import('pages/TransctionPage.vue') },
       {
@@ -45,6 +49,25 @@ const routes = [
             component: () => import('pages/DataManagement/LeadPage.vue'),
           },
         ],
+      },
+    ],
+  },
+  {
+    path: '/auth',
+    component: () => import('../views/AuthView.vue'),
+    props: true,
+    children: [
+      {
+        path: '',
+        name: 'Auth',
+        component: () => import('pages/Authentication/AuthPage.vue'),
+        props: true,
+      },
+      {
+        path: 'register',
+        name: 'Register',
+        component: () => import('pages/Authentication/RegisterPage.vue'),
+        props: true,
       },
     ],
   },
