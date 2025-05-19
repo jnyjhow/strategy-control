@@ -32,14 +32,16 @@
   </div>
 </template>
 <script setup>
-import { defineComponent } from 'vue'
+import { defineComponent, onMounted } from 'vue'
 import { useAuthStore } from 'src/stores/auth'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
 defineComponent({
   name: 'InitialAuthLayout',
 })
 
 const storeLogin = useAuthStore()
+const { selectedInitial, passwordReset } = storeToRefs(storeLogin)
 const router = useRouter()
 
 const sendSelected = (toRouter) => {
@@ -48,4 +50,13 @@ const sendSelected = (toRouter) => {
     name: toRouter,
   })
 }
+const route = useRoute()
+onMounted(() => {
+  if (route.query.token && route.query.email) {
+    console.log('Token de validação enviado')
+    passwordReset.value = true
+    selectedInitial.value = true
+    storeLogin.setValidateToken(route.query.token)
+  }
+})
 </script>
