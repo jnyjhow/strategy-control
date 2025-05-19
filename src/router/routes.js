@@ -7,7 +7,7 @@ const routes = [
       requiresAuth: true,
     },
     children: [
-      { path: '', name: 'home', component: () => import('pages/TransctionPage.vue') },
+      { path: '', name: 'Transações', component: () => import('pages/TransctionPage.vue') },
       {
         path: '/contracts',
         // component: () => import('layouts/ContractLayout.vue'), // (opcional)
@@ -62,12 +62,25 @@ const routes = [
         name: 'Auth',
         component: () => import('pages/Authentication/AuthPage.vue'),
         props: true,
+        query: {
+          email: null,
+          token: null,
+        },
       },
       {
         path: 'register',
         name: 'Register',
         component: () => import('pages/Authentication/RegisterPage.vue'),
         props: true,
+      },
+      {
+        path: 'token-validation',
+        name: 'TokenValidation',
+        component: () => import('pages/Authentication/TokenValidationPage.vue'),
+        props: true,
+        query: {
+          email: null,
+        },
       },
     ],
   },

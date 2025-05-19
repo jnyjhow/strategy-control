@@ -38,7 +38,7 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     const isAuthenticated = false // Replace with your authentication check
 
     if (to.matched.some((record) => record.meta.requiresAuth) && !isAuthenticated) {
-      next({ name: 'auth' }) // Redirect to login page if not authenticated
+      next({ name: 'Auth' }) // Redirect to login page if not authenticated
     } else {
       next() // Proceed to the route
     }

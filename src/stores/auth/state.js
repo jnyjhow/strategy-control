@@ -4,7 +4,10 @@ const state = () => {
     selectedInitial: false,
     auth: {
       conectetion: false,
+      token: null,
+      validateToken: false,
     },
+    passwordReset: false,
   }
 }
 

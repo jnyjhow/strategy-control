@@ -7,10 +7,10 @@
       </q-toolbar>
     </q-header>
     <q-page-container padding>
-      <video autoplay muted loop class="auth-video">
+      <!-- <video autoplay muted loop class="auth-video">
         <source src="media/authentication.mp4" type="video/mp4" />
         Your browser does not support the video tag.
-      </video>
+      </video> -->
       <initial-auth-layout v-if="!selectedInitial" />
       <router-view v-slot="{ Component }" v-else>
         <transition name="fade" mode="out-in">
