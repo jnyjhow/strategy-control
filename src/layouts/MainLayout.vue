@@ -9,7 +9,16 @@
           :class="route.name == 'home' ? 'border-active' : ''"
         >
           <!-- name="fa-solid fa-file-invoice-dollar" -->
-          <q-btn flat color="primary" to="/" no-caps unelevated padding="0px" ripple stretch>
+          <q-btn
+            flat
+            color="primary"
+            to="/transaction"
+            no-caps
+            unelevated
+            padding="0px"
+            ripple
+            stretch
+          >
             <q-icon
               :name="$filtersString.resolveUrl('img:icons/transfer.svg')"
               size="small"

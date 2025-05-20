@@ -1,7 +1,7 @@
 <template>
   <q-card class="BalanceInfoCard q-pa-sm" bordered flat :class="bgColor">
     <q-card-section class="q-pa-none">
-      <div class="text-caption text-grey-8">
+      <div class="text-caption text-grey-8" style="display: inline-flex">
         {{ title }}
         <span><q-btn color="grey-6" icon="fa-solid fa-circle-info" size="sm" flat /></span>
       </div>

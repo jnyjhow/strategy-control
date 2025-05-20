@@ -8,6 +8,7 @@ const state = () => {
       validateToken: false,
     },
     passwordReset: false,
+    finished: false,
   }
 }
 

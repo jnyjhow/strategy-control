@@ -7,12 +7,16 @@
       </q-toolbar>
     </q-header>
     <q-page-container padding>
-      <!-- <video autoplay muted loop class="auth-video">
+      <video autoplay muted loop class="auth-video" v-if="!finished">
         <source src="media/authentication.mp4" type="video/mp4" />
         Your browser does not support the video tag.
-      </video> -->
+      </video>
+      <video autoplay muted loop class="auth-video" v-else>
+        <source src="media/video-saida-auth.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
       <initial-auth-layout v-if="!selectedInitial" />
-      <router-view v-slot="{ Component }" v-else>
+      <router-view v-slot="{ Component }" v-else-if="selectedInitial && !finished">
         <transition name="fade" mode="out-in">
           <component :is="Component"></component>
         </transition>
@@ -35,7 +39,7 @@ import { storeToRefs } from 'pinia'
 // const { stateAuth } = useAuth();
 // const route = useRoute();
 const storeLogin = useAuthStore()
-const { selectedInitial } = storeToRefs(storeLogin)
+const { selectedInitial, finished } = storeToRefs(storeLogin)
 // onMounted(async () => {
 //   console.log(route.query);
 //   if (route.query.q) {

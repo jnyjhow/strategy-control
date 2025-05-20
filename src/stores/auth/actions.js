@@ -11,5 +11,8 @@ const actions = {
   setAuth(payload) {
     this.auth = payload
   },
+  setFineshed(payload) {
+    this.finished = payload
+  },
 }
 export default { ...actions }
