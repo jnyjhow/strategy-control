@@ -1,13 +1,17 @@
 const routes = [
   {
-    path: '/',
+    path: '/dashboard',
     component: () => import('layouts/MainLayout.vue'),
     props: true,
     meta: {
       requiresAuth: true,
     },
     children: [
-      { path: '', name: 'Transações', component: () => import('pages/TransctionPage.vue') },
+      {
+        path: '/transaction',
+        name: 'Transações',
+        component: () => import('pages/TransctionPage.vue'),
+      },
       {
         path: '/contracts',
         // component: () => import('layouts/ContractLayout.vue'), // (opcional)
@@ -49,6 +53,19 @@ const routes = [
             component: () => import('pages/DataManagement/LeadPage.vue'),
           },
         ],
+      },
+    ],
+  },
+  {
+    path: '/',
+    component: () => import('../views/AuthView.vue'),
+    props: true,
+    children: [
+      {
+        path: '',
+        name: 'Selected',
+        component: () => import('pages/IndexPage.vue'),
+        meta: { requiresAuth: true },
       },
     ],
   },

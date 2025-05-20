@@ -35,7 +35,7 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   Router.beforeEach((to, from, next) => {
     document.title = to.name != undefined ? 'Strategy Analytics - ' + to.name : 'Strategy Analytics'
     // Add your authentication logic here
-    const isAuthenticated = false // Replace with your authentication check
+    const isAuthenticated = true // Replace with your authentication check
 
     if (to.matched.some((record) => record.meta.requiresAuth) && !isAuthenticated) {
       next({ name: 'Auth' }) // Redirect to login page if not authenticated

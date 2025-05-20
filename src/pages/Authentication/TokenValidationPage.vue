@@ -5,7 +5,7 @@
       @actionEmit="backRouter()"
       subTitle="Enviamos no seu email um token de validação"
     />
-    <q-form class="q-gutter-sm row q-mt-md" @submit.prevent.stop="onSubmit">
+    <q-form class="q-gutter-sm row q-mt-md" @submit.prevent.stop="onSubmit()">
       <label-form className="col-12" textLabel="Token de validação">
         <q-input
           outlined
@@ -92,10 +92,6 @@ const onSubmit = () => {
     validation.value = true
     successNotify('Acesso validado com sucesso! Voce será redirecionado...')
   }
-  setTimeout(() => {
-    validation.value = false
-    console.log('Token de validação enviado')
-  }, 2000)
 
   if (route.query.email && !route.query.register) {
     storeLogin.setValidateToken(true)
@@ -125,6 +121,16 @@ const onSubmit = () => {
       },
     })
   }
+
+  setTimeout(() => {
+    validation.value = false
+    if (tokenRef.value.validate() && auth.value.token && auth.value.password && auth.value.email) {
+      console.log('Token validado com sucesso!')
+      router.replace({
+        name: 'Selected',
+      })
+    }
+  }, 2000)
 }
 defineComponent({
   name: 'TokenPage',
