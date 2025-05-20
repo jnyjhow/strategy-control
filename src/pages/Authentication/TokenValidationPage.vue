@@ -97,7 +97,7 @@ const onSubmit = () => {
     console.log('Token de validação enviado')
   }, 2000)
 
-  if (route.query.email) {
+  if (route.query.email && !route.query.register) {
     storeLogin.setValidateToken(true)
 
     if (!auth.value.email) {
@@ -109,6 +109,19 @@ const onSubmit = () => {
       query: {
         email: auth.value.email,
         token: auth.value.token,
+      },
+    })
+    return
+  }
+  if (route.query.register) {
+    storeLogin.setValidateToken(true)
+    storeLogin.setAuthEmail(route.query.email)
+    router.push({
+      name: 'Register',
+      query: {
+        email: auth.value.email,
+        token: auth.value.token,
+        register: true,
       },
     })
   }

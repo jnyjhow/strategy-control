@@ -71,6 +71,7 @@
           class="text-h7"
           no-caps
           style="width: 100%; border-radius: 8px"
+          @click.prevent.stop="router.push({ name: 'Register' })"
         />
       </div>
     </q-form>
@@ -83,6 +84,7 @@ import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import TitleAuth from 'src/components/Auth/TitleAuth.vue'
 import LabelForm from 'src/components/Form/LabelForm.vue'
+
 const storeAuth = useAuthStore()
 const { selectedInitial, auth, passwordReset } = storeToRefs(storeAuth)
 const router = useRouter()
@@ -97,7 +99,7 @@ const onSubmit = async () => {
   passwordRef.value.validate()
   if (!emailRef.value.hasError || !passwordRef.value.hasError) {
     // await authAction();
-    // successNotify('Acesso validado com sucesso! Voce será redirecionado...', 30000)
+    // Aqui vai ser feito a logica de envio de authenticação
     router.push({ name: 'TokenValidation' })
   }
 }

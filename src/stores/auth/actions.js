@@ -8,5 +8,8 @@ const actions = {
   setAuthEmail(payload) {
     this.auth.email = payload
   },
+  setAuth(payload) {
+    this.auth = payload
+  },
 }
 export default { ...actions }

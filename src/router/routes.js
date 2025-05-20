@@ -65,6 +65,7 @@ const routes = [
         query: {
           email: null,
           token: null,
+          register: false,
         },
       },
       {
