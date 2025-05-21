@@ -30,7 +30,6 @@
         class="text-h7 q-mt-md"
         no-caps
         style="width: 100%; border-radius: 8px"
-        disabled
         @click.prevent.stop="setTransiction()"
       />
     </q-card>
@@ -56,6 +55,7 @@
         size="lg"
         class="text-h7 q-mt-md"
         no-caps
+        disabled
         style="width: 100%; border-radius: 8px"
         @click.prevent.stop="setTransiction()"
       />
