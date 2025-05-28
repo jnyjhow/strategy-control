@@ -544,7 +544,4 @@ export default defineComponent({
   width: 0.4em
   min-width: 0.1em
   height: 0.4em
-.control-width
-  .q-dialog__inner
-    max-width: 60% !important
 </style>

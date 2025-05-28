@@ -14,6 +14,8 @@ const state = () => {
     projection: false,
     projectionStatus: 1,
     paramentroLogic: false,
+    clientDialog: false,
+    clientEdit: {},
   }
 }
 

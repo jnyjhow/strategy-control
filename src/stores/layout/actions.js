@@ -32,5 +32,11 @@ const actions = {
   setProjectionStatus(payload) {
     this.projectionStatus = payload
   },
+  setClientDialog(payload) {
+    this.clientDialog = payload
+  },
+  setClientEdit(payload) {
+    this.clientEdit = payload
+  },
 }
 export default { ...actions }

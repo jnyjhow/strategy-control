@@ -200,7 +200,7 @@
 
     <div class="row justify-between items-center q-mt-md">
       <div class="row items-center">
-        <span class="q-mr-sm">Itens por página:</span>
+        <span class="q-mr-sm text-muted">Itens por página:</span>
         <q-select
           dense
           outlined
@@ -208,10 +208,11 @@
           :options="[5, 10, 15, 20]"
           style="min-width: 80px"
           @update:model-value="updateRowsPerPage"
+          dropdown-icon="keyboard_arrow_down"
         />
         <span class="q-ml-md text-caption text-grey-8">
-          Mostrando {{ firstItemIndex }} a {{ lastItemIndex }} de
-          {{ filteredRows.length }} registros
+          <!-- Mostrando {{ firstItemIndex }} a {{ lastItemIndex }} de -->
+          Total de {{ filteredRows.length }} itens
         </span>
       </div>
       <div class="row justify-center q-mt-md">
@@ -236,22 +237,28 @@ const columns = [
     label: 'Solicitado em',
     field: 'solicitado_em',
     sortable: true,
+    align: 'left',
+    headerStyle: 'text-align: start',
   },
   {
     name: 'limitado_ate',
     label: 'Limitado até',
     field: 'limitado_ate',
     sortable: true,
+    align: 'left',
+    headerStyle: 'text-align: start',
   },
   {
     name: 'tipo',
     label: 'Tipo',
     field: 'tipo',
     sortable: true,
+    align: 'left',
+    headerStyle: 'text-align: start',
   },
   {
     name: 'cliente',
-    label: 'Cliente',
+    label: 'Cliente da transação',
     field: 'cliente',
     sortable: true,
   },
@@ -259,16 +266,19 @@ const columns = [
     name: 'origem',
     label: 'Origem',
     field: 'origem',
+    align: 'left',
   },
   {
     name: 'destino',
     label: 'Destino',
     field: 'destino',
+    align: 'left',
   },
   {
     name: 'valor',
     label: 'Valor Movimentação R$',
     field: 'transactionValue',
+    headerStyle: 'text-align: end',
     sortable: true,
     format: (val) =>
       `R$ ${val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
@@ -277,11 +287,13 @@ const columns = [
     name: 'status',
     label: 'Status',
     field: 'status',
+    align: 'left',
   },
   {
     name: 'documentos',
     label: 'Documentos',
     field: 'documentos',
+    align: 'left',
   },
 ]
 

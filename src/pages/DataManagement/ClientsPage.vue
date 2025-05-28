@@ -1,16 +1,8 @@
 <template>
-  <div class="ClientsPage">
-    <title-page title="Clientes" :breadcrumbs />
-  </div>
+  <q-page class="ClientsPage">
+    <clients-layout />
+  </q-page>
 </template>
 <script setup>
-import TitlePage from 'src/components/TitlePage.vue'
-const breadcrumbs = [
-  {
-    label: 'Clientes',
-  },
-  {
-    label: 'Clientes',
-  },
-]
+import ClientsLayout from 'src/layouts/Clients/ClientsLayout.vue'
 </script>

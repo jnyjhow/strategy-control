@@ -77,7 +77,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-page-container class="GPL__page-container">
+    <q-page-container>
       <router-view v-slot="{ Component }">
         <transition name="fade" mode="out-in">
           <component :is="Component" :key="route.path"></component>
