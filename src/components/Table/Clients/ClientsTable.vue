@@ -40,7 +40,8 @@
               no-caps
               outline
               label="Comparar Clientes"
-              :class="!compare ? 'text-muted' : 'text-primary'"
+              :class="!compareBtn ? 'text-muted' : 'text-primary'"
+              @click.prevent.stop="compareSelected"
             />
             <q-btn
               size="md"
@@ -85,7 +86,7 @@
         </q-td>
       </template>
 
-      <!-- Coluna de documentos personalizada -->
+      <!-- Coluna de emprestimo -->
       <template v-slot:body-cell-emprestimo="props">
         <q-td :props="props">
           <q-btn
@@ -98,6 +99,7 @@
           />
         </q-td>
       </template>
+      <!-- dividendo -->
       <template v-slot:body-cell-dividendo="props">
         <q-td :props="props">
           <p>
@@ -106,6 +108,7 @@
           </p>
         </q-td>
       </template>
+      <!-- contrato -->
       <template v-slot:body-cell-contrato="props">
         <q-td :props="props">
           <p>
@@ -119,7 +122,7 @@
           <p>{{ $filtersString.formatPartternCurrency(props.row.saldo) }} <br /></p>
         </q-td>
       </template>
-
+      <!-- actions -->
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
           <q-btn
@@ -187,6 +190,17 @@
     >
       <edit-clients-layout />
     </q-dialog>
+    <q-dialog
+      v-model="dialogCompare"
+      position="right"
+      full-height
+      full-width
+      maximized
+      persistent
+      class="control-width-compare"
+    >
+      <compare-layout />
+    </q-dialog>
     <!-- <div class="q-mt-md">Selected: {{ JSON.stringify(selected) }}</div> -->
     <div class="row justify-between items-center q-mt-md">
       <div class="row items-center">
@@ -218,18 +232,27 @@
 </template>
 
 <script setup>
-import useCliente from 'src/composables/Fakes/useCliente'
 import { ref, computed, defineComponent } from 'vue'
 import { exportFile, useQuasar } from 'quasar'
 import { useLayoutStore } from 'src/stores/layout'
 import { storeToRefs } from 'pinia'
+import { useClientStore } from 'src/stores/client'
+import useCliente from 'src/composables/Fakes/useCliente'
+
 import EditClientsLayout from 'src/layouts/Clients/EditClientsLayout.vue'
+import CompareLayout from 'src/layouts/Clients/CompareLayout.vue'
 defineComponent({
   name: 'ClientsTable',
 })
 const storeLayout = useLayoutStore()
-const { clientDialog } = storeToRefs(storeLayout)
+const storeClient = useClientStore()
+// const { compare } = storeToRefs(storeClient)
+const { clientDialog, dialogCompare } = storeToRefs(storeLayout)
 const { rowsClient, columnsClient, getClient } = useCliente()
+// const classCompare = computed(() => {
+//   console.log('classCompare', compare.value.length)
+//   return compare.value.length < 3 ? 'control-width' : 'control-width-compare'
+// })
 
 const editClient = (id) => {
   storeLayout.setDialogOpengHeader('Clientes')
@@ -238,8 +261,21 @@ const editClient = (id) => {
   storeLayout.setClientEdit(getClient(id))
 }
 
+const compareSelected = () => {
+  if (selected.value.length < 2) {
+    $q.notify({
+      message: 'Selecione pelo menos dois clientes para comparar.',
+      color: 'negative',
+      icon: 'warning',
+    })
+    return
+  }
+  storeLayout.setDialogOpengHeader('Comparar Clientes')
+  storeLayout.setDialogCompare(true)
+  storeClient.setCompareSelect(selected.value)
+}
 const selected = ref([])
-const compare = computed(() => {
+const compareBtn = computed(() => {
   return selected.value.length > 1
 })
 const getSelectedString = () => {

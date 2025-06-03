@@ -11,11 +11,13 @@ const state = () => {
       type: 'deposit',
       destination: 'movimentar',
     },
+    dialogCompare: false,
     projection: false,
     projectionStatus: 1,
     paramentroLogic: false,
     clientDialog: false,
     clientEdit: {},
+    clientCompare: {},
   }
 }
 

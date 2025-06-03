@@ -77,6 +77,8 @@ body
   font-size: 12px
   font-weight: 400
   border-radius: 2px
+%tag-border-style
+  border-radius: 8px !important
 .tag-positive-light
   @extend %tag-style
   border: 1px solid #75cfff
@@ -105,12 +107,23 @@ body
   box-shadow: 0px 0px 12px 6px #74E23929
 .control-width
   .q-dialog__inner
+    min-width: 20% !important
     max-width: 60% !important
+.control-width-compare
+  .q-dialog__inner
+    min-width: 30% !important
+    max-width: 80% !important
 .border-pattern
   background:#FAFAFA !important
   border-radius: 8px !important
   border: 1px solid #74E23929 !important
+.border-gray
+  @extend %tag-border-style
+  border: 1px solid #E0E0E0 !important
 .outline
   border: 1px solid currentColor !important
 .q-btn__icon 
   color: inherit !important
+.text-compara
+  font-weight: 500 !important
+

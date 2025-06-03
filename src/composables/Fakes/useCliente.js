@@ -1,4 +1,9 @@
+import { useLayoutStore } from 'src/stores/layout'
+import { storeToRefs } from 'pinia'
+
 export default function useCliente() {
+  const storeLayout = useLayoutStore()
+  const { clientEdit } = storeToRefs(storeLayout)
   const columnsClient = [
     {
       name: 'cliente',
@@ -51,16 +56,30 @@ export default function useCliente() {
     {
       id: 1,
       newWeLend: {},
+      level: 'A',
       weLend: [
         {
-          contrato: 'Contrato 1',
-          valor: 10000,
           status: 'Ativo',
+          valor: 10000,
+          data_loan: '01/01/2025',
+          value_dividendo: 250.0,
+          value_now_dividendo: 250.0,
+          value_finish: 10000,
+          value_before: 10000,
+          number_parcelas: 12,
+          date_payment: '01/02/2025',
+          contrato: 'Contrato 1',
           vigencia: '31/12/2030',
           saldo: 5000,
         },
       ],
-      investment: {},
+      investment: {
+        classification: 'A',
+        saldo: 150000,
+        assessor: 1,
+        data_dividendo: '21/02/2025',
+        valor_dividendo: 250.0,
+      },
       bank: {},
       residential: {},
       bankRegister: [
@@ -75,7 +94,11 @@ export default function useCliente() {
         },
       ],
       cliente: {
-        name: 'Carlos Silva',
+        cpf_cnpj: '123.456.789-00',
+        renda: 5000,
+        profissao: 'Engenheiro',
+        birth: '01/01/1990',
+        name: 'Carlos Silva Nunes',
         avatar: 'https://sources.strategyanalytics.com.br/storage/users/_Avatar_.png',
         email: 'carlos@gstrategyanalytics.com.br',
       },
@@ -94,16 +117,30 @@ export default function useCliente() {
     {
       id: 2,
       newWeLend: {},
+      level: 'A',
       weLend: [
         {
-          contrato: 'Contrato 1',
-          valor: 10000,
           status: 'Ativo',
+          valor: 10000,
+          data_loan: '01/01/2025',
+          value_dividendo: 250.0,
+          value_now_dividendo: 250.0,
+          value_finish: 10000,
+          value_before: 10000,
+          number_parcelas: 12,
+          date_payment: '01/02/2025',
+          contrato: 'Contrato 1',
           vigencia: '31/12/2030',
           saldo: 5000,
         },
       ],
-      investment: {},
+      investment: {
+        classification: 'A',
+        saldo: 150000,
+        assessor: 1,
+        data_dividendo: '21/02/2025',
+        valor_dividendo: 250.0,
+      },
       bank: {},
       residential: {},
       bankRegister: [
@@ -118,6 +155,10 @@ export default function useCliente() {
         },
       ],
       cliente: {
+        cpf_cnpj: '123.456.789-00',
+        renda: 5000,
+        profissao: 'Engenheiro',
+        birth: '01/01/1990',
         name: 'Ana Oliveira',
         avatar: 'https://sources.strategyanalytics.com.br/storage/users/_Avatar_.png',
         email: 'ana@gstrategyanalytics.com.br',
@@ -137,16 +178,30 @@ export default function useCliente() {
     {
       id: 3,
       newWeLend: {},
+      level: 'A',
       weLend: [
         {
-          contrato: 'Contrato 1',
-          valor: 10000,
           status: 'Ativo',
+          valor: 10000,
+          data_loan: '01/01/2025',
+          value_dividendo: 250.0,
+          value_now_dividendo: 250.0,
+          value_finish: 10000,
+          value_before: 10000,
+          number_parcelas: 12,
+          date_payment: '01/02/2025',
+          contrato: 'Contrato 1',
           vigencia: '31/12/2030',
           saldo: 5000,
         },
       ],
-      investment: {},
+      investment: {
+        classification: 'A',
+        saldo: 150000,
+        assessor: 1,
+        data_dividendo: '21/02/2025',
+        valor_dividendo: 250.0,
+      },
       bank: {},
       residential: {},
       bankRegister: [
@@ -161,6 +216,10 @@ export default function useCliente() {
         },
       ],
       cliente: {
+        cpf_cnpj: '123.456.789-00',
+        renda: 5000,
+        profissao: 'Engenheiro',
+        birth: '01/01/1990',
         name: 'Pedro Santos',
         avatar: 'https://sources.strategyanalytics.com.br/storage/users/_Avatar_.png',
         email: 'pedro@gstrategyanalytics.com.br',
@@ -180,16 +239,30 @@ export default function useCliente() {
     {
       id: 4,
       newWeLend: {},
+      level: 'A',
       weLend: [
         {
-          contrato: 'Contrato 1',
-          valor: 10000,
           status: 'Ativo',
+          valor: 10000,
+          data_loan: '01/01/2025',
+          value_dividendo: 250.0,
+          value_now_dividendo: 250.0,
+          value_finish: 10000,
+          value_before: 10000,
+          number_parcelas: 12,
+          date_payment: '01/02/2025',
+          contrato: 'Contrato 1',
           vigencia: '31/12/2030',
           saldo: 5000,
         },
       ],
-      investment: {},
+      investment: {
+        classification: 'A',
+        saldo: 150000,
+        assessor: 1,
+        data_dividendo: '21/02/2025',
+        valor_dividendo: 250.0,
+      },
       bank: {},
       residential: {},
       bankRegister: [
@@ -204,6 +277,10 @@ export default function useCliente() {
         },
       ],
       cliente: {
+        cpf_cnpj: '123.456.789-00',
+        renda: 5000,
+        profissao: 'Engenheiro',
+        birth: '01/01/1990',
         name: 'Mariana Costa',
         avatar: 'https://sources.strategyanalytics.com.br/storage/users/_Avatar_.png',
         email: 'mariana@gstrategyanalytics.com.br',
@@ -223,16 +300,30 @@ export default function useCliente() {
     {
       id: 5,
       newWeLend: {},
+      level: 'A',
       weLend: [
         {
-          contrato: 'Contrato 1',
-          valor: 10000,
           status: 'Ativo',
+          valor: 10000,
+          data_loan: '01/01/2025',
+          value_dividendo: 250.0,
+          value_now_dividendo: 250.0,
+          value_finish: 10000,
+          value_before: 10000,
+          number_parcelas: 12,
+          date_payment: '01/02/2025',
+          contrato: 'Contrato 1',
           vigencia: '31/12/2030',
           saldo: 5000,
         },
       ],
-      investment: {},
+      investment: {
+        classification: 'A',
+        saldo: 150000,
+        assessor: 1,
+        data_dividendo: '21/02/2025',
+        valor_dividendo: 250.0,
+      },
       bank: {},
       residential: {},
       bankRegister: [
@@ -247,8 +338,12 @@ export default function useCliente() {
         },
       ],
       cliente: {
+        cpf_cnpj: '123.456.789-00',
+        renda: 5000,
+        profissao: 'Engenheiro',
+        birth: '01/01/1990',
         name: 'João Pereira',
-        avatar: 'https://sources.strategyanalytics.com.br/storage/users/_Avatar_.png',
+        avatar: 'https://sources.strategyanalytics.com.br/storage/users/joao_default.png',
         email: 'joao@gstrategyanalytics.com.br',
       },
       assessor: 'Joe Doe',
@@ -266,16 +361,30 @@ export default function useCliente() {
     {
       id: 6,
       newWeLend: {},
+      level: 'A',
       weLend: [
         {
-          contrato: 'Contrato 1',
-          valor: 10000,
           status: 'Ativo',
+          valor: 10000,
+          data_loan: '01/01/2025',
+          value_dividendo: 250.0,
+          value_now_dividendo: 250.0,
+          value_finish: 10000,
+          value_before: 10000,
+          number_parcelas: 12,
+          date_payment: '01/02/2025',
+          contrato: 'Contrato 1',
           vigencia: '31/12/2030',
           saldo: 5000,
         },
       ],
-      investment: {},
+      investment: {
+        classification: 'A',
+        saldo: 150000,
+        assessor: 1,
+        data_dividendo: '21/02/2025',
+        valor_dividendo: 250.0,
+      },
       bank: {},
       residential: {},
       bankRegister: [
@@ -290,6 +399,10 @@ export default function useCliente() {
         },
       ],
       cliente: {
+        cpf_cnpj: '123.456.789-00',
+        renda: 5000,
+        profissao: 'Engenheiro',
+        birth: '01/01/1990',
         name: 'Luiza Almeida',
         avatar: 'https://sources.strategyanalytics.com.br/storage/users/_Avatar_.png',
         email: 'luiza@gstrategyanalytics.com.br',
@@ -309,16 +422,30 @@ export default function useCliente() {
     {
       id: 7,
       newWeLend: {},
+      level: 'A',
       weLend: [
         {
-          contrato: 'Contrato 1',
-          valor: 10000,
           status: 'Ativo',
+          valor: 10000,
+          data_loan: '01/01/2025',
+          value_dividendo: 250.0,
+          value_now_dividendo: 250.0,
+          value_finish: 10000,
+          value_before: 10000,
+          number_parcelas: 12,
+          date_payment: '01/02/2025',
+          contrato: 'Contrato 1',
           vigencia: '31/12/2030',
           saldo: 5000,
         },
       ],
-      investment: {},
+      investment: {
+        classification: 'A',
+        saldo: 150000,
+        assessor: 1,
+        data_dividendo: '21/02/2025',
+        valor_dividendo: 250.0,
+      },
       bank: {},
       residential: {},
       bankRegister: [
@@ -333,6 +460,10 @@ export default function useCliente() {
         },
       ],
       cliente: {
+        cpf_cnpj: '123.456.789-00',
+        renda: 5000,
+        profissao: 'Engenheiro',
+        birth: '01/01/1990',
         name: 'Carlos Silva',
         avatar: 'https://sources.strategyanalytics.com.br/storage/users/_Avatar_.png',
         email: 'carlos@gstrategyanalytics.com.br',
@@ -352,16 +483,30 @@ export default function useCliente() {
     {
       id: 8,
       newWeLend: {},
+      level: 'A',
       weLend: [
         {
-          contrato: 'Contrato 1',
-          valor: 10000,
           status: 'Ativo',
+          valor: 10000,
+          data_loan: '01/01/2025',
+          value_dividendo: 250.0,
+          value_now_dividendo: 250.0,
+          value_finish: 10000,
+          value_before: 10000,
+          number_parcelas: 12,
+          date_payment: '01/02/2025',
+          contrato: 'Contrato 1',
           vigencia: '31/12/2030',
           saldo: 5000,
         },
       ],
-      investment: {},
+      investment: {
+        classification: 'A',
+        saldo: 150000,
+        assessor: 1,
+        data_dividendo: '21/02/2025',
+        valor_dividendo: 250.0,
+      },
       bank: {},
       residential: {},
       bankRegister: [
@@ -376,6 +521,10 @@ export default function useCliente() {
         },
       ],
       cliente: {
+        cpf_cnpj: '123.456.789-00',
+        renda: 5000,
+        profissao: 'Engenheiro',
+        birth: '01/01/1990',
         name: 'Ana Oliveira',
         avatar: 'https://sources.strategyanalytics.com.br/storage/users/_Avatar_.png',
         email: 'ana@gstrategyanalytics.com.br',
@@ -395,16 +544,30 @@ export default function useCliente() {
     {
       id: 9,
       newWeLend: {},
+      level: 'A',
       weLend: [
         {
-          contrato: 'Contrato 1',
-          valor: 10000,
           status: 'Ativo',
+          valor: 10000,
+          data_loan: '01/01/2025',
+          value_dividendo: 250.0,
+          value_now_dividendo: 250.0,
+          value_finish: 10000,
+          value_before: 10000,
+          number_parcelas: 12,
+          date_payment: '01/02/2025',
+          contrato: 'Contrato 1',
           vigencia: '31/12/2030',
           saldo: 5000,
         },
       ],
-      investment: {},
+      investment: {
+        classification: 'A',
+        saldo: 150000,
+        assessor: 1,
+        data_dividendo: '21/02/2025',
+        valor_dividendo: 250.0,
+      },
       bank: {},
       residential: {},
       bankRegister: [
@@ -419,6 +582,10 @@ export default function useCliente() {
         },
       ],
       cliente: {
+        cpf_cnpj: '123.456.789-00',
+        renda: 5000,
+        profissao: 'Engenheiro',
+        birth: '01/01/1990',
         name: 'Pedro Santos',
         avatar: 'https://sources.strategyanalytics.com.br/storage/users/_Avatar_.png',
         email: 'pedro@gstrategyanalytics.com.br',
@@ -438,16 +605,30 @@ export default function useCliente() {
     {
       id: 10,
       newWeLend: {},
+      level: 'A',
       weLend: [
         {
-          contrato: 'Contrato 1',
-          valor: 10000,
           status: 'Ativo',
+          valor: 10000,
+          data_loan: '01/01/2025',
+          value_dividendo: 250.0,
+          value_now_dividendo: 250.0,
+          value_finish: 10000,
+          value_before: 10000,
+          number_parcelas: 12,
+          date_payment: '01/02/2025',
+          contrato: 'Contrato 1',
           vigencia: '31/12/2030',
           saldo: 5000,
         },
       ],
-      investment: {},
+      investment: {
+        classification: 'A',
+        saldo: 150000,
+        assessor: 1,
+        data_dividendo: '21/02/2025',
+        valor_dividendo: 250.0,
+      },
       bank: {},
       residential: {},
       bankRegister: [
@@ -462,6 +643,10 @@ export default function useCliente() {
         },
       ],
       cliente: {
+        cpf_cnpj: '123.456.789-00',
+        renda: 5000,
+        profissao: 'Engenheiro',
+        birth: '01/01/1990',
         name: 'Mariana Costa',
         avatar: 'https://sources.strategyanalytics.com.br/storage/users/_Avatar_.png',
         email: 'mariana@gstrategyanalytics.com.br',
@@ -490,9 +675,30 @@ export default function useCliente() {
     return null
   }
 
+  const getClientIdName = (arrayRemove = []) => {
+    console.log('antes', arrayRemove)
+    let clientes = null
+
+    if (arrayRemove.length > 0) {
+      const lstCompare = arrayRemove.map((client) => client.id)
+      clientes = rowsClient.filter((client) => !lstCompare.includes(client.id)) // Exclude clients based on the provided array
+    } else {
+      clientes = rowsClient.filter((client) => client.id !== clientEdit.value.id) // Exclude the current client being edited
+    }
+
+    const listClient = clientes.map((client) => ({
+      id: client.id,
+      name: client.cliente.name,
+      avatar: client.cliente.avatar,
+    }))
+    console.log('getClientIdName', listClient)
+    return listClient
+  }
+
   return {
     columnsClient,
     rowsClient,
     getClient,
+    getClientIdName,
   }
 }

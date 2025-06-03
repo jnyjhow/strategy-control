@@ -38,5 +38,11 @@ const actions = {
   setClientEdit(payload) {
     this.clientEdit = payload
   },
+  setClientCompare(payload) {
+    this.clientCompare = payload
+  },
+  setDialogCompare(payload) {
+    this.dialogCompare = payload
+  },
 }
 export default { ...actions }
