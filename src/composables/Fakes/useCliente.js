@@ -676,7 +676,6 @@ export default function useCliente() {
   }
 
   const getClientIdName = (arrayRemove = []) => {
-    console.log('antes', arrayRemove)
     let clientes = null
 
     if (arrayRemove.length > 0) {
@@ -691,8 +690,14 @@ export default function useCliente() {
       name: client.cliente.name,
       avatar: client.cliente.avatar,
     }))
-    console.log('getClientIdName', listClient)
     return listClient
+  }
+  const getClientOptions = () => {
+    return rowsClient.map((client) => ({
+      label: client.cliente.name,
+      value: client.id,
+      avatar: client.cliente.avatar,
+    }))
   }
 
   return {
@@ -700,5 +705,6 @@ export default function useCliente() {
     rowsClient,
     getClient,
     getClientIdName,
+    getClientOptions,
   }
 }

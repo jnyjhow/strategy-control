@@ -44,5 +44,17 @@ const actions = {
   setDialogCompare(payload) {
     this.dialogCompare = payload
   },
+  seAdvisorsDialog(payload) {
+    this.advisorsDialog = payload
+  },
+  setSplenDialog(payload) {
+    this.splenDialog = payload
+  },
+  setSplentHistoricDialog(payload) {
+    this.splentHistoricDialog = payload
+  },
+  setCommissionDialog(payload) {
+    this.commissionDialog = payload
+  },
 }
 export default { ...actions }

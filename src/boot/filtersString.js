@@ -24,6 +24,19 @@ const filtersStrings = {
       maximumFractionDigits: 2,
     }).format(value)
   },
+  /**
+   *
+   * @param {date} date data para se formatada para o formato brasileiro
+   * @example 2025-01-01T00:00:00.000Z
+   * @returns date formatada para o formato brasileiro dd/mm/yyyy
+   * @description Formata uma data para o formato brasileiro (dd/mm/yyyy)
+   */
+  formatDateBR(date) {
+    if (!date) return ''
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit' }
+    const dateObj = new Date(date)
+    return dateObj.toLocaleDateString('pt-BR', options)
+  },
 }
 
 export default filtersStrings

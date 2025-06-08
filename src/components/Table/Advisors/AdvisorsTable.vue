@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md ClientsTable">
+  <div class="q-pa-md AdvisorsTable">
     <q-table
       flat
       dense
@@ -7,7 +7,7 @@
       hide-pagination
       :pagination="pagination"
       :rows="paginatedRows"
-      :columns="props.columns.length == 0 ? columnsClient : props.columns"
+      :columns="columnsAssessores"
       row-key="id"
       @update:pagination="updatePagination"
       :selected-rows-label="getSelectedString"
@@ -35,15 +35,6 @@
           <div class="col self-end items-end" style="text-align-last: end">
             <q-btn color="primary" no-caps label="Exportar" flat size="sm" @click="exportTable" />
             <q-btn
-              size="xs"
-              padding="xs"
-              no-caps
-              outline
-              label="Comparar Clientes"
-              :class="!compareBtn ? 'text-muted' : 'text-primary'"
-              @click.prevent.stop="compareSelected"
-            />
-            <q-btn
               size="md"
               padding="xs"
               :icon="$filtersString.resolveUrl('img:icons/layout-cards.svg')"
@@ -56,71 +47,33 @@
               padding="xs"
               :icon="$filtersString.resolveUrl('img:icons/list.svg')"
               outline
-              class="outline"
               color="primary"
             />
           </div>
         </div>
       </template>
-      <!-- Coluna de Clientes -->
-      <template v-slot:body-cell-cliente="props">
+      <!-- Coluna de Assessores -->
+      <template v-slot:body-cell-assessor="props">
         <q-td :props="props">
           <q-item>
             <q-item-section avatar>
               <q-avatar size="32px" class="q-mr-sm">
                 <q-img
-                  :src="props.row.cliente.avatar"
-                  :alt="props.row.cliente.name"
-                  :title="props.row.cliente.name"
+                  :src="props.row.assessor.avatar"
+                  :alt="props.row.assessor.name"
+                  :title="props.row.assessor.name"
                 />
               </q-avatar>
             </q-item-section>
             <q-item-section align="left">
               <q-item-label>
-                {{ props.row.cliente.name }}
+                {{ props.row.assessor.name }}
               </q-item-label>
               <q-item-label caption>
-                {{ props.row.cliente.email }}
+                {{ props.row.assessor.email }}
               </q-item-label>
             </q-item-section>
           </q-item>
-        </q-td>
-      </template>
-
-      <!-- Coluna de emprestimo -->
-      <template v-slot:body-cell-emprestimo="props">
-        <q-td :props="props">
-          <q-btn
-            size="xs"
-            outline
-            padding="xs"
-            no-caps
-            class="custom-btn-muted"
-            :label="props.row.emprestimo"
-          />
-        </q-td>
-      </template>
-      <!-- dividendo -->
-      <template v-slot:body-cell-dividendo="props">
-        <q-td :props="props">
-          <p>
-            {{ $filtersString.formatPartternCurrency(props.row.dividendo.total) }} <br />
-            <span class="text-muted text-small">Data: {{ props.row.dividendo.data }}</span>
-          </p>
-        </q-td>
-      </template>
-      <!-- contrato -->
-      <template v-slot:body-cell-contrato="props">
-        <q-td :props="props">
-          <p>
-            {{ $filtersString.formatPartternCurrency(props.row.contrato.total) }} <br />
-            <span class="text-muted text-small">{{ props.row.contrato.quantity }}</span>
-          </p>
-        </q-td>
-      </template>
-      <template v-slot:body-cell-saldo="props">
-        <q-td :props="props">
-          <p>{{ $filtersString.formatPartternCurrency(props.row.saldo) }} <br /></p>
         </q-td>
       </template>
       <!-- actions -->
@@ -150,7 +103,7 @@
                   no-caps
                   flat
                   style="min-width: 181px; align-items: start"
-                  @click.prevent="editClient(props.row.id)"
+                  @click.prevent="editAdvisor(props.row.id)"
                 >
                   <q-icon
                     :name="$filtersString.resolveUrl('img:icons/edit.svg')"
@@ -182,30 +135,41 @@
       </template>
     </q-table>
     <q-dialog
-      v-model="clientDialog"
+      v-model="advisorsDialog"
       position="right"
       full-height
       full-width
+      persistent
       maximized
       class="control-width"
     >
-      <edit-clients-layout />
+      <edit-advisor-layout />
     </q-dialog>
     <q-dialog
-      v-model="dialogCompare"
+      v-model="splentHistoricDialog"
       position="right"
       full-height
       full-width
-      maximized
       persistent
+      maximized
+      class="control-width"
+    >
+      <historic-splent-layout />
+    </q-dialog>
+    <q-dialog
+      v-model="commissionDialog"
+      position="right"
+      full-height
+      full-width
+      persistent
+      maximized
       class="control-width-compare"
     >
-      <compare-layout />
+      <add-commission-form-layout />
     </q-dialog>
-    <!-- <div class="q-mt-md">Selected: {{ JSON.stringify(selected) }}</div> -->
     <div class="row justify-between items-center q-mt-md">
       <div class="row items-center">
-        <span class="q-mr-sm">Itens por página:</span>
+        <span class="q-mr-sm">Itens por pág.:</span>
         <q-select
           dense
           outlined
@@ -216,8 +180,8 @@
           dropdown-icon="keyboard_arrow_down"
         />
         <span class="q-ml-md text-caption text-grey-8">
-          Mostrando {{ firstItemIndex }} a {{ lastItemIndex }} de
-          {{ filteredRows.length }} registros
+          Mostrando {{ firstItemIndex }} a {{ lastItemIndex }} de Total de
+          {{ filteredRows.length }} itens
         </span>
       </div>
       <div class="row justify-center q-mt-md">
@@ -238,59 +202,40 @@
 import { ref, computed, defineComponent } from 'vue'
 import { exportFile, useQuasar } from 'quasar'
 import { useLayoutStore } from 'src/stores/layout'
+import { useAdvisorStore } from 'src/stores/advisor'
 import { storeToRefs } from 'pinia'
-import { useClientStore } from 'src/stores/client'
-import useCliente from 'src/composables/Fakes/useCliente'
-
-import EditClientsLayout from 'src/layouts/Clients/EditClientsLayout.vue'
-import CompareLayout from 'src/layouts/Clients/CompareLayout.vue'
+import EditAdvisorLayout from 'src/layouts/Advisors/EditAdvisorLayout.vue'
+import useAdvisors from 'src/composables/Fakes/useAdvisors'
+import HistoricSplentLayout from 'src/layouts/Advisors/HistoricSplentLayout.vue'
+import AddCommissionFormLayout from 'src/layouts/Advisors/Form/AddCommissionFormLayout.vue'
 defineComponent({
-  name: 'ClientsTable',
-})
-const props = defineProps({
-  columns: {
-    type: Array,
-    default: () => [],
-  },
+  name: 'AdvisorsTable',
 })
 const storeLayout = useLayoutStore()
-const storeClient = useClientStore()
+const storeAdvisor = useAdvisorStore()
+const { columnsAssessores, rowsAssessores, getAdvisor } = useAdvisors()
 // const { compare } = storeToRefs(storeClient)
-const { clientDialog, dialogCompare } = storeToRefs(storeLayout)
-const { rowsClient, columnsClient, getClient } = useCliente()
+const { advisorsDialog, splentHistoricDialog, commissionDialog } = storeToRefs(storeLayout)
 // const classCompare = computed(() => {
 //   console.log('classCompare', compare.value.length)
 //   return compare.value.length < 3 ? 'control-width' : 'control-width-compare'
 // })
 
-const editClient = (id) => {
-  storeLayout.setDialogOpengHeader('Clientes')
-  console.log('editClient', id)
-  storeLayout.setClientDialog(true)
-  storeLayout.setClientEdit(getClient(id))
+const editAdvisor = (id) => {
+  console.log('editAdvisor', id)
+  storeLayout.setDialogOpengHeader('Assessores')
+  storeLayout.seAdvisorsDialog(true)
+  storeAdvisor.setAdvisorEdit(getAdvisor(id))
+
+  // advisorsDialog.value = true
 }
 
-const compareSelected = () => {
-  if (selected.value.length < 2) {
-    $q.notify({
-      message: 'Selecione pelo menos dois clientes para comparar.',
-      color: 'negative',
-      icon: 'warning',
-    })
-    return
-  }
-  storeLayout.setDialogOpengHeader('Comparar Clientes')
-  storeLayout.setDialogCompare(true)
-  storeClient.setCompareSelect(selected.value)
-}
 const selected = ref([])
-const compareBtn = computed(() => {
-  return selected.value.length > 1
-})
+
 const getSelectedString = () => {
   return selected.value.length === 0
     ? ''
-    : `${selected.value.length} record${selected.value.length > 1 ? 's' : ''} selected of ${rowsClient.length}`
+    : `${selected.value.length} record${selected.value.length > 1 ? 's' : ''} selected of ${rowsAssessores.length}`
 }
 
 const pagination = ref({
@@ -304,11 +249,11 @@ const updatePagination = (val) => {
 const filter = ref('')
 // Filtra as linhas com base nos filtros aplicados
 const filteredRows = computed(() => {
-  return rowsClient.filter((row) => {
+  return rowsAssessores.filter((row) => {
     // Filtro de pesquisa geral
     if (
       filter.value &&
-      !Object.values(row.cliente).some((val) =>
+      !Object.values(row.assessor.name).some((val) =>
         String(val).toLowerCase().includes(filter.value.toLowerCase()),
       )
     ) {
@@ -364,10 +309,10 @@ const updateRowsPerPage = (val) => {
 const $q = useQuasar()
 const exportTable = () => {
   // naive encoding to csv format
-  const content = [columnsClient.map((col) => wrapCsvValue(col.label))]
+  const content = [columnsAssessores.map((col) => wrapCsvValue(col.label))]
     .concat(
-      rowsClient.map((row) =>
-        columnsClient
+      rowsAssessores.map((row) =>
+        columnsAssessores
           .map((col) =>
             wrapCsvValue(
               typeof col.field === 'function'

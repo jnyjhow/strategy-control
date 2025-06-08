@@ -1,7 +1,7 @@
 <template>
   <q-card class="CompareLayout">
     <q-icon name=""></q-icon>
-    <title-card :title="dialogOpengHeader" @on-close="onClose" />
+    <title-card :title="dialogOpengHeader" :advisor="advisorEdit.name" @on-close="onClose" />
     <q-separator />
     <q-banner inline-actions rounded class="q-ma-md">
       <div class="row q-gutter-sm">
@@ -67,13 +67,13 @@
     <personal-fields-layout v-if="option.value == 'personal' || option.value == 'all'" />
     <investiment-fields-layout v-if="option.value == 'all' || option.value == 'investment'" />
     <loan-fields-layout v-if="option.value == 'all' || option.value == 'loan'" />
-    <!-- {{ compare }} -->
   </q-card>
 </template>
 <script setup>
 import { defineComponent, onMounted, ref } from 'vue'
 import { useLayoutStore } from 'src/stores/layout'
 import { useClientStore } from 'src/stores/client'
+import { useAdvisorStore } from 'src/stores/advisor'
 import { storeToRefs } from 'pinia'
 import LabelForm from 'src/components/Form/LabelForm.vue'
 import TitleCard from 'src/components/Card/TitleCard.vue'
@@ -84,6 +84,8 @@ import InvestimentFieldsLayout from './Compare/InvestimentFieldsLayout.vue'
 import LoanFieldsLayout from './Compare/LoanFieldsLayout.vue'
 const layoutStore = useLayoutStore()
 const clientStore = useClientStore()
+const advisorStore = useAdvisorStore()
+const { advisorEdit } = storeToRefs(advisorStore)
 const { compare } = storeToRefs(clientStore)
 const { dialogOpengHeader } = storeToRefs(layoutStore)
 const option = ref({ label: 'Todos os dados', value: 'all' })
@@ -100,6 +102,7 @@ const removeEmpty = () => {
 }
 const onClose = () => {
   console.log('onClose')
+  layoutStore.setDialogOpengHeader('Cliente')
   clientStore.setClearCompare()
 }
 const optionsCompare = [

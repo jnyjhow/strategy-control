@@ -1,6 +1,9 @@
 <template>
   <q-card class="EditClientsLayout">
-    <title-card :title="dialogOpengHeader" />
+    <title-card
+      :title="dialogOpengHeader"
+      :advisor="advisorEdit.assessor ? advisorEdit.assessor.name : ''"
+    />
 
     <q-separator></q-separator>
 
@@ -128,6 +131,7 @@
 import { defineComponent, ref, computed } from 'vue'
 import { useLayoutStore } from 'src/stores/layout'
 import { useClientStore } from 'src/stores/client'
+import { useAdvisorStore } from 'src/stores/advisor'
 import { storeToRefs } from 'pinia'
 import TitleCard from 'src/components/Card/TitleCard.vue'
 import PersonalDataLayout from 'src/layouts/Clients/PersonalDataLayout.vue'
@@ -146,7 +150,9 @@ defineComponent({
 
 const layoutStore = useLayoutStore()
 const clientStore = useClientStore()
+const advisorStore = useAdvisorStore()
 const { clientEdit, dialogOpengHeader } = storeToRefs(layoutStore)
+const { advisorEdit } = storeToRefs(advisorStore)
 const showLevelOptions = ref(false)
 const showCompareOptions = ref(false)
 const { getClientIdName, getClient } = useCliente()

@@ -18,6 +18,10 @@ const state = () => {
     clientDialog: false,
     clientEdit: {},
     clientCompare: {},
+    advisorsDialog: false,
+    splenDialog: false,
+    splentHistoricDialog: false,
+    commissionDialog: false,
   }
 }
 
