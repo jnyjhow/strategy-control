@@ -122,7 +122,6 @@
       <contract-client-table class="q-my-lg" />
       <div class="text-h7 text-bold q-mt-lg">Empréstimo</div>
       <we-lend-form-layout class="q-my-lg" />
-      {{ clientEdit.bankRegister }}
     </q-card-section>
     <q-card-actions vertical> </q-card-actions>
   </q-card>
