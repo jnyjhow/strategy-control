@@ -56,5 +56,8 @@ const actions = {
   setCommissionDialog(payload) {
     this.commissionDialog = payload
   },
+  setLeadDialog(payload) {
+    this.leadDialog = payload
+  },
 }
 export default { ...actions }
