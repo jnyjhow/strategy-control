@@ -82,7 +82,15 @@
         @submitAction="submit"
       />
     </q-dialog>
-    <q-dialog v-model="historicEdit" position="right" full-height full-width maximized persistent>
+    <q-dialog
+      v-model="historicEdit"
+      position="right"
+      full-height
+      full-width
+      maximized
+      persistent
+      class="control-width-historic"
+    >
       <historic-edit-layout />
     </q-dialog>
   </div>

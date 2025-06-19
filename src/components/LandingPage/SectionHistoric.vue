@@ -1,19 +1,37 @@
 <template>
-  <div class="section-editor q-mb-md">
-    <q-item v-ripple>
-      <q-item-section side>
-        <q-chip>
-          <q-avatar color="red" text-color="white">50</q-avatar>
-          Emails
-        </q-chip>
-      </q-item-section>
-      <q-item-section>
-        <q-item-label>Mary</q-item-label>
-        <q-item-label caption>2 new messages</q-item-label>
-      </q-item-section>
-      <q-item-section side> 3 min ago </q-item-section>
-    </q-item>
-  </div>
+  <q-banner inline-actions rounded class="border-pattern q-ma-md">
+    <div class="row align-center justify-between">
+      <div class="col-1 flex flex-center">
+        <q-avatar size="32px" :color="avatarColor">
+          <component :is="icon" :color />
+        </q-avatar>
+      </div>
+      <div class="col-4">
+        <q-avatar size="22px" color="grey-5" text-color="grey-9"> j </q-avatar>
+        <span class="q-mx-xs"> {{ name }} </span>
+        <span class="text-muted" style="font-size: 12px">| {{ date }}</span>
+        <div class="">
+          {{ description }}
+        </div>
+      </div>
+      <div class="col text-end" style="text-align-last: end">
+        <div class="" v-if="status !== 'approved'">
+          <q-btn flat color="primary" class="q-mr-sm" no-caps v-if="status === 'pending'">
+            <IconFile :size="14" class="q-mr-xs" />
+            Visualiar Versão
+          </q-btn>
+          <q-btn v-else flat color="primary" class="q-mr-sm" no-caps>
+            <IconMessage2 :size="14" class="q-mr-xs" />
+            Ver FeedBalcks
+          </q-btn>
+          <q-btn flat color="grey" class="q-mr-sm" no-caps>
+            <IconRefresh :size="14" class="q-mr-xs" />
+            Restaurar
+          </q-btn>
+        </div>
+      </div>
+    </div>
+  </q-banner>
 </template>
 
 <script setup>
@@ -29,14 +47,22 @@ defineProps({
   icon: { type: String, default: '' },
   date: { type: String, default: '' },
   name: { type: String, default: '' },
+  color: { type: String, default: 'grey' },
+  avatarColor: { type: String, default: 'grey-5' },
+  status: {
+    type: String,
+    default: 'approved',
+    validator: (value) => ['approved', 'pending', 'rejected'].includes(value),
+  },
 })
 </script>
 
 <style scoped>
-.section-editor {
+.section-historic {
   border: 1px solid #ccc;
   border-radius: 8px;
   transition: border-color 0.3s;
+  margin: 1rem;
   cursor: url('/icons/cursor.png'), pointer;
 }
 .section-editor.active-section > .section-content {
