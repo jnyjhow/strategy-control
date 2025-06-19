@@ -1,5 +1,12 @@
 <template>
   <div class="MainTitle">
+    <div
+      v-if="props.data.text"
+      class="row bg-white q-pt-sm q-px-sm align-center justify-between"
+      style="border-bottom: 1px solid #ccc"
+    >
+      <p class="text-h7 text-muted">Parâmetros da Seção</p>
+    </div>
     <label-form textLabel="Texto">
       <q-input
         v-model="dataTitle.text"
@@ -101,10 +108,18 @@
 
 <script setup>
 import LabelForm from 'src/components/Form/LabelForm.vue'
-import { defineComponent, ref } from 'vue'
+import { defineComponent, onMounted, ref, defineProps } from 'vue'
 
 defineComponent({
   name: 'MainTitle',
+})
+
+const props = defineProps({
+  // Defina as propriedades se necessário
+  data: {
+    type: Object,
+    default: () => ({}),
+  },
 })
 // Seu código aqui
 const dataTitle = ref({
@@ -133,6 +148,12 @@ const textAlignOptions = [
 ]
 
 const tamanhoTextOptions = ['12', '14', '16', '18', '20', '22', '24', '28', '32', '36']
+
+onMounted(() => {
+  if (props.data.value && props.data.value.text) {
+    dataTitle.value = { ...props.data.value }
+  }
+})
 </script>
 
 <style scoped>

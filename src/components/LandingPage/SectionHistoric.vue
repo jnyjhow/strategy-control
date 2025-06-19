@@ -3,7 +3,7 @@
     inline-actions
     rounded
     class="border-pattern q-ma-md section-historic"
-    @click="emit('select')"
+    :class="{ 'active-section': isActive }"
   >
     <div class="row align-center justify-between">
       <div class="col-1 flex flex-center">
@@ -34,6 +34,27 @@
             <IconRefresh :size="14" class="q-mr-xs" />
             Restaurar
           </q-btn>
+        </div>
+        <div class="" v-else>
+          <q-btn
+            flat
+            color="grey"
+            class="q-mr-sm"
+            icon="keyboard_arrow_down"
+            no-caps
+            @click="emit('select')"
+            v-if="!isActive"
+          >
+          </q-btn>
+          <q-btn
+            v-else
+            flat
+            color="primary"
+            class="q-mr-sm"
+            icon="keyboard_arrow_up"
+            no-caps
+            @click="emit('closed')"
+          ></q-btn>
         </div>
       </div>
     </div>
@@ -74,18 +95,18 @@ const emit = defineEmits(['select', 'edit', 'closed'])
 
 <style scoped>
 .section-historic {
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  transition: border-color 0.3s;
-  margin: 1rem;
-  cursor: url('/icons/cursor.png'), pointer;
+  border: 1px solid #ccc !important;
+  border-radius: 8px !important;
+  transition: border-color 0.3s !important;
+  margin: 1rem !important;
+  cursor: url('/icons/cursor.png'), pointer !important;
 }
-.section-editor.active-section > .section-content {
-  border-color: var(--q-primary); /* usa a variável $primary do Quasar */
-  background-color: #dcdcdc;
-  border-top: 1px solid #656565;
+.section-historic.active-section > .section-content {
+  border-color: var(--q-primary) !important; /* usa a variável $primary do Quasar */
+  background-color: #dcdcdc !important;
+  border-top: 2px solid #656565 !important;
 }
-.section-editor:hover {
-  border-color: var(--q-primary);
+.section-historic:hover {
+  border-color: var(--q-primary) !important;
 }
 </style>

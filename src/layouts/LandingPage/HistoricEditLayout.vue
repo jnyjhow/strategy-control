@@ -6,12 +6,12 @@
     </q-card-section>
     <q-separator />
     <q-card-section>
-      <div class="row align-center">
+      <div class="row text-start items-start">
         <q-toggle
           v-model="select"
           label="Visualizar Mudanças por Seção:"
           left-label
-          class="col-6 self-center"
+          class="col-5"
           @update:model-value="listView = 'Selecione uma Seção'"
         />
         <q-select
@@ -19,7 +19,7 @@
           v-model="listView"
           :options="['Selecione uma Seção', 'Seção Principal', 'Segunda Seção']"
           placeholder="Selecione uma Seção"
-          class="q-mt-md col"
+          class="col"
           dense
           outlined
           dropdown-icon="keyboard_arrow_down"
@@ -28,9 +28,16 @@
       </div>
     </q-card-section>
 
-    <div class="" v-if="select && listView == 'Selecione uma Seção'">
-      <p class="text-h6 text-bold q-pa-md">Selecione uma Seção para visualizar as mudanças</p>
-    </div>
+    <q-card-section
+      class="text-center q-mt-xl q-pt-lg"
+      v-if="select && listView == 'Selecione uma Seção'"
+    >
+      <p class="text-h6 text-bold">Selecione uma Seção para visualizar as mudanças</p>
+      <p class="text-muted q-px-lg">
+        Os salvamentos serão exibidos aqui e você poderá ver os parâmentros de cadas edição do
+        histórico
+      </p>
+    </q-card-section>
     <section-historic
       v-else
       v-for="(item, index) in selectList"
@@ -46,13 +53,17 @@
       :filter="item.filter"
       @select="actionSelected(item.id)"
       :section="select"
-    />
+      @closed="activeSection = null"
+    >
+      <main-title :data="item.data.titleData" />
+    </section-historic>
   </q-card>
 </template>
 
 <script setup>
 import { computed, defineComponent, ref } from 'vue'
 import SectionHistoric from 'src/components/LandingPage/SectionHistoric.vue'
+import MainTitle from 'src/components/Form/LandingPage/MainTitle.vue'
 
 defineComponent({
   name: 'HistoricEditLayout',
@@ -95,6 +106,28 @@ const listHistoric = [
     color: '#52C41A',
     avatarColor: 'green-11',
     filter: 'Seção Principal',
+    data: {
+      parametersData: {
+        styleBackground: 'color',
+        background: '#ffffff',
+        layout: 'text-imagem',
+        alignImage: 'left',
+      },
+      titleData: {
+        text: 'Título Principal',
+        tipografia: 'Arial',
+        pesoText: 'bold',
+        tamanhoText: '24px',
+        corTexto: '#ffffff',
+        textAlign: 'left',
+      },
+      buttonData: {
+        text: 'Aqui vem o texto do botão',
+        link: 'external',
+        corTexto: '#FFFFFF',
+        background: '#00A3FF',
+      },
+    },
   },
   {
     id: 2,
@@ -109,9 +142,31 @@ const listHistoric = [
     color: '#52C41A',
     avatarColor: 'green-11',
     filter: 'Seção Principal',
+    data: {
+      parametersData: {
+        styleBackground: 'color',
+        background: '#ffffff',
+        layout: 'text-imagem',
+        alignImage: 'left',
+      },
+      titleData: {
+        text: 'Título Principal',
+        tipografia: 'Arial',
+        pesoText: 'bold',
+        tamanhoText: '24px',
+        corTexto: '#ffffff',
+        textAlign: 'left',
+      },
+      buttonData: {
+        text: 'Aqui vem o texto do botão',
+        link: 'external',
+        corTexto: '#FFFFFF',
+        background: '#00A3FF',
+      },
+    },
   },
   {
-    id: 1,
+    id: 3,
     date: '21/06/2025 10:24',
     description: 'Enviado para Revisão e Aprovação!',
     user: {
@@ -123,9 +178,31 @@ const listHistoric = [
     color: 'grey',
     avatarColor: 'grey-11',
     filter: 'Segunda Seção',
+    data: {
+      parametersData: {
+        styleBackground: 'color',
+        background: '#ffffff',
+        layout: 'text-imagem',
+        alignImage: 'left',
+      },
+      titleData: {
+        text: 'Título Principal',
+        tipografia: 'Arial',
+        pesoText: 'bold',
+        tamanhoText: '24px',
+        corTexto: '#ffffff',
+        textAlign: 'left',
+      },
+      buttonData: {
+        text: 'Aqui vem o texto do botão',
+        link: 'external',
+        corTexto: '#FFFFFF',
+        background: '#00A3FF',
+      },
+    },
   },
   {
-    id: 3,
+    id: 4,
     date: '19/06/2025 10:24',
     description: '5 campos editados',
     user: {
@@ -137,9 +214,31 @@ const listHistoric = [
     color: 'grey',
     avatarColor: 'grey-11',
     filter: 'Seção Principal',
+    data: {
+      parametersData: {
+        styleBackground: 'color',
+        background: '#ffffff',
+        layout: 'text-imagem',
+        alignImage: 'left',
+      },
+      titleData: {
+        text: 'Título Principal',
+        tipografia: 'Arial',
+        pesoText: 'bold',
+        tamanhoText: '24px',
+        corTexto: '#ffffff',
+        textAlign: 'left',
+      },
+      buttonData: {
+        text: 'Aqui vem o texto do botão',
+        link: 'external',
+        corTexto: '#FFFFFF',
+        background: '#00A3FF',
+      },
+    },
   },
   {
-    id: 4,
+    id: 5,
     date: '19/06/2025 10:24',
     description: 'Edições Reprovadas!',
     user: {
@@ -151,9 +250,31 @@ const listHistoric = [
     color: 'red',
     avatarColor: 'red-2',
     filter: 'Segunda Seção',
+    data: {
+      parametersData: {
+        styleBackground: 'color',
+        background: '#ffffff',
+        layout: 'text-imagem',
+        alignImage: 'left',
+      },
+      titleData: {
+        text: 'Título Principal',
+        tipografia: 'Arial',
+        pesoText: 'bold',
+        tamanhoText: '24px',
+        corTexto: '#ffffff',
+        textAlign: 'left',
+      },
+      buttonData: {
+        text: 'Aqui vem o texto do botão',
+        link: 'external',
+        corTexto: '#FFFFFF',
+        background: '#00A3FF',
+      },
+    },
   },
   {
-    id: 5,
+    id: 6,
     date: '21/06/2025 10:24',
     description: 'Enviado para Revisão e Aprovação!',
     user: {
@@ -165,9 +286,31 @@ const listHistoric = [
     color: 'grey',
     avatarColor: 'grey-11',
     filter: 'Segunda Seção',
+    data: {
+      parametersData: {
+        styleBackground: 'color',
+        background: '#ffffff',
+        layout: 'text-imagem',
+        alignImage: 'left',
+      },
+      titleData: {
+        text: 'Título Principal',
+        tipografia: 'Arial',
+        pesoText: 'bold',
+        tamanhoText: '24px',
+        corTexto: '#ffffff',
+        textAlign: 'left',
+      },
+      buttonData: {
+        text: 'Aqui vem o texto do botão',
+        link: 'external',
+        corTexto: '#FFFFFF',
+        background: '#00A3FF',
+      },
+    },
   },
   {
-    id: 6,
+    id: 7,
     date: '21/06/2025 10:24',
     description: '3 campos editados',
     user: {
@@ -179,6 +322,28 @@ const listHistoric = [
     color: 'grey',
     avatarColor: 'grey-11',
     filter: 'Segunda Principal',
+    data: {
+      parametersData: {
+        styleBackground: 'color',
+        background: '#ffffff',
+        layout: 'text-imagem',
+        alignImage: 'left',
+      },
+      titleData: {
+        text: 'Título Principal',
+        tipografia: 'Arial',
+        pesoText: 'bold',
+        tamanhoText: '24px',
+        corTexto: '#ffffff',
+        textAlign: 'left',
+      },
+      buttonData: {
+        text: 'Aqui vem o texto do botão',
+        link: 'external',
+        corTexto: '#FFFFFF',
+        background: '#00A3FF',
+      },
+    },
   },
 ]
 </script>
