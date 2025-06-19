@@ -63,5 +63,8 @@ const actions = {
   setLeadDialog(payload) {
     this.leadDialog = payload
   },
+  setMaximizedPreview(payload) {
+    this.maximizedPreview = payload
+  },
 }
 export default { ...actions }

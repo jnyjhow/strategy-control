@@ -56,13 +56,25 @@
               <!-- <q-tooltip anchor="top middle" self="bottom middle" transition-show="scale">
                 </q-tooltip> -->
             </q-btn>
-            <q-btn class="q-mb-xs" no-caps flat style="min-width: 181px; align-items: start">
+            <q-btn
+              class="q-mb-xs"
+              no-caps
+              flat
+              style="min-width: 181px; align-items: start"
+              @click.prevent="maximizedPreview = true"
+            >
               <IconScreenShare :size="14" class="text-muted" />
               <span class="q-ml-sm text-muted" style="font-size: small; color: #656565">
                 Pré Visualizar
               </span>
             </q-btn>
-            <q-btn class="q-mb-xs" no-caps flat style="min-width: 181px; align-items: start">
+            <q-btn
+              class="q-mb-xs"
+              no-caps
+              flat
+              style="min-width: 181px; align-items: start"
+              @click="exportCode = true"
+            >
               <IconFileCode :size="14" class="text-muted" />
               <span class="q-ml-sm text-muted" style="font-size: small; color: #656565">
                 Exportar Código
@@ -93,6 +105,9 @@
     >
       <historic-edit-layout />
     </q-dialog>
+    <q-dialog v-model="exportCode">
+      <export-code-card @closeDialog="exportCode = false" />
+    </q-dialog>
   </div>
 </template>
 
@@ -101,16 +116,18 @@ import { defineComponent, ref } from 'vue'
 import { useLayoutStore } from 'src/stores/layout'
 import ConfirmRevision from '../Card/ConfirmRevision.vue'
 import HistoricEditLayout from 'src/layouts/LandingPage/HistoricEditLayout.vue'
-// import { storeToRefs } from 'pinia'
+import ExportCodeCard from '../Card/ExportCodeCard.vue'
+import { storeToRefs } from 'pinia'
 
 defineComponent({
   name: 'SectionHeader',
 })
 const storeLayout = useLayoutStore()
-// const {dialogOpengHeader} = storeToRefs(storeLayout)
+const { maximizedPreview } = storeToRefs(storeLayout)
 
 const sendRevisao = ref(false)
 const historicEdit = ref(false)
+const exportCode = ref(false)
 
 const enviarParaRevisao = () => {
   sendRevisao.value = true

@@ -25,6 +25,7 @@ const state = () => {
     splentHistoricDialog: false,
     commissionDialog: false,
     leadDialog: false,
+    maximizedPreview: false,
   }
 }
 

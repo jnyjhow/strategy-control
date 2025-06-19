@@ -2,7 +2,9 @@
   <q-card class="PreviewLpLayout">
     <div class="row justify-between q-pa-md align-center">
       <title-page title="Pré Visualização" />
-      <p class="text-h7 text-muted q-my-md">Expandir preview</p>
+      <p class="text-h7 text-muted q-my-md" @click.prevent="maximizedPreview = true">
+        Expandir preview
+      </p>
       <div ref="container" class="col-12" style="width: 50vw; height: 80vh; overflow: hidden">
         <div :style="scaledStyle">
           <q-resize-observer @resize="onResize"></q-resize-observer>
@@ -16,14 +18,29 @@
         </div>
       </div>
     </div>
+
+    <q-dialog
+      v-model="maximizedPreview"
+      persistent
+      maximized
+      transition-show="slide-up"
+      transition-hide="slide-down"
+    >
+      <maximed-preview-page @closeDialog="maximizedPreview = false" />
+    </q-dialog>
   </q-card>
 </template>
 <script setup>
 import TitlePage from 'src/components/TitlePage.vue'
 import { defineComponent, ref, computed } from 'vue'
+import { useLayoutStore } from 'stores/layout'
+import { storeToRefs } from 'pinia'
+import MaximedPreviewPage from 'src/components/LandingPage/MaximedPreviewPage.vue'
 defineComponent({
   name: 'PreviewLpLayout',
 })
+const storeLayout = useLayoutStore()
+const { maximizedPreview } = storeToRefs(storeLayout)
 
 const container = ref(null)
 const scale = ref(0.5) // pode calcular dinamicamente depois
