@@ -1,11 +1,13 @@
 const state = () => {
   return {
+    painel: null,
     dialogTransictionDeposit: false,
     dialogConfirmAction: false,
     dialogConfirmHeader: 'Solicitação enviada com sucesso!',
     dialogConfirmBody:
       'A solicitação foi enviada com sucesso, você pode acompanhar o status dela na aba "Solicitações".',
     dialogOpengHeader: 'Solicitação de Depósito',
+    dialogLabelButton: null,
     dataSolicitacao: {
       bank: '',
       type: 'deposit',

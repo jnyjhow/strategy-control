@@ -5,6 +5,7 @@ const routes = [
     props: true,
     meta: {
       requiresAuth: true,
+      painel: 'Painel de Dados',
     },
     children: [
       {
@@ -56,6 +57,24 @@ const routes = [
       },
     ],
   },
+
+  {
+    path: '/landing-page',
+    component: () => import('layouts/MainLayout.vue'),
+    props: true,
+    meta: {
+      requiresAuth: false,
+      painel: 'Edição de LP',
+    },
+    children: [
+      {
+        path: '/edit-lp',
+        name: 'Edição de LP',
+        component: () => import('pages/LandingPage/EditLandingPage.vue'),
+      },
+    ],
+  },
+
   {
     path: '/',
     component: () => import('../views/AuthView.vue'),

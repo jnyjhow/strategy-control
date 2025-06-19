@@ -1,4 +1,7 @@
 const actions = {
+  setPainel(payload) {
+    this.painel = payload
+  },
   setDialogTransactionDeposit(payload) {
     this.dialogTransictionDeposit = payload
   },
@@ -11,10 +14,11 @@ const actions = {
   setDialogConfirmBody(payload) {
     this.dialogConfirmBody = payload
   },
-  setDialogactionHeaderBody(action, header, body) {
+  setDialogactionHeaderBody(action = false, header, body, button = null) {
     this.dialogConfirmAction = action
     this.dialogConfirmHeader = header
     this.dialogConfirmBody = body
+    this.dialogLabelButton = button
   },
   setDataSolicitacao(payload) {
     console.log('setDataSolicitacao', payload)

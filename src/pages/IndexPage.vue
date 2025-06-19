@@ -55,9 +55,8 @@
         size="lg"
         class="text-h7 q-mt-md"
         no-caps
-        disabled
         style="width: 100%; border-radius: 8px"
-        @click.prevent.stop="setTransiction()"
+        @click.prevent.stop="setLandingPage()"
       />
     </q-card>
   </q-page>
@@ -70,6 +69,13 @@ import { useAuthStore } from 'src/stores/auth'
 
 const storeLogin = useAuthStore()
 // const { finished } = storeToRefs(storeLogin)
+const setLandingPage = () => {
+  storeLogin.setFineshed(true)
+  setTimeout(() => {
+    router.push({ name: 'Edição de LP' })
+  }, 3000)
+}
+
 const setTransiction = () => {
   storeLogin.setFineshed(true)
   setTimeout(() => {

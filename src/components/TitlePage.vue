@@ -1,7 +1,10 @@
 <template>
   <div class="TitlePage row">
     <div class="col-12 q-pa-md">
-      <div class="text-subtitle2 text-caption text-grey">{{ subtitle }}</div>
+      <div class="text-subtitle2 text-caption text-grey">
+        {{ subtitle }}
+        <slot name="subtitleAppend"></slot>
+      </div>
       <q-breadcrumbs v-if="breadcrumbs.length > 0" class="primary q-mb-md" active-color="grey">
         <q-breadcrumbs-el
           v-for="(item, index) in breadcrumbs"
@@ -10,7 +13,7 @@
           :icon="item.icon"
         />
       </q-breadcrumbs>
-      <div class="text-h6">{{ title }}</div>
+      <div class="text-h5 text-bold">{{ title }}</div>
       <slot></slot>
     </div>
   </div>

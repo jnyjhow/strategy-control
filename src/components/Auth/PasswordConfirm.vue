@@ -1,7 +1,7 @@
 <template>
   <q-card class="q-dialog q-px-md">
     <q-card-section class="row justify-between" style="padding-inline: 0px">
-      <div class="text-h7">Forneça sua Senha de Acesso para executar essa ação</div>
+      <div class="text-h7">{{ title }}</div>
       <q-btn v-close-popup flat icon="close" size="sm" rounded color="grey-6" />
     </q-card-section>
     <q-separator />
@@ -40,6 +40,10 @@ export default defineComponent({
     sendPasswordAction: {
       type: Boolean,
       required: true,
+    },
+    title: {
+      type: String,
+      default: 'Forneça sua Senha de Acesso para executar essa ação',
     },
   },
   emits: ['update:sendPasswordAction', 'passwordSubmitted'],

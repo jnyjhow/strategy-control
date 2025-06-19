@@ -7,6 +7,7 @@
         <div
           class="align-center items-center row no-wrap q-ml-sm"
           :class="route.name == 'home' ? 'border-active' : ''"
+          v-if="route.meta.painel == 'Painel de Dados'"
         >
           <!-- name="fa-solid fa-file-invoice-dollar" -->
           <q-btn
@@ -32,19 +33,18 @@
               Transações
             </span>
           </q-btn>
+          <menu-bar
+            v-for="(routeLinks, index) in linkesRoutes"
+            :key="index"
+            class="q-ml-sm"
+            :items="routeLinks.items"
+            :icon="routeLinks.icon"
+            :name="routeLinks.name"
+            :color="routeLinks.color"
+            :size="routeLinks.size"
+            :toPrimary="routeLinks.toPrimary"
+          />
         </div>
-
-        <menu-bar
-          v-for="(routeLinks, index) in linkesRoutes"
-          :key="index"
-          class="q-ml-sm"
-          :items="routeLinks.items"
-          :icon="routeLinks.icon"
-          :name="routeLinks.name"
-          :color="routeLinks.color"
-          :size="routeLinks.size"
-          :toPrimary="routeLinks.toPrimary"
-        />
 
         <q-space />
         <q-badge outline color="primary" class="q-pa-sm">
@@ -59,7 +59,7 @@
         <div class="q-gutter-sm row items-center no-wrap">
           <div class="text-small q-px-md">
             <span class="text-grey">Voce está em:</span>
-            <span class="text-white text-bold"> Painel de Dados </span>
+            <span class="text-white text-bold"> {{ painel }} </span>
           </div>
           <q-btn round dense flat color="white" icon="fa-regular fa-bell" class="q-mx-lg">
             <!-- <q-badge color="red" text-color="white" floating> 2 </q-badge> -->
@@ -93,7 +93,7 @@ import CompletBrand from 'src/components/brand/CompletBrand.vue'
 import MenuBar from 'src/components/navbar/menuBar.vue'
 import RequestSuccess from 'src/components/Card/RequestSuccess.vue'
 import { useRoute } from 'vue-router'
-import { defineComponent } from 'vue'
+import { defineComponent, onBeforeMount } from 'vue'
 import { useLayoutStore } from 'src/stores/layout'
 import { storeToRefs } from 'pinia'
 defineComponent({
@@ -101,7 +101,11 @@ defineComponent({
 })
 const route = useRoute()
 const layoutStore = useLayoutStore()
-const { dialogConfirmAction } = storeToRefs(layoutStore)
+
+onBeforeMount(() => {
+  if (route.meta.painel) layoutStore.setPainel(route.meta.painel)
+})
+const { dialogConfirmAction, painel } = storeToRefs(layoutStore)
 
 const linkesRoutes = [
   {

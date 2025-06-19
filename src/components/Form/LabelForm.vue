@@ -1,5 +1,5 @@
 <template>
-  <div class="LabelForm" :class="className">
+  <div class="LabelForm" :class="className" style="display: grid; gap: 4px">
     <span style="font-size: 14px; font-weight: 500">{{ textLabel }}</span>
     <slot></slot>
   </div>
