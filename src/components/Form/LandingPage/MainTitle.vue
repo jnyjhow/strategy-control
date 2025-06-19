@@ -76,7 +76,7 @@
           style="width: 20%"
           bg-color="white"
         >
-          <template v-slot:before>
+          <template v-slot:prepend>
             <div
               class="color-preview cursor-pointer"
               :style="{

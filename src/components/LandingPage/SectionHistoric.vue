@@ -1,5 +1,10 @@
 <template>
-  <q-banner inline-actions rounded class="border-pattern q-ma-md">
+  <q-banner
+    inline-actions
+    rounded
+    class="border-pattern q-ma-md section-historic"
+    @click="emit('select')"
+  >
     <div class="row align-center justify-between">
       <div class="col-1 flex flex-center">
         <q-avatar size="32px" :color="avatarColor">
@@ -11,7 +16,8 @@
         <span class="q-mx-xs"> {{ name }} </span>
         <span class="text-muted" style="font-size: 12px">| {{ date }}</span>
         <div class="">
-          {{ description }}
+          <span v-if="section">{{ filter }}</span>
+          <span v-else>{{ description }}</span>
         </div>
       </div>
       <div class="col text-end" style="text-align-last: end">
@@ -31,6 +37,11 @@
         </div>
       </div>
     </div>
+    <q-slide-transition>
+      <div v-show="isActive" class="q-pa-md section-content">
+        <slot />
+      </div>
+    </q-slide-transition>
   </q-banner>
 </template>
 
@@ -54,7 +65,11 @@ defineProps({
     default: 'approved',
     validator: (value) => ['approved', 'pending', 'rejected'].includes(value),
   },
+  isActive: Boolean,
+  section: Boolean,
+  filter: String,
 })
+const emit = defineEmits(['select', 'edit', 'closed'])
 </script>
 
 <style scoped>

@@ -42,6 +42,10 @@
       :color="item.color"
       :name="item.user.name"
       :avatar-color="item.avatarColor"
+      :isActive="activeSection === item.id"
+      :filter="item.filter"
+      @select="actionSelected(item.id)"
+      :section="select"
     />
   </q-card>
 </template>
@@ -54,9 +58,14 @@ defineComponent({
   name: 'HistoricEditLayout',
 })
 // Seu código aqui
-
+const activeSection = ref(null)
 const select = ref(false)
 const listView = ref('Selecione uma Seção')
+
+const actionSelected = (id) => {
+  console.log('Selected section ID:', id)
+  activeSection.value = id
+}
 
 const selectSection = (value) => {
   let lista = []

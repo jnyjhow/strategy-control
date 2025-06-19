@@ -11,19 +11,7 @@
         @select="actionSelected(section.type)"
         @closed="activeSection = null"
       >
-        <div v-if="section.type === 'paramentros'">
-          <main-title />
-        </div>
-
-        <div v-else-if="section.type === 'titulo-principal'">
-          <main-title />
-        </div>
-        <div v-else-if="section.type === 'text-corpo'">
-          <main-title />
-        </div>
-        <div v-else-if="section.type === 'botao-action'">
-          <main-title />
-        </div>
+        <component :is="componentsMap[section.component]" />
       </section-editor>
     </div>
     <div class="row justify-between q-pa-md align-center section-editor-pai">
@@ -37,19 +25,7 @@
         @select="actionSelected(section.type)"
         @closed="activeSection = null"
       >
-        <div v-if="section.type === 'paramentros-second'">
-          <main-title />
-        </div>
-
-        <div v-else-if="section.type === 'titulo-principal-second'">
-          <main-title />
-        </div>
-        <div v-else-if="section.type === 'text-corpo-second'">
-          <main-title />
-        </div>
-        <div v-else-if="section.type === 'botao-action-second'">
-          <main-title />
-        </div>
+        <component :is="componentsMap[section.component]" />
       </section-editor>
     </div>
 
@@ -64,15 +40,22 @@
 </template>
 <script setup>
 import { defineComponent, ref } from 'vue'
+import { useAuthStore } from 'src/stores/auth'
+import { storeToRefs } from 'pinia'
 import SectionEditor from 'src/components/LandingPage/SectionEditor.vue'
 import MainTitle from 'src/components/Form/LandingPage/MainTitle.vue'
 import PasswordConfirm from 'src/components/Auth/PasswordConfirm.vue'
-import { useAuthStore } from 'src/stores/auth'
-import { storeToRefs } from 'pinia'
+import SectionParamenters from 'src/components/Form/LandingPage/SectionParameters.vue'
+import SectionButton from 'src/components/Form/LandingPage/SectionButton.vue'
 
 defineComponent({
   name: 'SectionLPLayout',
 })
+const componentsMap = {
+  MainTitle,
+  SectionParamenters,
+  SectionButton,
+}
 const activeSection = ref(null)
 const sendPasswordAction = ref(false)
 const storeAuth = useAuthStore()
@@ -89,18 +72,22 @@ const sections = ref([
   {
     title: 'Parâmetros da Seção',
     type: 'paramentros',
+    component: 'SectionParamenters',
   },
   {
     title: 'Titulo Principal',
     type: 'titulo-principal',
+    component: 'MainTitle',
   },
   {
     title: 'Texto de corpo',
     type: 'text-corpo',
+    component: 'MainTitle',
   },
   {
     title: 'Botão de Ação',
     type: 'botao-action',
+    component: 'SectionButton',
   },
 ])
 const submitForm = (value) => {
@@ -112,14 +99,17 @@ const sectionsSecond = ref([
   {
     title: 'Parâmetros da Seção',
     type: 'paramentros-second',
+    component: 'SectionParamenters',
   },
   {
     title: 'Titulo Principal',
     type: 'titulo-principal-second',
+    component: 'MainTitle',
   },
   {
     title: 'Texto de corpo',
     type: 'text-corpo-second',
+    component: 'MainTitle',
   },
 ])
 </script>
