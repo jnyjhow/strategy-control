@@ -29,19 +29,19 @@ const { paramentroLogic } = storeToRefs(storeLayout)
 const linkItems = [
   {
     title: 'Detalhes do Contrato',
-    icon: 'description',
+    icon: 'IconFileText',
     linkTo: '/contracts',
     linkText: 'Ver Contrato',
   },
   {
     title: 'Parâmentros de Lógica',
-    icon: 'fa-solid fa-sliders',
+    icon: 'IconAdjustments',
     linkTo: '',
     linkText: 'Ver parâmetros',
   },
   {
     title: 'Projeção',
-    icon: 'timeline',
+    icon: 'IconTimeline',
     selectd: true,
     linkTo: '',
     linkText: 'Ver parâmetros',

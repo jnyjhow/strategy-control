@@ -6,10 +6,9 @@
 
         <div
           class="align-center items-center row no-wrap q-ml-sm"
-          :class="route.name == 'home' ? 'border-active' : ''"
+          :class="route.name == 'Transações' ? 'border-active' : ''"
           v-if="route.meta.painel == 'Painel de Dados'"
         >
-          <!-- name="fa-solid fa-file-invoice-dollar" -->
           <q-btn
             flat
             color="primary"
@@ -20,15 +19,10 @@
             ripple
             stretch
           >
-            <q-icon
-              :name="$filtersString.resolveUrl('img:icons/transfer.svg')"
-              size="small"
-              color="primary"
-              class="col self-center"
-            />
+            <IconTransfer class="trabler-icon-size" />
             <span
               class="text-small q-ml-sm"
-              :class="route.name == 'home' ? 'text-primary' : 'text-white'"
+              :class="route.name == 'Transações' ? 'text-primary' : 'text-white'"
             >
               Transações
             </span>
@@ -48,11 +42,7 @@
 
         <q-space />
         <q-badge outline color="primary" class="q-pa-sm">
-          <q-icon
-            :name="$filtersString.resolveUrl('img:icons/user.svg')"
-            size="0.8rem"
-            class="q-pr-xs"
-          />
+          <IconUser class="trabler-icon-size" />
           <span class="text-grey">Clientes:</span>
           <span class="text-white text-bold"> 180</span>
         </q-badge>
@@ -61,7 +51,8 @@
             <span class="text-grey">Voce está em:</span>
             <span class="text-white text-bold"> {{ painel }} </span>
           </div>
-          <q-btn round dense flat color="white" icon="fa-regular fa-bell" class="q-mx-lg">
+          <q-btn round dense flat color="white">
+            <IconBell class="trabler-icon-size" />
             <!-- <q-badge color="red" text-color="white" floating> 2 </q-badge> -->
             <q-tooltip>Notifications</q-tooltip>
           </q-btn>
@@ -110,7 +101,7 @@ const { dialogConfirmAction, painel } = storeToRefs(layoutStore)
 const linkesRoutes = [
   {
     name: 'Contratos',
-    icon: 'fa-solid fa-file-invoice-dollar',
+    icon: 'IconFileDollar',
     color: 'primary',
     size: 'small',
     items: [
@@ -121,7 +112,7 @@ const linkesRoutes = [
   },
   {
     name: 'Gestão de Dados',
-    icon: 'img:icons/user-scan.svg',
+    icon: 'IconUserScan',
     color: 'primary',
     size: 'small',
     toPrimary: 'dataManagement',
@@ -143,7 +134,7 @@ const linkesRoutes = [
   opacity: 0
 .border-active
   border-left: 2px solid #00a3ff
-  border-radius: 2px
+  border-radius: 4px
   padding: 0.7rem
 .text-small
   font-size: 0.7rem

@@ -13,25 +13,28 @@
     <div class="col text-end" style="text-align-last: end">
       <q-btn
         size="xs"
-        :icon="$filtersString.resolveUrl('img:icons/layout-list.svg')"
         padding="4px"
         class="q-mx-xs"
         :outline="projectionStatus !== 1"
         :flat="projectionStatus == 1"
+        :color="projectionStatus !== 1 ? 'primary' : 'grey'"
         @click="storeLayout.setProjectionStatus(2)"
         v-if="projection"
-      />
+      >
+        <IconLayoutList size="10" />
+      </q-btn>
       <q-btn
         :outline="projectionStatus == 1"
         :flat="projectionStatus !== 1"
-        color="primary"
+        :color="projectionStatus == 1 ? 'primary' : 'grey'"
         padding="4px"
         size="xs"
         class="q-mx-sm"
-        :icon="$filtersString.resolveUrl('img:icons/layout-columns.svg')"
         @click="storeLayout.setProjectionStatus(1)"
         v-if="projection"
-      />
+      >
+        <IconLayoutColumns size="10" />
+      </q-btn>
       <slot></slot>
     </div>
   </div>

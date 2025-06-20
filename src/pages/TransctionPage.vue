@@ -13,45 +13,22 @@
           align="left"
         >
           <q-tab
+            v-for="(item, index) in tabList"
+            :key="index"
             no-caps
-            name="carteiras"
-            label="Todas a Carteiras"
-            icon="img:icons/layout-grid.svg"
-          />
-          <q-tab
-            no-caps
-            name="disponivel"
-            label="Disponível para Movimentar"
-            icon="img:icons/wallet.svg"
-          />
-          <q-tab
-            no-caps
-            name="contratos"
-            label="Contratos/Investimentos"
-            icon="img:icons/file-dollar-current.svg"
-          />
-          <q-tab
-            no-caps
-            name="strategy"
-            label="Strategy Banking(em breve)"
-            icon="img:icons/building-bank.svg"
-            disable
-          />
+            :name="item.name"
+            :disable="item.disable"
+          >
+            <component :is="item.icon" class="tabler-icon-s14 q-mr-sm" />
+            <span>{{ item.label }}</span>
+          </q-tab>
         </q-tabs>
 
         <q-separator />
 
         <q-tab-panels v-model="tab" animated>
-          <q-tab-panel name="carteiras">
-            <wallet-layout />
-          </q-tab-panel>
-
-          <q-tab-panel name="disponivel">
-            <available-for-movement-layout />
-          </q-tab-panel>
-
-          <q-tab-panel name="contratos">
-            <contratcts-invesments-layout />
+          <q-tab-panel v-for="(item, index) in tabList" :key="index" :name="item.qTabelPanel">
+            <component :is="componentsMaps[item.componentPanel]" />
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -67,4 +44,40 @@ import ContratctsInvesmentsLayout from 'src/layouts/Transaction/ContractsInvesme
 import { ref } from 'vue'
 
 const tab = ref('carteiras')
+const componentsMaps = {
+  WalletLayout,
+  AvailableForMovementLayout,
+  ContratctsInvesmentsLayout,
+}
+
+const tabList = [
+  {
+    name: 'carteiras',
+    label: 'Todas a Carteiras',
+    icon: 'IconLayoutGrid',
+    qTabelPanel: 'carteiras',
+    componentPanel: 'WalletLayout',
+  },
+  {
+    name: 'disponivel',
+    label: 'Disponível para Movimentar',
+    icon: 'IconWallet',
+    qTabelPanel: 'disponivel',
+    componentPanel: 'AvailableForMovementLayout',
+  },
+  {
+    name: 'contratos',
+    label: 'Contratos/Investimentos',
+    icon: 'IconFileDollar',
+    qTabelPanel: 'contratos',
+    componentPanel: 'ContratctsInvesmentsLayout',
+  },
+  {
+    name: 'strategy',
+    label: 'Strategy Banking(em breve)',
+    icon: 'IconBuildingBank',
+    disable: true,
+  },
+]
 </script>
+<style scoped></style>

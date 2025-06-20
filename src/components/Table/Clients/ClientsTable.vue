@@ -43,22 +43,12 @@
               :class="!compareBtn ? 'text-muted' : 'text-primary'"
               @click.prevent.stop="compareSelected"
             />
-            <q-btn
-              size="md"
-              padding="xs"
-              :icon="$filtersString.resolveUrl('img:icons/layout-cards.svg')"
-              outline
-              color="primary"
-              class="border-radius-4"
-            />
-            <q-btn
-              size="md"
-              padding="xs"
-              :icon="$filtersString.resolveUrl('img:icons/list.svg')"
-              outline
-              class="outline"
-              color="primary"
-            />
+            <q-btn size="md" padding="xs" outline color="primary" class="border-radius-4">
+              <IconLayoutCards size="18" />
+            </q-btn>
+            <q-btn size="md" padding="xs" outline class="outline" color="primary">
+              <IconList size="18" />
+            </q-btn>
           </div>
         </div>
       </template>

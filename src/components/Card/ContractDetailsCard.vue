@@ -9,15 +9,10 @@
       :class="paramentroLogic && item.title == 'Parâmentros de Lógica' ? 'bordered-primary' : ''"
     >
       <q-item-section avatar>
-        <q-btn
-          round
-          text-color="dark"
-          color="grey-3"
-          unelevated
-          :icon="item.icon"
-          :style="item.icon === 'fa-solid fa-sliders' ? 'transform: rotate(90deg);' : ''"
-        />
-        <!-- <q-avatar rounded>fa-solid fa-sliders
+        <q-btn round text-color="dark" color="grey-3" unelevated>
+          <component :is="item.icon" />
+        </q-btn>
+        <!-- <q-avatar rounded>IconAdjustments
           <q-icon name="description" />
         </q-avatar> -->
       </q-item-section>
@@ -48,7 +43,7 @@ export default defineComponent({
       default: () => [
         {
           title: 'Detalhes do Contrato',
-          icon: 'description',
+          icon: 'IconFileText',
           linkTo: '/contracts/logic',
           linkText: 'Ver Contrato',
           selectd: false,

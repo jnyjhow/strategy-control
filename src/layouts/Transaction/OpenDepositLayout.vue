@@ -132,14 +132,16 @@
       >
       </label-form>
       <q-btn
-        label="Upload"
         color="primary"
-        icon="upload"
         outline
         no-caps
         style="border-radius: 6px; border: 2px solid #00a3ff"
+        class="q-mt-sm q-px-md q-py-sm"
         @click="triggerFileInput"
-      />
+      >
+        <IconUpload size="16" class="q-mr-sm" />
+        Upload
+      </q-btn>
       <input
         type="file"
         ref="fileInput"
@@ -148,20 +150,22 @@
         multiple
         accept=".jpg, .jpeg, .png, .pdf"
       />
-      <div class="col-12" v-if="uploadedFiles.length > 0">
+
+      <div class="col" v-if="uploadedFiles.length > 0" style="text-align-last: end">
         <q-btn
           v-for="(item, index) in uploadedFiles"
           :key="index"
           size="sm"
-          outline
+          flat
           padding="xs"
           color="secondary"
-          :label="item.name"
           no-caps
-          border-radius="6px"
-          class="q-ma-sm"
-          style="border: 2px solid #00a3ff"
-        />
+          class="q-ma-sm text-muted"
+        >
+          <IconPhoto class="q-mr-xs" />
+          {{ item.name }}
+          <IconTrash class="q-ml-lg" @click="uploadedFiles = []" />
+        </q-btn>
       </div>
     </q-card-section>
 

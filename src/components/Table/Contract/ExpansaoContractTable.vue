@@ -13,37 +13,45 @@
     @update:pagination="updatePagination"
     class="ExpansaoContractTable"
   >
-    <template v-slot:body-cell-label="props">
-      <q-td :props="props">
-        <!-- <q-badge color="grey" text-color="white">{{ props.row.label }}</q-badge> -->
-        {{ props.row.label }}
-      </q-td>
+    <template v-slot:body="props">
+      <q-tr :props="props">
+        <q-td :props="props" key="label">
+          {{ props.row.label }}
+        </q-td>
+        <q-td v-for="i in 32" :key="`value${i === 1 ? '' : i - 1}`" :props="props">
+          <q-chip
+            v-if="props.row[`value${i === 1 ? '' : i - 1}`] === 'Lógica Contrato ABC'"
+            size="sm"
+            square
+            padding="lg"
+            no-caps
+            style="border: 1px solid #bdb4b4"
+            :label="props.row[`value${i === 1 ? '' : i - 1}`]"
+          />
+          <q-chip
+            color="transparent"
+            v-else-if="props.row[`value${i === 1 ? '' : i - 1}`] === 'Real (BRL)'"
+          >
+            <q-avatar rounded>
+              <img src="icons/brazil_icon.png" />
+            </q-avatar>
+            {{ props.row[`value${i === 1 ? '' : i - 1}`] }}
+          </q-chip>
+          <q-chip
+            color="transparent"
+            v-else-if="props.row[`value${i === 1 ? '' : i - 1}`] === 'Dólar (USD)'"
+          >
+            <q-avatar rounded>
+              <img :src="i % 2 !== 0 ? 'icons/usa_icon.png' : 'icons/bitcon_icon.png'" />
+            </q-avatar>
+            {{ props.row[`value${i === 1 ? '' : i - 1}`] }}
+          </q-chip>
+          <span v-else>
+            {{ props.row[`value${i === 1 ? '' : i - 1}`] }}
+          </span>
+        </q-td>
+      </q-tr>
     </template>
-    <!-- <template v-slot:body-cell-log-yield="props">
-      <q-td :props="props">
-        <span class="text-positive">{{ props.row['log-yield'] }}</span>
-      </q-td>
-    </template>
-    <template v-slot:body-cell-contract-logic="props">
-      <q-td :props="props">
-        <q-badge color="grey" text-color="white">{{ props.row['contract-logic'] }}</q-badge>
-      </q-td>
-    </template>
-    <template v-slot:body-cell-dividend-logic="props">
-      <q-td :props="props">
-        <q-badge color="grey" text-color="white">---{{ props.row['dividend-logic'] }}</q-badge>
-      </q-td>
-    </template>
-    <template v-slot:body-cell-backed-currency="props">
-      <q-td :props="props">
-        <q-icon name="flag" class="text-green" /> {{ props.row.backed - currency }}
-      </q-td>
-    </template>
-    <template v-slot:body-cell-secondary-currency="props">
-      <q-td :props="props">
-        <q-icon name="flag" class="text-blue" /> {{ props.row['secondary-currency'] }}
-      </q-td>
-    </template> -->
   </q-table>
 </template>
 <script setup>
@@ -88,18 +96,18 @@ const columns = [
 const retornClass = (value) => {
   const test = [value]
   const encontrado = test.some((objeto) => objeto.label === 'Variação desde a criação [R$ (%)]')
-  const logicaContrato = test.some(
-    (objeto) =>
-      objeto.label === 'Lógica de Contrato Atrelada' ||
-      objeto.label === 'Lógica de Dividendo Atrelada',
-  )
+  // const logicaContrato = test.some(
+  //   (objeto) =>
+  //     objeto.label === 'Lógica de Contrato Atrelada' ||
+  //     objeto.label === 'Lógica de Dividendo Atrelada',
+  // )
   const positivo = test.some((objeto) => objeto.label === 'Rendimento Lóg. Contrato [R$ (%)]')
   if (encontrado) {
     return 'text-negative'
   }
-  if (logicaContrato) {
-    return 'q-btn-special q-btn-item non-selectable no-outline q-btn--outline q-btn--rectangle q-btn--actionable q-focusable q-hoverable q-btn--no-uppercase custom-btn-muted'
-  }
+  // if (logicaContrato) {
+  //   return 'q-btn-special q-btn-item non-selectable no-outline q-btn--outline q-btn--rectangle q-btn--actionable q-focusable q-hoverable q-btn--no-uppercase custom-btn-muted'
+  // }
   if (positivo) {
     return 'text-positive'
   }
@@ -578,23 +586,16 @@ const updatePagination = (val) => {
 }
 </script>
 <style lang="sass">
+.custom-btn-muted
+  background-color: #bdb4b41c !important
+  color: #000 !important
+  border: 1px solid #bdb4b4 !important
 .q-btn-special
-  flex-direction: column
-  align-items: stretch
-  position: relative
-  outline: 0
-  border: 0
   vertical-align: middle
-  font-size: 10px !important
-  text-decoration: none
-  color: inherit
-  background: transparent
+  font-size: 9px !important
   font-weight: 500 !important
   text-align: center !important
-  width: auto
-  height: auto
   cursor: default
-  padding: 4px 16px
 .q-badge-special
   background-color: #f5f5f5 !important
   color: #000 !important

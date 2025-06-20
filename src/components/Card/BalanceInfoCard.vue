@@ -3,7 +3,9 @@
     <q-card-section class="q-pa-none">
       <div class="text-caption text-grey-8" style="display: inline-flex">
         {{ title }}
-        <span><q-btn color="grey-6" icon="fa-solid fa-circle-info" size="sm" flat /></span>
+        <span>
+          <IconInfoCircle size="20px" />
+        </span>
       </div>
       <!-- <div class="text-h5 text-grey-8">{{ subTitle }}</div> -->
       <div class="text-h6">{{ value }}</div>

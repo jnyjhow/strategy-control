@@ -1,6 +1,5 @@
 <template>
   <div class="ProjectionCompareTable">
-    teste
     <q-table
       :grid="$q.screen.xs"
       flat

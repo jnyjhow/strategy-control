@@ -34,21 +34,12 @@
           </div>
           <div class="col self-end items-end" style="text-align-last: end">
             <q-btn color="primary" no-caps label="Exportar" flat size="sm" @click="exportTable" />
-            <q-btn
-              size="md"
-              padding="xs"
-              :icon="$filtersString.resolveUrl('img:icons/layout-cards.svg')"
-              outline
-              color="primary"
-              class="border-radius-4"
-            />
-            <q-btn
-              size="md"
-              padding="xs"
-              :icon="$filtersString.resolveUrl('img:icons/list.svg')"
-              outline
-              color="primary"
-            />
+            <q-btn size="md" padding="xs" outline class="">
+              <IconLayoutCards size="18" />
+            </q-btn>
+            <q-btn size="md" padding="xs" outline color="primary" class="outline border-radius-4">
+              <IconList size="18" />
+            </q-btn>
           </div>
         </div>
       </template>

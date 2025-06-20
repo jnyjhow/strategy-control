@@ -128,14 +128,10 @@
             <p class="text-h6">Histórico de Transações</p>
           </div>
           <div class="col self-end items-end" style="text-align-last: end">
-            <q-btn
-              color="primary"
-              icon="fa-solid fa-plus"
-              label="Solicitar Depósito"
-              flat
-              size="sm"
-              @click="setDialogSolicitar(true)"
-            />
+            <q-btn color="primary" flat size="sm" no-caps @click="setDialogSolicitar(true)">
+              <IconPlus class="q-mr-sm" size="16" />
+              Solicitar Depósito
+            </q-btn>
           </div>
         </div>
       </template>
@@ -233,6 +229,7 @@
           :max="pagesNumber"
           :max-pages="6"
           size="sm"
+          direction-links
         />
       </div>
     </div>
@@ -257,6 +254,7 @@ import useVariablesGlobal from 'src/composables/Fakes/useVariablesGlobal'
 import useMovement from 'src/composables/Fakes/useMovement'
 import OpenDepositLayout from 'src/layouts/Transaction/OpenDepositLayout.vue'
 import { useLayoutStore } from 'src/stores/layout'
+
 export default defineComponent({
   name: 'MovementHistoric',
   components: {

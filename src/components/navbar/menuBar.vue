@@ -1,15 +1,10 @@
 <template>
   <div class="q-ml-md cursor-pointer non-selectable menuBar">
     <div class="align-center items-center row no-wrap" :class="includesTo() ? 'border-active' : ''">
-      <!-- name="fa-solid fa-file-invoice-dollar" -->
-      <q-icon
-        :name="$filtersString.resolveUrl(icon)"
-        size="small"
-        color="primary"
-        class="col self-ceter"
-      />
+      <component :is="icon" class="trabler-icon-size text-primary" />
       <span class="text-small q-ml-sm" :class="includesTo() ? 'text-primary' : ''">
         {{ name }}
+        <IconChevronDown style="width: 10px; height: 10px; margin-top: 3px" />
       </span>
     </div>
     <q-menu
@@ -81,7 +76,7 @@ export default defineComponent({
 }
 .border-active {
   border-left: 2px solid #00a3ff;
-  border-radius: 2px;
+  border-radius: 4px;
   padding: 0.7rem;
 }
 </style>

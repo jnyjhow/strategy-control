@@ -222,6 +222,7 @@
           :max="pagesNumber"
           :max-pages="6"
           size="sm"
+          direction-links
         />
       </div>
     </div>
