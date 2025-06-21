@@ -72,14 +72,14 @@ const storeLogin = useAuthStore()
 const setLandingPage = () => {
   storeLogin.setFineshed(true)
   setTimeout(() => {
-    router.push({ name: 'Edição de LP' })
+    router.push({ path: '/edit-lp' })
   }, 3000)
 }
 
 const setTransiction = () => {
   storeLogin.setFineshed(true)
   setTimeout(() => {
-    router.push({ name: 'Transações' })
+    router.push({ path: '/transaction' })
   }, 3000)
 }
 
