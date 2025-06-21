@@ -14,6 +14,7 @@
           unmasked-value
           class="q-my-sm"
           bg-color="white"
+          :rules="[(val) => (val && val.length > 0) || 'Campo obrigatório']"
         />
       </label-form>
       <label-form className="col-12" textLabel="Senha">
@@ -26,6 +27,7 @@
           unmasked-value
           class="q-my-sm"
           bg-color="white"
+          :rules="[(val) => (val && val.length > 0) || 'Campo obrigatório']"
           :type="isPwd ? 'password' : 'text'"
         >
           <template v-slot:append>
