@@ -2,7 +2,7 @@
   <q-card class="maximed-preview-page">
     <q-card-section class="row justify-between">
       <div class="text-h6"><span class="text-muted"> Você está na </span>Pré-visualização</div>
-      <q-btn v-close-popup flat icon="close" size="sm" rounded color="grey-6" no-shadow />
+      <q-btn v-close-popup outline color="primary" no-shadow label="Voltar para Edição" no-caps />
     </q-card-section>
     <q-card-section>
       <iframe

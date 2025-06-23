@@ -37,6 +37,23 @@ export default function useNotification() {
   /**
    *
    * @param {string|null} message mensagem da notificação a ser ixibida se estiver null vai
+   * exibir mensagem padrão "Tudo certo!"
+   * @param {number|null} getTime quantos segundos vai aparece a notificações se for passaro $time
+   * @return {$q.notify}
+   */
+  const successNotifyLp = (message, getTime = time, positionNot = pos) => {
+    $q.notify({
+      position: positionNot,
+      message: message || 'Tudo certo!',
+      icon: 'check_circle',
+      iconColor: 'green-4',
+      iconSize: '16px',
+      timeout: getTime,
+    })
+  }
+  /**
+   *
+   * @param {string|null} message mensagem da notificação a ser ixibida se estiver null vai
    * exibir mensagem padrão "Ops... precisamos recomeça."
    * @param {number|null} getTime quantos segundos vai aparece a notificações se for passaro $time
    * @return {$q.notify}
@@ -146,6 +163,7 @@ export default function useNotification() {
     })
   }
   return {
+    successNotifyLp,
     errorNotify,
     successNotify,
     infoNotify,
