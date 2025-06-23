@@ -2,7 +2,7 @@
   <div
     class="section-editor q-mb-md"
     :class="{ 'active-section': isActive }"
-    @click="emit('select')"
+    @mouseenter="emit('hover')"
   >
     <div class="row items-center justify-between q-pa-md">
       <div class="section-title">{{ title }}</div>

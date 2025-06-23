@@ -10,6 +10,8 @@
         :isActive="activeSection === section.type"
         @select="actionSelected(section.type)"
         @closed="activeSection = null"
+        @hover="activeHover"
+        @edit="editLp()"
       >
         <component :is="componentsMap[section.component]" />
       </section-editor>
@@ -47,7 +49,7 @@ import MainTitle from 'src/components/Form/LandingPage/MainTitle.vue'
 import PasswordConfirm from 'src/components/Auth/PasswordConfirm.vue'
 import SectionParamenters from 'src/components/Form/LandingPage/SectionParameters.vue'
 import SectionButton from 'src/components/Form/LandingPage/SectionButton.vue'
-
+import useNotification from 'src/composables/global/useNotification'
 defineComponent({
   name: 'SectionLPLayout',
 })
@@ -56,6 +58,7 @@ const componentsMap = {
   SectionParamenters,
   SectionButton,
 }
+const { successNotifyLp } = useNotification()
 const activeSection = ref(null)
 const sendPasswordAction = ref(false)
 const storeAuth = useAuthStore()
@@ -68,6 +71,50 @@ const actionSelected = (type) => {
 
   console.log(`Ação selecionada: ${type}`)
 }
+
+const activeHover = () => {
+  //bg-header
+  console.log('Hover na seção ativa')
+  // const header = document.querySelector('.bg-header')
+  // const iframe = document.getElementById('preview-iframe')
+  // const showActionBtn = document.getElementById('show-action')
+  // const resetStylesBtn = document.getElementById('reset-styles') // Opcional
+  // console.log(iframe, showActionBtn, resetStylesBtn)
+  // iframe.onload = function () {
+  //   const iframeDoc = iframe.contentDocument || iframe.contentWindow.document
+
+  //   // Função para aplicar estilos
+  //   function applyActionStyles() {
+  //     const style = iframeDoc.createElement('style')
+  //     style.id = 'dynamic-action-styles' // Para remover depois
+  //     style.innerHTML = `
+  //     .sua-classe-de-acao {
+  //       background: yellow !important;
+  //       border: 2px dashed red !important;
+  //     }
+  //     /* Outros estilos que você quer aplicar */
+  //   `
+  //     iframeDoc.head.appendChild(style)
+  //   }
+
+  //   // Função para remover estilos (opcional)
+  //   function resetActionStyles() {
+  //     const existingStyle = iframeDoc.getElementById('dynamic-action-styles')
+  //     if (existingStyle) {
+  //       existingStyle.remove()
+  //     }
+  //   }
+
+  //   // Aplicar estilos ao clicar no botão
+  //   showActionBtn.addEventListener('click', applyActionStyles)
+
+  //   // Resetar estilos (opcional)
+  //   resetStylesBtn?.addEventListener('click', resetActionStyles)
+  // }
+
+  // console.log(header)
+}
+
 const sections = ref([
   {
     title: 'Parâmetros da Seção',
@@ -90,6 +137,10 @@ const sections = ref([
     component: 'SectionButton',
   },
 ])
+
+const editLp = () => {
+  successNotifyLp('Edição salva com sucesso!')
+}
 const submitForm = (value) => {
   sendPasswordAction.value = false
   auth.value.password = value
@@ -124,5 +175,8 @@ const sectionsSecond = ref([
     0 3px 1px -2px rgba(0, 0, 0, 0.12) !important;
   border-radius: 4px !important;
   background: #fff !important;
+}
+.dashed-border {
+  border: dashed 10px red;
 }
 </style>

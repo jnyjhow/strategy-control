@@ -53,7 +53,7 @@ const { selectedInitial, finished } = storeToRefs(storeLogin)
 <style scoped lang="sass">
 .fade-enter-active,
 .fade-leave-active
-  transition: opacity 355ms
+  transition: opacity 555ms
 
 .fade-enter,
 .fade-leave-to

@@ -156,7 +156,11 @@ const dataButton = ref({
   corTexto: '#FFFFFF',
   background: '#00A3FF',
 })
-
+const pesoTextOptions = [
+  { label: 'Regular', value: 'regular' },
+  { label: 'Bold', value: 'bold' },
+  { label: 'Light', value: 'light' },
+]
 const optionLinks = [
   { label: 'Selecione Opção', value: '' },
   { label: 'https://strategyanalytics.com.br/quemsomos', value: 'external' },

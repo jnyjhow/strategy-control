@@ -6,11 +6,12 @@
     </q-card-section>
     <q-card-section style="height: 100%">
       <iframe
-        src="https://strategyanalytics.com.br/"
+        src="https://www.strategyanalytics.com.br/"
         width="100%"
+        id="preview-iframe"
         height="100vh"
         frameborder="100"
-        style="height: 110%"
+        style="height: 115%; padding-inline: 2px"
       ></iframe>
     </q-card-section>
   </q-card>

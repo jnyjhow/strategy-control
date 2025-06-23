@@ -9,32 +9,6 @@
     <div class="col-12 text-center text-grey-5 q-mb-md">Selecione o sistema que deseja acessar</div>
     <q-card class="card-auth col-sm-12 col-12 col-md-12 text-center" style="max-width: 320px">
       <q-icon
-        :name="$filtersString.resolveUrl('img:icons/nodes.svg')"
-        size="lg"
-        color="primary"
-        class="col self-center"
-      />
-      <p class="text-h7 text-white q-mt-md">
-        Painel de inserção <br />
-        de dados
-      </p>
-      <p class="text-center text-grey-5 q-mb-md">
-        Gestão e monitoramento de todos os dados e sistemas da Strategy Analytics
-      </p>
-      <q-btn
-        color="primary"
-        flat
-        label="Acessar Sistema"
-        padding="none"
-        size="lg"
-        class="text-h7 q-mt-md"
-        no-caps
-        style="width: 100%; border-radius: 8px"
-        @click.prevent.stop="setTransiction()"
-      />
-    </q-card>
-    <q-card class="card-auth col-sm-12 col-12 col-md-12 text-center" style="max-width: 320px">
-      <q-icon
         :name="$filtersString.resolveUrl('img:icons/screen-share.svg')"
         size="lg"
         color="primary"
@@ -47,17 +21,35 @@
       <p class="text-center text-grey-5 q-mb-md">
         Gestão e monitoramento de todos os dados e sistemas da Strategy Analytics
       </p>
-      <q-btn
-        color="primary"
-        flat
-        label="Acessar Sistema"
-        padding="none"
-        size="lg"
-        class="text-h7 q-mt-md"
-        no-caps
-        style="width: 100%; border-radius: 8px"
+      <span
+        class="text-primary text-h7 q-mt-md"
+        style="cursor: pointer"
         @click.prevent.stop="setLandingPage()"
+      >
+        Acessar Sistema
+      </span>
+    </q-card>
+    <q-card class="card-auth col-sm-12 col-12 col-md-12 text-center" style="max-width: 320px">
+      <q-icon
+        :name="$filtersString.resolveUrl('img:icons/nodes.svg')"
+        size="lg"
+        color="primary"
+        class="col self-center"
       />
+      <p class="text-h7 text-white q-mt-md">
+        Painel de inserção <br />
+        de dados
+      </p>
+      <p class="text-center text-grey-5 q-mb-md">
+        Gestão e monitoramento de todos os dados e sistemas da Strategy Analytics
+      </p>
+      <span
+        class="text-primary text-h7 q-mt-md"
+        style="cursor: pointer"
+        @click.prevent.stop="setTransiction()"
+      >
+        Acessar Sistema
+      </span>
     </q-card>
   </q-page>
 </template>
