@@ -15,81 +15,83 @@
       :pagination="pagination"
       @update:pagination="updatePagination"
       :loading="loading"
+      color="primary"
     >
       <!-- Filtros avançados -->
       <template v-slot:top>
         <div class="col-12 row q-mb-md">
           <div class="col-12 row q-col-gutter-sm">
-            <!-- Filtro por data de solicitação -->
             <div class="col-xs-12 col-sm-4 col-md-2">
-              <q-input
-                v-model="dateRangeInput.solicitado"
-                label="Data de Solicitação"
-                outlined
-                dense
-                readonly
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-date v-model="dateRange.solicitado" range mask="DD/MM/YYYY">
-                        <div class="row items-center justify-end q-gutter-sm">
-                          <q-btn
-                            label="Cancelar"
-                            color="primary"
-                            flat
-                            v-close-popup
-                            @click="clearSolicitado"
-                          />
-                          <q-btn
-                            label="OK"
-                            color="primary"
-                            flat
-                            @click="updateDateInput('solicitado')"
-                            v-close-popup
-                          />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
+              <div class="input-personal" @click="openDatePicker">
+                <span
+                  class="text-input"
+                  :style="!dateRange.solicitado.to ? 'font-size:1.2em' : 'font-size:0.6em'"
+                >
+                  Data de solicitação
+                </span>
+
+                <q-btn flat v-if="!dateRange.solicitado.to">
+                  <IconCalendarEventFilled size="16" />
+                  <q-popup-proxy
+                    cover
+                    transition-show="scale"
+                    transition-hide="scale"
+                    ref="pickerSolitado"
+                  >
+                    <q-date v-model="dateRange.solicitado" range mask="DD/MM/YYYY">
+                      <div class="row items-center justify-end q-gutter-sm">
+                        <q-btn label="Cancel" color="primary" flat v-close-popup />
+                        <q-btn label="OK" color="primary" flat v-close-popup />
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </q-btn>
+                <q-badge
+                  v-else
+                  class="custom-btn-primary"
+                  style="font-size: 12px !important; border: 1px solid var(--Info-200, #b9e1ff)"
+                >
+                  {{ dateRange.solicitado.from }} - {{ dateRange.solicitado.to }}
+                  <IconX size="14" class="q-ml-xs cursor-pointer" @click.prevent="emptyDateRange" />
+                </q-badge>
+              </div>
             </div>
 
             <!-- Filtro por data limite -->
             <div class="col-xs-12 col-sm-4 col-md-2">
-              <q-input
-                v-model="dateRangeInput.limitado"
-                label="Data Limite"
-                outlined
-                dense
-                readonly
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-date v-model="dateRange.limitado" range mask="DD/MM/YYYY">
-                        <div class="row items-center justify-end q-gutter-sm">
-                          <q-btn
-                            label="Cancelar"
-                            color="primary"
-                            flat
-                            v-close-popup
-                            @click="clearLimitado"
-                          />
-                          <q-btn
-                            label="OK"
-                            color="primary"
-                            flat
-                            @click="updateDateInput('limitado')"
-                            v-close-popup
-                          />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
+              <div class="input-personal" @click.prevent="openDatePickerLimite">
+                <span
+                  class="text-input"
+                  :style="!dateRange.limitado.to ? 'font-size:1.2em' : 'font-size:0.6em'"
+                >
+                  Data Limite
+                </span>
+
+                <q-btn flat v-if="!dateRange.limitado.to">
+                  <IconCalendarEventFilled size="16" />
+                  <q-popup-proxy
+                    cover
+                    transition-show="scale"
+                    transition-hide="scale"
+                    ref="pickerLimite"
+                  >
+                    <q-date v-model="dateRange.limitado" range mask="DD/MM/YYYY">
+                      <div class="row items-center justify-end q-gutter-sm">
+                        <q-btn label="Cancel" color="primary" flat v-close-popup />
+                        <q-btn label="OK" color="primary" flat v-close-popup />
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </q-btn>
+                <q-badge
+                  v-else
+                  class="custom-btn-primary"
+                  style="font-size: 12px !important; border: 1px solid var(--Info-200, #b9e1ff)"
+                >
+                  {{ dateRange.limitado.from }} - {{ dateRange.limitado.to }}
+                  <IconX size="14" class="q-ml-xs cursor-pointer" @click.prevent="emptyDateRange" />
+                </q-badge>
+              </div>
             </div>
 
             <!-- Filtro por tipo -->
@@ -97,12 +99,14 @@
               <q-select
                 v-model="filters.tipo"
                 :options="tiposOptions"
-                label="Tipo de Movimentação"
                 outlined
                 dense
                 multiple
+                input-style="max-height: 50px !important;"
                 use-chips
+                dropdown-icon="keyboard_arrow_down"
               />
+              <!-- label="Tipo de Movimentação" -->
             </div>
 
             <!-- Filtro por status -->
@@ -115,6 +119,7 @@
                 dense
                 multiple
                 use-chips
+                dropdown-icon="keyboard_arrow_down"
               />
             </div>
 
@@ -165,6 +170,47 @@
           /> -->
         </q-td>
       </template>
+      <!-- Coluna de Origem -->]
+      <template v-slot:body-cell-origem="props">
+        <q-td :props="props">
+          <q-chip color="transparent">
+            <q-btn
+              size="sm"
+              padding="xs"
+              no-caps
+              rounded
+              :style="`backgroundColor: ${props.row.origem.backColor}`"
+              :icon="$filtersString.resolveUrl(props.row.origem.icon)"
+            />
+            <span class="q-ml-sm">{{ props.row.origem.name }}</span>
+          </q-chip>
+        </q-td>
+      </template>
+      <!-- Coluna de Origem -->]
+      <template v-slot:body-cell-limitado_ate="props">
+        <q-td :props="props">
+          <span class="q-ml-sm" :style="`color:${props.row.limitado_ate.color}`">{{
+            props.row.limitado_ate.date
+          }}</span>
+        </q-td>
+      </template>
+      <!-- Coluna de Destino -->]
+      <template v-slot:body-cell-destino="props">
+        <q-td :props="props">
+          <q-chip color="transparent">
+            <q-btn
+              size="sm"
+              padding="xs"
+              no-caps
+              rounded
+              :style="`backgroundColor: ${props.row.destino.backColor}`"
+              :icon="$filtersString.resolveUrl(props.row.destino.icon)"
+            />
+            <span class="q-ml-sm">{{ props.row.destino.name }}</span>
+          </q-chip>
+        </q-td>
+      </template>
+
       <!-- Coluna de status personalizada -->
       <template v-slot:body-cell-status="props">
         <q-td :props="props">
@@ -175,6 +221,19 @@
             :color="getStatusColor(props.row.status)"
             :class="getClasseStatus(props.row.status)"
             :label="props.row.status"
+            no-caps
+          />
+        </q-td>
+      </template>
+      <!-- Coluna de Tipo -->
+      <template v-slot:body-cell-tipo="props">
+        <q-td :props="props">
+          <q-btn
+            size="xs"
+            outline
+            padding="xs"
+            class="custom-btn-muted"
+            :label="props.row.tipo"
             no-caps
           />
         </q-td>
@@ -302,15 +361,20 @@ const rows = [
   {
     id: 1,
     solicitado_em: '10/04/2025 - 14:30',
-    limitado_ate: '15/04/2025 - 23:59',
+    limitado_ate: { date: '15/04/2025 - 23:59', color: 'red' },
     tipo: 'Depósito',
     cliente: {
       name: 'Carlos Silva',
       avatar: 'https://sources.strategyanalytics.com.br/storage/users/default-avatar.png',
       email: 'carlos@gstrategyanalytics.com.br',
     },
-    origem: 'Itaú',
-    destino: 'N/A',
+    origem: {
+      name: 'Itaú ',
+      backColor: '#FF6200',
+      code: '341',
+      icon: 'img:icons/bancos/itau.png',
+    },
+    destino: { name: 'Carteira Disponível', backColor: '#ECECEC', icon: 'img:icons/wallet.svg' },
     transactionValue: 4500.0,
     status: 'Concluído: 10/04/2025 - 14:35',
     documentos: 'comprovante.pdf',
@@ -318,15 +382,25 @@ const rows = [
   {
     id: 2,
     solicitado_em: '11/04/2025 - 09:15',
-    limitado_ate: '16/04/2025 - 23:59',
-    tipo: 'Transferência',
+    limitado_ate: { date: '16/04/2025 - 23:59', color: '#FFB54A' },
+    tipo: 'Saldo -> Contrato',
     cliente: {
       name: 'Ana Oliveira',
       avatar: 'https://sources.strategyanalytics.com.br/storage/users/default-avatar.png',
       email: 'ana@gstrategyanalytics.com.br',
     },
-    origem: 'Bradesco',
-    destino: 'Santander',
+    origem: {
+      name: 'Bradesco',
+      backColor: '#CC092F',
+      code: '237',
+      icon: 'img:icons/bancos/bradesco.png',
+    },
+    destino: {
+      name: 'Santander',
+      backColor: '#EA1D25',
+      code: '033',
+      icon: 'img:icons/bancos/santander.png',
+    },
     transactionValue: 3200.5,
     status: 'Concluído: 11/04/2025 - 09:20',
     documentos: 'comprovante.pdf',
@@ -334,15 +408,20 @@ const rows = [
   {
     id: 3,
     solicitado_em: '12/04/2025 - 16:45',
-    limitado_ate: '17/04/2025 - 23:59',
+    limitado_ate: { date: '17/04/2025 - 23:59', color: 'black' },
     tipo: 'Saque',
     cliente: {
       name: 'Pedro Santos',
       avatar: 'https://sources.strategyanalytics.com.br/storage/users/default-avatar.png',
       email: 'pedro@gstrategyanalytics.com.br',
     },
-    origem: 'Banco do Brasil',
-    destino: 'N/A',
+    origem: {
+      name: 'Banco do Brasil',
+      backColor: '#FDE100',
+      code: '001',
+      icon: 'img:icons/banco_brasil.png',
+    },
+    destino: { name: 'Carteira Disponível', backColor: '#ECECEC', icon: 'img:icons/wallet.svg' },
     transactionValue: 1500.0,
     status: 'Pendente',
     documentos: 'Sem anexo',
@@ -350,15 +429,20 @@ const rows = [
   {
     id: 4,
     solicitado_em: '13/04/2025 - 11:20',
-    limitado_ate: '18/04/2025 - 23:59',
-    tipo: 'Saldo',
+    limitado_ate: { date: '18/04/2025 - 23:59', color: '#FFB54A' },
+    tipo: 'Saldo -> Contrato',
     cliente: {
       name: 'Mariana Costa',
       avatar: 'https://sources.strategyanalytics.com.br/storage/users/default-avatar.png',
       email: 'mariana@gstrategyanalytics.com.br',
     },
-    origem: 'Nubank',
-    destino: 'N/A',
+    origem: {
+      name: 'Nubank',
+      backColor: '#A020F0',
+      code: '000',
+      icon: 'img:icons/NubankLogo.svg',
+    },
+    destino: { name: 'Carteira Disponível', backColor: '#ECECEC', icon: 'img:icons/wallet.svg' },
     transactionValue: 7800.75,
     status: 'Concluído: 13/04/2025 - 11:25',
     documentos: 'extrato.pdf',
@@ -366,15 +450,25 @@ const rows = [
   {
     id: 5,
     solicitado_em: '14/04/2025 - 13:10',
-    limitado_ate: '19/04/2025 - 23:59',
+    limitado_ate: { date: '19/04/2025 - 23:59', color: 'red' },
     tipo: 'Transferência',
     cliente: {
       name: 'João Pereira',
       avatar: 'https://sources.strategyanalytics.com.br/storage/users/default-avatar.png',
       email: 'joao@gstrategyanalytics.com.br',
     },
-    origem: 'Caixa Econômica',
-    destino: 'Inter',
+    origem: {
+      name: 'Caixa Econômica Federal',
+      backColor: '#fff',
+      code: '104',
+      icon: 'img:icons/bancos/caixa.png',
+    },
+    destino: {
+      name: 'Inter',
+      backColor: '#EA7100',
+      code: '002',
+      icon: 'img:icons/bancos/inter.png',
+    },
     transactionValue: 4200.0,
     status: 'Atrasado: 2 dias',
     documentos: 'contrato.docx',
@@ -382,15 +476,20 @@ const rows = [
   {
     id: 6,
     solicitado_em: '15/04/2025 - 10:05',
-    limitado_ate: '20/04/2025 - 23:59',
+    limitado_ate: { date: '20/04/2025 - 23:59', color: '#FFB54A' },
     tipo: 'Depósito',
     cliente: {
       name: 'Luiza Almeida',
       avatar: 'https://sources.strategyanalytics.com.br/storage/users/default-avatar.png',
       email: 'luiza@gstrategyanalytics.com.br',
     },
-    origem: 'Santander',
-    destino: 'N/A',
+    origem: {
+      name: 'Santander',
+      backColor: '#EA1D25',
+      code: '033',
+      icon: 'img:icons/bancos/santander.png',
+    },
+    destino: { name: 'Carteira Disponível', backColor: '#ECECEC', icon: 'img:icons/wallet.svg' },
     transactionValue: 6300.25,
     status: 'Concluído: 15/04/2025 - 10:10',
     documentos: 'comprovante.pdf',
@@ -398,15 +497,20 @@ const rows = [
   {
     id: 7,
     solicitado_em: '16/04/2025 - 15:30',
-    limitado_ate: '21/04/2025 - 23:59',
+    limitado_ate: { date: '21/04/2025 - 23:59', color: 'black' },
     tipo: 'Saque',
     cliente: {
       name: 'Carlos Silva',
       avatar: 'https://sources.strategyanalytics.com.br/storage/users/default-avatar.png',
       email: 'carlos@gstrategyanalytics.com.br',
     },
-    origem: 'Itaú',
-    destino: 'N/A',
+    origem: {
+      name: 'Itaú ',
+      backColor: '#FF6200',
+      code: '341',
+      icon: 'img:icons/bancos/itau.png',
+    },
+    destino: { name: 'Carteira Disponível', backColor: '#ECECEC', icon: 'img:icons/wallet.svg' },
     transactionValue: 2000.0,
     status: 'Pendente',
     documentos: 'Sem anexo',
@@ -414,15 +518,25 @@ const rows = [
   {
     id: 8,
     solicitado_em: '17/04/2025 - 08:45',
-    limitado_ate: '22/04/2025 - 23:59',
+    limitado_ate: { date: '22/04/2025 - 23:59', color: '#FFB54A' },
     tipo: 'Transferência',
     cliente: {
       name: 'Ana Oliveira',
       avatar: 'https://sources.strategyanalytics.com.br/storage/users/default-avatar.png',
       email: 'ana@gstrategyanalytics.com.br',
     },
-    origem: 'Bradesco',
-    destino: 'Banco do Brasil',
+    origem: {
+      name: 'Bradesco',
+      backColor: '#CC092F',
+      code: '237',
+      icon: 'img:icons/bancos/bradesco.png',
+    },
+    destino: {
+      name: 'Banco do Brasil',
+      backColor: '#FDE100',
+      code: '001',
+      icon: 'img:icons/banco_brasil.png',
+    },
     transactionValue: 5100.8,
     status: 'Concluído: 17/05/2025 - 08:50',
     documentos: 'comprovante.pdf',
@@ -430,15 +544,20 @@ const rows = [
   {
     id: 9,
     solicitado_em: '18/04/2025 - 14:20',
-    limitado_ate: '23/04/2025 - 23:59',
+    limitado_ate: { date: '23/04/2025 - 23:59', color: 'red' },
     tipo: 'Saldo',
     cliente: {
       name: 'Pedro Santos',
       avatar: 'https://sources.strategyanalytics.com.br/storage/users/default-avatar.png',
       email: 'pedro@gstrategyanalytics.com.br',
     },
-    origem: 'Inter',
-    destino: 'N/A',
+    origem: {
+      name: 'Inter',
+      backColor: '#EA7100',
+      code: '002',
+      icon: 'img:icons/bancos/inter.png',
+    },
+    destino: { name: 'Carteira Disponível', backColor: '#ECECEC', icon: 'img:icons/wallet.svg' },
     transactionValue: 9200.0,
     status: 'Concluído: 18/04/2025 - 14:25',
     documentos: 'extrato.pdf',
@@ -446,15 +565,20 @@ const rows = [
   {
     id: 10,
     solicitado_em: '19/04/2025 - 11:15',
-    limitado_ate: '24/04/2025 - 23:59',
+    limitado_ate: { date: '24/04/2025 - 23:59', color: 'red' },
     tipo: 'Depósito',
     cliente: {
       name: 'Mariana Costa',
       avatar: 'https://sources.strategyanalytics.com.br/storage/users/default-avatar.png',
       email: 'mariana@gstrategyanalytics.com.br',
     },
-    origem: 'Nubank',
-    destino: 'N/A',
+    origem: {
+      name: 'Nubank',
+      backColor: '#A020F0',
+      code: '000',
+      icon: 'img:icons/NubankLogo.svg',
+    },
+    destino: { name: 'Carteira Disponível', backColor: '#ECECEC', icon: 'img:icons/wallet.svg' },
     transactionValue: 3500.5,
     status: 'Concluído: 19/04/2025 - 11:20',
     documentos: 'identidade.jpg',
@@ -462,15 +586,25 @@ const rows = [
   {
     id: 11,
     solicitado_em: '20/04/2025 - 16:40',
-    limitado_ate: '25/04/2025 - 23:59',
+    limitado_ate: { date: '25/04/2025 - 23:59', color: 'black' },
     tipo: 'Transferência',
     cliente: {
       name: 'João Pereira',
       avatar: 'https://sources.strategyanalytics.com.br/storage/users/default-avatar.png',
       email: 'joaoa@gstrategyanalytics.com.br',
     },
-    origem: 'Caixa Econômica',
-    destino: 'Itaú',
+    origem: {
+      name: 'Caixa Econômica Federal',
+      backColor: '#fff',
+      code: '104',
+      icon: 'img:icons/bancos/caixa.png',
+    },
+    destino: {
+      name: 'Itaú ',
+      code: '341',
+      icon: 'img:icons/bancos/itau.png',
+      backColor: '#FF6200',
+    },
     transactionValue: 2800.0,
     status: 'Atrasado: 1 dia',
     documentos: 'contrato.docx',
@@ -478,15 +612,20 @@ const rows = [
   {
     id: 12,
     solicitado_em: '21/04/2025 - 09:25',
-    limitado_ate: '26/04/2025 - 23:59',
+    limitado_ate: { date: '26/04/2025 - 23:59', color: '#FFB54A' },
     tipo: 'Saque',
     cliente: {
       name: 'Luiza Almeida',
       avatar: 'https://sources.strategyanalytics.com.br/storage/users/default-avatar.png',
       email: 'luiza@gstrategyanalytics.com.br',
     },
-    origem: 'Santander',
-    destino: 'N/A',
+    origem: {
+      name: 'Santander',
+      backColor: '#EA1D25',
+      code: '033',
+      icon: 'img:icons/bancos/santander.png',
+    },
+    destino: { name: 'Carteira Disponível', backColor: '#ECECEC', icon: 'img:icons/wallet.svg' },
     transactionValue: 1200.0,
     status: 'Pendente',
     documentos: 'Sem anexo',
@@ -519,6 +658,13 @@ export default defineComponent({
       solicitado: { from: '', to: '' },
       limitado: { from: '', to: '' },
     })
+    const emptyDateRange = () => {
+      pickerSolitado.value = null
+      dateRange.value.solicitado = { from: '', to: '' }
+      dateRange.value.limitado = { from: '', to: '' }
+      dateRangeInput.value.solicitado = ''
+      dateRangeInput.value.limitado = ''
+    }
 
     // Função para converter data string para objeto Date
     const parseDate = (dateStr) => {
@@ -558,7 +704,7 @@ export default defineComponent({
 
         // Filtro por data limite
         if (dateRange.value.limitado.from && dateRange.value.limitado.to) {
-          const rowDate = parseDate(row.limitado_ate)
+          const rowDate = parseDate(row.limitado_ate.date)
           const fromDate = parseDate(dateRange.value.limitado.from)
           const toDate = parseDate(dateRange.value.limitado.to)
 
@@ -677,7 +823,19 @@ export default defineComponent({
         dateRangeInput.value[field] = ''
       }
     }
+    const pickerSolitado = ref(null)
+    const pickerLimite = ref(null)
+    const openDatePicker = () => {
+      pickerSolitado.value.show()
+    }
+
     return {
+      openDatePickerLimite: () => {
+        pickerLimite.value.show()
+      },
+      pickerSolitado,
+      openDatePicker,
+      pickerLimite,
       selected,
       columns,
       rows,
@@ -704,7 +862,7 @@ export default defineComponent({
       clearSolicitado,
       clearLimitado,
       getClasseStatus,
-
+      emptyDateRange,
       getSelectedString() {
         return selected.value.length === 0
           ? ''

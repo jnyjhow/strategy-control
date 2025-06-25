@@ -53,7 +53,7 @@ const componentsMaps = {
 const tabList = [
   {
     name: 'carteiras',
-    label: 'Todas a Carteiras',
+    label: 'Todas as Carteiras',
     icon: 'IconLayoutGrid',
     qTabelPanel: 'carteiras',
     componentPanel: 'WalletLayout',

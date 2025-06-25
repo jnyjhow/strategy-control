@@ -37,6 +37,24 @@ const filtersStrings = {
     const dateObj = new Date(date)
     return dateObj.toLocaleDateString('pt-BR', options)
   },
+
+  getBankObjct(bank) {
+    const banks = {
+      banco_do_brasil: { name: 'Banco do Brasil', code: '001', icon: 'img:icons/banco_brasil.png' },
+      nubank: { name: 'Nubank', code: '000', icon: 'img:icons/NubankLogo.svg' },
+      santander: { name: 'Santander', code: '033', icon: 'img:icons/santander_Brasil.svg' },
+      inter: { name: 'Inter', code: '002', icon: 'img:icons/santander_Brasil.svg' },
+      caixa_economicaa: {
+        name: 'Caixa Econômica Federal',
+        code: '104',
+        icon: 'img:icons/CaixaEconomica.svg',
+      },
+      bradesco: { name: 'Bradesco', code: '237', icon: 'img:icons/banner_bradesco.png' },
+      itau: { name: 'Itaú Unibanco', code: '341', icon: 'img:icons/CaixaEconomica.svg' },
+      // Adicione outros bancos conforme necessário
+    }
+    return banks[bank] || { name: 'Banco Desconhecido', code: bank }
+  },
 }
 
 export default filtersStrings
