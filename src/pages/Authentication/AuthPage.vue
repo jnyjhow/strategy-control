@@ -1,27 +1,26 @@
 <template>
-  <card-authentication-layout class="AuthPage">
+  <card-authentication-layout class="auth-page">
     <sign-in-layout v-if="!passwordReset" />
     <reset-passwor-layout v-else />
-    <span class="fixed-bottom-left text-teal-1">v{{ version }}</span>
   </card-authentication-layout>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useAuthStore } from 'src/stores/auth'
 import { storeToRefs } from 'pinia'
 import SignInLayout from 'src/layouts/Auth/SignInLayout.vue'
 import CardAuthenticationLayout from 'src/layouts/Auth/CardAuthenticationLayout.vue'
 import ResetPassworLayout from 'src/layouts/Auth/ResetPassworLayout.vue'
-const version = ref(process.env.VERSION_APP)
 const storeAuth = useAuthStore()
 const { passwordReset } = storeToRefs(storeAuth)
-
-// onMounted(() => {
-//   if (route.query.token) {
-//     step.value = "resetPassword";
-//   }
-// });
+const loaded = ref(false)
+onMounted(() => {
+  // Aguarda o próximo tick para garantir que o valor reativo esteja resolvido
+  requestAnimationFrame(() => {
+    loaded.value = true
+  })
+})
 </script>
 <style lang="sass">
 

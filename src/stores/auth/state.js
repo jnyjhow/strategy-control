@@ -1,14 +1,14 @@
 const state = () => {
   return {
-    authenticated: false,
-    selectedInitial: false,
+    authenticated: null,
+    selectedInitial: null,
     auth: {
-      conectetion: false,
+      conectetion: null,
       token: null,
-      validateToken: false,
+      validateToken: null,
     },
-    passwordReset: false,
-    finished: false,
+    passwordReset: null,
+    finished: null,
   }
 }
 

@@ -30,25 +30,28 @@
 <script setup>
 import CompletBrand from 'src/components/brand/CompletBrand.vue'
 import InitialAuthLayout from 'src/layouts/Auth/InitialAuthLayout.vue'
-// import { onMounted } from "vue";
-// import { useRoute } from "vue-router";
+import { onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 // import useAuth from "../composables/Helpers/useAuth.js";
 import { useAuthStore } from 'src/stores/auth'
 import { storeToRefs } from 'pinia'
 // import IconleftBack from "../components/footer/IconleftBack.vue";
 // const { stateAuth } = useAuth();
-// const route = useRoute();
+const route = useRoute()
 const storeLogin = useAuthStore()
 const { selectedInitial, finished } = storeToRefs(storeLogin)
-// onMounted(async () => {
-//   console.log(route.query);
-//   if (route.query.q) {
-//     // console.log(route.name);
-//     await stateAuth(route.query.q, route.name);
-//   } else if (route.query.recovery) {
-//     //console.log("Amigo estou aqui!!!");
-//   }
-// });
+onMounted(async () => {
+  if (route.name === 'Auth' || route.name === 'Register') {
+    storeLogin.selectedInitial = true
+  }
+  console.log(route.query)
+  if (route.query.q) {
+    console.log(route.name)
+    // await stateAuth(route.query.q, route.name);
+  } else if (route.query.recovery) {
+    console.log('Amigo estou aqui!!!')
+  }
+})
 </script>
 <style scoped lang="sass">
 .fade-enter-active,

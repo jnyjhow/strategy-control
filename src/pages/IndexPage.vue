@@ -2,6 +2,7 @@
   <q-page
     class="IndexPage q-ma-sm row justify-center align-center items-center bg-transparent q-gutter-lg"
     style="min-height: auto !important"
+    v-if="auth.token"
   >
     <div class="col-12 text-center text-h4 text-white text-bold">
       Boas Vindas, <span class="text-blue">João Silva</span>
@@ -57,10 +58,10 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { useAuthStore } from 'src/stores/auth'
-// import { storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia'
 
 const storeLogin = useAuthStore()
-// const { finished } = storeToRefs(storeLogin)
+const { auth } = storeToRefs(storeLogin)
 const setLandingPage = () => {
   storeLogin.setFineshed(true)
   setTimeout(() => {

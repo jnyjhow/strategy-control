@@ -1,6 +1,6 @@
 <template>
   <div class="">
-    <title-auth @actionEmit="selectedInitial = false" />
+    <title-auth @actionEmit="backRouter()" />
     <q-form class="q-gutter-sm row q-mt-md" @submit.prevent.stop="onSubmit">
       <label-form className="col-12" textLabel="E-mail ou CPF">
         <q-input
@@ -95,6 +95,10 @@ const passwordRef = ref(null)
 defineComponent({
   name: 'SignInLayout',
 })
+const backRouter = () => {
+  selectedInitial.value = false
+  router.push({ name: 'Selected' })
+}
 const isPwd = ref(true)
 const onSubmit = async () => {
   emailRef.value.validate()

@@ -54,8 +54,8 @@ const route = useRoute()
 onMounted(() => {
   if (route.query.token && route.query.email) {
     console.log('Token de validação enviado')
-    passwordReset.value = true
-    selectedInitial.value = true
+    passwordReset.value = null
+    selectedInitial.value = null
     storeLogin.setValidateToken(route.query.token)
   }
 })
