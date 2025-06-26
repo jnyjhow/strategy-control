@@ -26,33 +26,12 @@
           </div>
         </div>
       </div>
-      <label-form className="col" textLabel="Contrato Atrelado">
-        <q-select
-          outlined
-          v-model="filter.contrato"
-          :options="optionContract"
-          dense
-          reverse-fill-mask
-          unmasked-value
-        />
-      </label-form>
-      <label-form className="col" textLabel="Data da Distribuição padrão">
+      <label-form className="col" textLabel="Valor da Parcela da Dívida padrão">
         <q-input
           outlined
-          v-model="filter.fatorialMensal"
+          v-model="filter.fatorialDiaria"
           type="text"
-          placeholder="5° dia útil do mês seguinte"
-          dense
-          reverse-fill-mask
-          unmasked-value
-        />
-      </label-form>
-      <label-form className="col" textLabel="Percentual sobre Valor Base(%)">
-        <q-input
-          outlined
-          v-model="filter.fatorialAnual"
-          type="text"
-          placeholder="1%"
+          placeholder="2.500,00"
           dense
           reverse-fill-mask
           unmasked-value
@@ -67,13 +46,6 @@ import LabelForm from './LabelForm.vue'
 defineComponent({
   name: 'LogicDividendFilter',
 })
-const filter = ref({
-  contrato: '#231 Nome do contrato',
-})
+const filter = ref({})
 const editActive = ref(false)
-const optionContract = ref([
-  { label: '#231 Nome do contrato', value: 'contrato1' },
-  { label: 'Contrato 2', value: 'contrato2' },
-  { label: 'Contrato 3', value: 'contrato3' },
-])
 </script>

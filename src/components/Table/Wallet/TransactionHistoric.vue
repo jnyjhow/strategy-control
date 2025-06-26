@@ -3,7 +3,7 @@
     <q-table
       flat
       dense
-      class="my-sticky-header-column-table"
+      class="my-sticky-header-column-table transaction-historic-table"
       title="Histórico de Transações"
       :rows="paginatedRows"
       :columns="columns"

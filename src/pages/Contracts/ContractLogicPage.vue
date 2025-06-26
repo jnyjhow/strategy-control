@@ -25,11 +25,11 @@
           </q-tab-panel>
 
           <q-tab-panel name="aposentadoria">
-            <p>estou no segundo</p>
+            <logics-contracts-layout />
           </q-tab-panel>
 
           <q-tab-panel name="liquidez">
-            <p>estou no terceiro</p>
+            <logics-contracts-layout />
           </q-tab-panel>
         </q-tab-panels>
       </div>

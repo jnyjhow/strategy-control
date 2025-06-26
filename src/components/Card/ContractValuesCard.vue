@@ -6,7 +6,12 @@
       </div>
       <!-- <div class="text-h5 text-grey-8">{{ subTitle }}</div> -->
       <div class="text-h6" :class="iconValue && badgeText ? 'section-card' : ''">
-        <q-icon v-if="iconValue" :name="iconValue" class="text-h6" :color="iconColor" />
+        <q-icon
+          v-if="iconValue"
+          :name="iconValue"
+          class="text-h6"
+          :color="iconValue == 'arrow_downward' ? 'red' : 'green'"
+        />
         <p class="text-h7" v-if="value" style="margin: auto">{{ value }}</p>
         <q-chip
           outline

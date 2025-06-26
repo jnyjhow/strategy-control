@@ -56,6 +56,7 @@ const columns = [
     label: 'Label',
     field: 'label',
     align: 'left',
+    classes: () => 'border-right-3',
   },
   value0,
   ...values,
@@ -411,8 +412,7 @@ const updatePagination = (val) => {
     border-right: 1px solid #ececec
   td:first-child
     background-color: #fff
-    border-right: 1px solid #ececec
-
+    border-right: 3px solid #ececec
   th:first-child,
   td:first-child
     position: sticky

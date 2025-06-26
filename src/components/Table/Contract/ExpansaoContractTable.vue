@@ -586,6 +586,7 @@ const updatePagination = (val) => {
 }
 </script>
 <style lang="sass">
+
 .custom-btn-muted
   background-color: #bdb4b41c !important
   color: #000 !important
@@ -619,7 +620,7 @@ const updatePagination = (val) => {
     border-right: 1px solid #ececec
   td:first-child
     background-color: #fff
-    border-right: 1px solid #ececec
+    border-right: 0px solid #ececec
 
   th:first-child,
   td:first-child

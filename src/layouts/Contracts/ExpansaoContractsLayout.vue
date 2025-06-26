@@ -11,15 +11,34 @@
         :bgColor="item.bgColor"
       />
     </div>
-    <div class="col-12 q-pa-sm text-info text-weight-bold text-end" style="text-align: end">
-      ver historico
+    <div
+      class="col-12 q-pa-sm text-weight-bold text-end"
+      style="text-align: end; text-align: -webkit-right !important"
+    >
+      <span
+        class="text-info text-weight-bold text-end cursor-pointer"
+        style="text-align: end"
+        v-if="!viewHistory"
+        @click.prevent="viewHistory = true"
+      >
+        ver historico
+      </span>
+      <q-select
+        v-else
+        v-model="periodo"
+        :options="optionView"
+        outlined
+        dense
+        style="height: 35px; border-radius: 6px; min-width: 200px; max-width: 220px"
+        class="q-mb-sm"
+      />
     </div>
     <expansao-contract-table class="col-12" />
   </div>
 </template>
 
 <script setup>
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import ExpansaoContractTable from 'src/components/Table/Contract/ExpansaoContractTable.vue'
 import ContractDetailsCard from 'src/components/Card/ContractDetailsCard.vue'
 import ContractValuesCard from 'src/components/Card/ContractValuesCard.vue'
@@ -76,5 +95,13 @@ const details = [
     badgeColor: 'positive',
     bgColor: 'primary',
   },
+]
+const viewHistory = ref(false)
+const periodo = ref('all')
+const optionView = [
+  { label: 'Todo o período', value: 'all' },
+  { label: '30 dias', value: '30d' },
+  { label: '90 dias', value: '90d' },
+  { label: '1 ano', value: '1y' },
 ]
 </script>

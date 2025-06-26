@@ -3,13 +3,13 @@
     :grid="$q.screen.xs"
     flat
     bordered
-    :rows="rowLogic"
-    :columns="columnsLogic"
+    :rows="rowCpa"
+    :columns="columnsCpa"
     row-key="label"
     hide-header
     hide-pagination
     :pagination="pagination"
-    class="expansive-logic"
+    class="cpa-logic-table"
   >
     <template v-slot:body="props">
       <q-tr :props="props">
@@ -18,13 +18,17 @@
         </q-td>
         <q-td v-for="i in 11" :key="`value${i === 1 ? '' : i - 1}`" :props="props">
           <q-chip
-            v-if="props.row[`value${i === 1 ? '' : i - 1}`] === '300,00_'"
+            v-if="arrayChip.includes(props.row[`value${i === 1 ? '' : i - 1}`])"
             size="sm"
             square
             padding="lg"
             no-caps
             style="border: 1px solid #bdb4b4"
-            label="#A231 Nome do C..."
+            :class="{
+              'custom-btn-primary': props.row[`value${i === 1 ? '' : i - 1}`] === 'Pagamento feito',
+              'custom-btn-warning': props.row[`value${i === 1 ? '' : i - 1}`] === 'Perto de Vencer',
+            }"
+            :label="props.row[`value${i === 1 ? '' : i - 1}`]"
           />
           <span v-else>{{ props.row[`value${i === 1 ? '' : i - 1}`] }}</span>
         </q-td>
@@ -34,12 +38,19 @@
 </template>
 <script setup>
 import { defineComponent, ref } from 'vue'
-import useLogic from 'src/composables/Fakes/useLogic'
+import useCpa from 'src/composables/Fakes/useCpa'
 
-const { columnsLogic, rowLogic } = useLogic()
-
+const { columnsCpa, rowCpa } = useCpa()
+const arrayChip = [
+  'Pendente',
+  'Pagamento feito',
+  'Perto de Vencer',
+  '#A231 Nome do..',
+  'x9s0a1ka-boleto',
+  '12jasn--t213_comp',
+]
 defineComponent({
-  name: 'ExpansiveLogic',
+  name: 'CpaLogicTable',
 })
 const pagination = ref({
   page: 1,
@@ -47,4 +58,9 @@ const pagination = ref({
   rowsNumber: 0,
 })
 </script>
-<style lang="sass"></style>
+<style lang="sass">
+.ExpansiveLogic
+  tr:first-child
+    background-color: #f5f5f5
+    color: #000
+</style>

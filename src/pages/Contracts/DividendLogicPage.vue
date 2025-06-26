@@ -12,9 +12,9 @@
           inline-label
           align="left"
         >
-          <q-tab no-caps name="expansao" label="Expansão de Patrimônio" />
-          <q-tab no-caps name="aposentadoria" label="Fundo de Aposentadoria" />
-          <q-tab no-caps name="liquidez" label="Fundo de Liquidez Elevada" />
+          <q-tab no-caps name="expansao" label="[Nome do Contrato] (DRP)" />
+          <q-tab no-caps name="aposentadoria" label="[Nome do Contrato] (CPA)" />
+          <q-tab no-caps name="liquidez" label="[Nome do Contrato] (CPA)" />
         </q-tabs>
 
         <q-separator />
@@ -25,7 +25,7 @@
           </q-tab-panel>
 
           <q-tab-panel name="aposentadoria">
-            <p>estou no segundo</p>
+            <cpa-logic-layout />
           </q-tab-panel>
 
           <q-tab-panel name="liquidez">
@@ -39,6 +39,7 @@
 <script setup>
 import TitlePage from 'src/components/TitlePage.vue'
 import ExpansaoLogicLayout from 'src/layouts/DividendLogic/ExpansaoLogicLayout.vue'
+import CpaLogicLayout from 'src/layouts/DividendLogic/CpaLogicLayout.vue'
 import { ref } from 'vue'
 
 const tab = ref('expansao')

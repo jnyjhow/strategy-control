@@ -16,15 +16,34 @@
         :bgColor="item.bgColor"
       />
     </div>
-    <div class="col-12 q-pr-sm text-info text-weight-bold text-end" style="text-align: end">
-      ver historico
+    <div
+      class="col-12 q-pr-sm text-info text-weight-bold text-end"
+      style="text-align: end; text-align: -webkit-right !important"
+    >
+      <span
+        class="text-info text-weight-bold text-end cursor-pointer"
+        style="text-align: end"
+        v-if="!viewHistory"
+        @click.prevent="viewHistory = true"
+      >
+        ver historico
+      </span>
+      <q-select
+        v-else
+        v-model="storeLayout.periodo"
+        :options="optionView"
+        outlined
+        dense
+        style="height: 35px; border-radius: 6px; min-width: 200px"
+        class="q-mb-sm col-2"
+      />
     </div>
     <logic-contract-table class="col-12" />
   </div>
 </template>
 
 <script setup>
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { useLayoutStore } from 'src/stores/layout'
 import { storeToRefs } from 'pinia'
 import LogicContractTable from 'src/components/Table/Contract/LogiccContractTable.vue'
@@ -90,6 +109,14 @@ const linkItems = [
     linkTo: '',
     linkText: 'Ver parâmetros',
   },
+]
+
+const viewHistory = ref(false)
+const optionView = [
+  { label: 'Todo o período', value: 'all' },
+  { label: '30 dias', value: '30d' },
+  { label: '90 dias', value: '90d' },
+  { label: '1 ano', value: '1y' },
 ]
 </script>
 <style>

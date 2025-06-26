@@ -21,6 +21,7 @@ export default function useLogic() {
       label: 'Label',
       field: 'label',
       align: 'left',
+      classes: 'border-right-3 q-ml-md',
     },
     value0,
     ...values,
@@ -28,14 +29,7 @@ export default function useLogic() {
   const returnClass = (value) => {
     const arrayValue = [value]
     const logicaContrato = arrayValue.some((objeto) => objeto.label == 'Contrato atrelado')
-    const classText = [
-      '',
-      logicaContrato
-        ? 'q-btn-special q-btn-item non-selectable no-outline q-btn--outline q-btn--rectangle q-btn--actionable q-focusable q-hoverable q-btn--no-uppercase custom-btn-muted'
-        : '',
-    ]
-      .filter(Boolean)
-      .join(' ')
+    const classText = ['', logicaContrato ? '' : ''].filter(Boolean).join(' ')
     return classText
   }
 
@@ -57,18 +51,18 @@ export default function useLogic() {
     },
     {
       label: 'Contrato atrelado',
-      value: '300,00',
-      value1: '300,00',
-      value2: '300,00',
-      value3: '300,00',
-      value4: '300,00',
-      value5: '300,00',
-      value6: '300,00',
-      value7: '300,00',
-      value8: '300,00',
-      value9: '300,00',
-      value10: '300,00',
-      value11: '300,00',
+      value: '300,00_',
+      value1: '300,00_',
+      value2: '300,00_',
+      value3: '300,00_',
+      value4: '300,00_',
+      value5: '300,00_',
+      value6: '300,00_',
+      value7: '300,00_',
+      value8: '300,00_',
+      value9: '300,00_',
+      value10: '300,00_',
+      value11: '300,00_',
     },
     {
       label: 'Valor Base [R$]',

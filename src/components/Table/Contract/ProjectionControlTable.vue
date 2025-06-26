@@ -1,14 +1,17 @@
 <template>
   <div class="row justify-between">
     <div class="col-10">
-      <b>Atual <b v-if="projectionStatus == 1">vs Projeção</b></b>
-      <span class="q-ml-md bg-negative-light q-pa-xs tag-warning-light"> Atual </span>
-      <span
-        class="q-ml-md bg-positive-light q-pa-xs tag-positive-light"
-        v-if="projectionStatus == 1"
-      >
-        Projeção
-      </span>
+      <div class="" v-if="projection">
+        <b>Atual vs Projeção</b>
+
+        <span class="q-ml-md bg-negative-light q-pa-xs tag-warning-light"> Atual </span>
+        <span
+          class="q-ml-md bg-positive-light q-pa-xs tag-positive-light"
+          v-if="projectionStatus == 1"
+        >
+          Projeção
+        </span>
+      </div>
     </div>
     <div class="col text-end" style="text-align-last: end">
       <q-btn
@@ -21,7 +24,7 @@
         @click="storeLayout.setProjectionStatus(2)"
         v-if="projection"
       >
-        <IconLayoutList size="10" />
+        <IconLayoutList size="12" />
       </q-btn>
       <q-btn
         :outline="projectionStatus == 1"
@@ -33,7 +36,7 @@
         @click="storeLayout.setProjectionStatus(1)"
         v-if="projection"
       >
-        <IconLayoutColumns size="10" />
+        <IconLayoutColumns size="12" />
       </q-btn>
       <slot></slot>
     </div>

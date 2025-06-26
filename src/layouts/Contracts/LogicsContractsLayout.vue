@@ -18,9 +18,23 @@
     </div>
     <div class="col-12 q-pr-sm">
       <projection-control-table class="q-mt-md">
-        <span class="text-info text-weight-bold text-end" style="text-align: end">
+        <span
+          class="text-info text-weight-bold text-end cursor-pointer"
+          style="text-align: end"
+          v-if="!viewHistory"
+          @click.prevent="viewHistory = true"
+        >
           ver historico
         </span>
+        <q-select
+          v-else
+          v-model="periodo"
+          :options="optionView"
+          outlined
+          dense
+          style="height: 35px; border-radius: 6px"
+          class="q-mb-sm"
+        />
       </projection-control-table>
     </div>
     <logic-contract-table class="col-12" v-if="!projection" />
@@ -29,7 +43,7 @@
 </template>
 
 <script setup>
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { useLayoutStore } from 'src/stores/layout'
 import { storeToRefs } from 'pinia'
 import LogicContractTable from 'src/components/Table/Contract/LogiccContractTable.vue'
@@ -43,6 +57,7 @@ defineComponent({
 })
 const storeLayout = useLayoutStore()
 const { paramentroLogic, projection } = storeToRefs(storeLayout)
+const viewHistory = ref(false)
 const details = [
   {
     title: 'Valorização do ativo em 7 dias',
@@ -97,6 +112,13 @@ const linkItems = [
     linkTo: '',
     linkText: 'Ver parâmetros',
   },
+]
+const periodo = ref('Todo o período')
+const optionView = [
+  { label: 'Todo o período', value: 'all' },
+  { label: '30 dias', value: '30d' },
+  { label: '90 dias', value: '90d' },
+  { label: '1 ano', value: '1y' },
 ]
 </script>
 <style>

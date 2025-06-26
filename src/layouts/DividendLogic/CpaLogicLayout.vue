@@ -1,8 +1,8 @@
 <template>
-  <div class="dividendLogicPage row items-start q-gutter-sm text-end justify-end">
+  <div class="cpa-logic-layout row items-start q-gutter-sm text-end justify-end">
     <contract-details-card class="col-12" :item="linkItems">
       <transition name="fade" mode="out-in">
-        <logic-dividend-filter v-if="paramentroLogic" />
+        <cpa-logic-filter v-if="paramentroLogic" />
       </transition>
     </contract-details-card>
     <div class="q-pa-sm text-info text-weight-bold" style="text-align: end">
@@ -25,7 +25,7 @@
       />
     </div>
     <div class="col-12">
-      <expansive-logic />
+      <cpa-logic-table />
     </div>
   </div>
 </template>
@@ -35,10 +35,10 @@ import { defineComponent, ref } from 'vue'
 import { useLayoutStore } from 'src/stores/layout'
 import { storeToRefs } from 'pinia'
 import ContractDetailsCard from 'src/components/Card/ContractDetailsCard.vue'
-import ExpansiveLogic from 'src/components/Table/DividendLogic/ExpansiveLogicTable.vue'
-import LogicDividendFilter from 'src/components/Form/LogicDividendFilter.vue'
+import CpaLogicFilter from 'src/components/Form/CpaLogicFilter.vue'
+import CpaLogicTable from 'src/components/Table/DividendLogic/CpaLogicTable.vue'
 defineComponent({
-  name: 'ExpansaoLogicLayout',
+  name: 'CpaLogicLayout',
 })
 const storeLayout = useLayoutStore()
 const { paramentroLogic } = storeToRefs(storeLayout)

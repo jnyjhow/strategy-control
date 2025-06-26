@@ -8,7 +8,26 @@
       <div class="col-12">
         <div class="row justify-between">
           <p class="text-h7">Parâmetros de Lógica</p>
-          <q-btn flat size="sm" color="primary" label="Salvar" unelevated icon="checked" />
+          <q-btn
+            flat
+            color="primary"
+            unelevated
+            no-caps
+            v-if="!editActive"
+            @click.prevent="editActive = true"
+          >
+            <IconEdit size="16" />
+            <span class="q-ml-sm">Editar</span>
+          </q-btn>
+          <div class="" v-else>
+            <q-btn flat color="primary" unelevated no-caps>
+              <IconCheck size="16" />
+              <span class="q-ml-sm">Salvar</span>
+            </q-btn>
+            <q-btn unelevated no-caps color="grey" flat @click.prevent="editActive = false">
+              <span class="q-ml-sm">Cancelar</span>
+            </q-btn>
+          </div>
         </div>
       </div>
       <label-form className="col" textLabel="Fatorial de valorização diária">
@@ -99,5 +118,7 @@ import LabelForm from './LabelForm.vue'
 defineComponent({
   name: 'LogicParametersFilter',
 })
+const editActive = ref(false)
+
 const filter = ref({})
 </script>
