@@ -24,7 +24,7 @@
             <div class="col-xs-12 col-sm-4 col-md-2">
               <div class="input-personal" @click="openDatePicker">
                 <span
-                  class="text-input"
+                  class="text-input text-muted"
                   :style="!dateRange.solicitado.to ? 'font-size:1.2em' : 'font-size:0.6em'"
                 >
                   Data de solicitação
@@ -48,7 +48,7 @@
                 </q-btn>
                 <q-badge
                   v-else
-                  class="custom-btn-primary"
+                  class="custom-btn-info"
                   style="font-size: 12px !important; border: 1px solid var(--Info-200, #b9e1ff)"
                 >
                   {{ dateRange.solicitado.from }} - {{ dateRange.solicitado.to }}
@@ -61,7 +61,7 @@
             <div class="col-xs-12 col-sm-4 col-md-2">
               <div class="input-personal" @click.prevent="openDatePickerLimite">
                 <span
-                  class="text-input"
+                  class="text-input text-muted"
                   :style="!dateRange.limitado.to ? 'font-size:1.2em' : 'font-size:0.6em'"
                 >
                   Data Limite
@@ -85,7 +85,7 @@
                 </q-btn>
                 <q-badge
                   v-else
-                  class="custom-btn-primary"
+                  class="custom-btn-info"
                   style="font-size: 12px !important; border: 1px solid var(--Info-200, #b9e1ff)"
                 >
                   {{ dateRange.limitado.from }} - {{ dateRange.limitado.to }}
@@ -93,7 +93,6 @@
                 </q-badge>
               </div>
             </div>
-
             <!-- Filtro por tipo -->
             <div class="col-xs-12 col-sm-4 col-md-2">
               <q-select
@@ -101,12 +100,63 @@
                 :options="tiposOptions"
                 outlined
                 dense
-                multiple
                 input-style="max-height: 50px !important;"
                 use-chips
                 dropdown-icon="keyboard_arrow_down"
-              />
+                v-bind:hide-dropdown-icon="filters.tipo != null"
+              >
+                <template v-slot:selected>
+                  <span class="text-muted" style="font-size: 14px">Tipo de movimentação </span>
+                  <q-badge
+                    v-if="filters.tipo"
+                    class="custom-btn-info"
+                    style="font-size: 12px !important; border: 1px solid var(--Info-200, #b9e1ff)"
+                  >
+                    {{ filters.tipo }}
+                    <IconX
+                      size="14"
+                      class="q-ml-xs cursor-pointer"
+                      @click.prevent="filters.tipo = null"
+                    />
+                  </q-badge>
+                </template>
+              </q-select>
               <!-- label="Tipo de Movimentação" -->
+            </div>
+            <!-- Filtro por Nome -->
+            <div class="col-xs-12 col-sm-4 col-md-3">
+              <q-select
+                v-model="filters.clienteName"
+                :options="optionsClienteName"
+                outlined
+                dense
+                input-style="max-height: 50px !important;"
+                use-chips
+                dropdown-icon="keyboard_arrow_down"
+                aria-placeholder="Selecione teste"
+                :display-value="`Company: ${filters.clienteName ? filters.clienteName.label : '*none*'}`"
+                v-bind:hide-dropdown-icon="filters.clienteName != null"
+              >
+                <template v-slot:selected>
+                  <span class="text-muted">Cliente </span>
+                  <q-badge
+                    v-if="filters.clienteName"
+                    class="custom-btn-info"
+                    style="font-size: 12px !important; border: 1px solid var(--Info-200, #b9e1ff)"
+                  >
+                    {{ filters.clienteName.label }}
+                    <span v-if="dateRange.limitado.from && dateRange.limitado.to">
+                      - {{ dateRange.limitado.from }} - {{ dateRange.limitado.to }}</span
+                    >
+                    <IconX
+                      size="14"
+                      class="q-ml-xs cursor-pointer"
+                      @click.prevent="filters.clienteName = null"
+                    />
+                  </q-badge>
+                </template>
+              </q-select>
+              <!-- :label="filters.clienteName ? '' : 'Pesquisar por cliente'" -->
             </div>
 
             <!-- Filtro por status -->
@@ -114,13 +164,28 @@
               <q-select
                 v-model="filters.status"
                 :options="statusOptions"
-                label="Status"
                 outlined
                 dense
-                multiple
                 use-chips
                 dropdown-icon="keyboard_arrow_down"
-              />
+                v-bind:hide-dropdown-icon="filters.status != null"
+              >
+                <template v-slot:selected>
+                  <span class="text-muted" style="font-size: 14px">Status </span>
+                  <q-badge
+                    v-if="filters.status"
+                    class="custom-btn-info"
+                    style="font-size: 12px !important; border: 1px solid var(--Info-200, #b9e1ff)"
+                  >
+                    {{ filters.status }}
+                    <IconX
+                      size="14"
+                      class="q-ml-xs cursor-pointer"
+                      @click.prevent="filters.status = null"
+                    />
+                  </q-badge>
+                </template>
+              </q-select>
             </div>
 
             <!-- <div class="col-xs-12 col-sm-4 col-md-2">
@@ -170,7 +235,7 @@
           /> -->
         </q-td>
       </template>
-      <!-- Coluna de Origem -->]
+      <!-- Coluna de Origem -->
       <template v-slot:body-cell-origem="props">
         <q-td :props="props">
           <q-chip color="transparent">
@@ -186,7 +251,7 @@
           </q-chip>
         </q-td>
       </template>
-      <!-- Coluna de Origem -->]
+      <!-- Coluna de Origem -->
       <template v-slot:body-cell-limitado_ate="props">
         <q-td :props="props">
           <span class="q-ml-sm" :style="`color:${props.row.limitado_ate.color}`">{{
@@ -631,6 +696,12 @@ const rows = [
     documentos: 'Sem anexo',
   },
 ]
+
+const optionsClienteName = rows.map((row) => ({
+  label: row.cliente.name,
+  value: row.cliente.name,
+}))
+
 export default defineComponent({
   name: 'TransactionHistoric',
   setup() {
@@ -650,8 +721,9 @@ export default defineComponent({
 
     // Modelos para filtros
     const filters = ref({
-      tipo: [],
-      status: [],
+      tipo: null,
+      status: null,
+      clienteName: null,
     })
 
     const dateRange = ref({
@@ -714,19 +786,22 @@ export default defineComponent({
         }
 
         // Filtro por tipo
-        if (
-          filters.value.tipo.length > 0 &&
-          !filters.value.tipo.some((tipo) => row.tipo.includes(tipo))
-        ) {
+        if (filters.value.tipo && !row.tipo.includes(filters.value.tipo)) {
           return false
         }
 
         // Filtro por status
-        if (
-          filters.value.status.length > 0 &&
-          !filters.value.status.some((status) => row.status.includes(status))
-        ) {
+        if (filters.value.status && !row.status.includes(filters.value.status)) {
           return false
+        }
+
+        // Filtro por nome do cliente
+        if (filters.value.clienteName) {
+          const clienteName = filters.value.clienteName.value.toLowerCase()
+          console.log(`Filtrando por cliente: ${clienteName}`)
+          if (!row.cliente.name.toLowerCase().includes(clienteName)) {
+            return false
+          }
         }
 
         return true
@@ -828,6 +903,12 @@ export default defineComponent({
     const openDatePicker = () => {
       pickerSolitado.value.show()
     }
+    // const filterFn =  (val, update,)  => {
+    //   update(() => {
+    //     const needle = val.toLowerCase()
+    //     optionsClienteName.label = rows.cliente.name.filter(v => v.toLowerCase().indexOf(needle) > -1)
+    //   })
+    // }
 
     return {
       openDatePickerLimite: () => {
@@ -863,6 +944,7 @@ export default defineComponent({
       clearLimitado,
       getClasseStatus,
       emptyDateRange,
+      optionsClienteName,
       getSelectedString() {
         return selected.value.length === 0
           ? ''

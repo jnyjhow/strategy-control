@@ -20,76 +20,77 @@
       <template v-slot:top>
         <div class="col-12 row q-mb-md">
           <div class="col-12 row q-col-gutter-sm">
-            <!-- Filtro por data de solicitação -->
             <div class="col-xs-12 col-sm-4 col-md-2">
-              <q-input
-                v-model="dateRangeInput.solicitado"
-                label="Data de Solicitação"
-                outlined
-                dense
-                readonly
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-date v-model="dateRange.solicitado" range mask="DD/MM/YYYY">
-                        <div class="row items-center justify-end q-gutter-sm">
-                          <q-btn
-                            label="Cancelar"
-                            color="primary"
-                            flat
-                            v-close-popup
-                            @click="clearSolicitado"
-                          />
-                          <q-btn
-                            label="OK"
-                            color="primary"
-                            flat
-                            @click="updateDateInput('solicitado')"
-                            v-close-popup
-                          />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
+              <div class="input-personal" @click="openDatePicker">
+                <span
+                  class="text-input text-muted"
+                  :style="!dateRange.solicitado.to ? 'font-size:1.2em' : 'font-size:0.6em'"
+                >
+                  Data de solicitação
+                </span>
+
+                <q-btn flat v-if="!dateRange.solicitado.to">
+                  <IconCalendarEventFilled size="16" />
+                  <q-popup-proxy
+                    cover
+                    transition-show="scale"
+                    transition-hide="scale"
+                    ref="pickerSolitado"
+                  >
+                    <q-date v-model="dateRange.solicitado" range mask="DD/MM/YYYY">
+                      <div class="row items-center justify-end q-gutter-sm">
+                        <q-btn label="Cancel" color="primary" flat v-close-popup />
+                        <q-btn label="OK" color="primary" flat v-close-popup />
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </q-btn>
+                <q-badge
+                  v-else
+                  class="custom-btn-info"
+                  style="font-size: 12px !important; border: 1px solid var(--Info-200, #b9e1ff)"
+                >
+                  {{ dateRange.solicitado.from }} - {{ dateRange.solicitado.to }}
+                  <IconX size="14" class="q-ml-xs cursor-pointer" @click.prevent="emptyDateRange" />
+                </q-badge>
+              </div>
             </div>
 
             <!-- Filtro por data limite -->
             <div class="col-xs-12 col-sm-4 col-md-2">
-              <q-input
-                v-model="dateRangeInput.limitado"
-                label="Data Limite"
-                outlined
-                dense
-                readonly
-              >
-                <template v-slot:append>
-                  <q-icon name="event" class="cursor-pointer">
-                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                      <q-date v-model="dateRange.limitado" range mask="DD/MM/YYYY">
-                        <div class="row items-center justify-end q-gutter-sm">
-                          <q-btn
-                            label="Cancelar"
-                            color="primary"
-                            flat
-                            v-close-popup
-                            @click="clearLimitado"
-                          />
-                          <q-btn
-                            label="OK"
-                            color="primary"
-                            flat
-                            @click="updateDateInput('limitado')"
-                            v-close-popup
-                          />
-                        </div>
-                      </q-date>
-                    </q-popup-proxy>
-                  </q-icon>
-                </template>
-              </q-input>
+              <div class="input-personal" @click.prevent="openDatePickerLimite">
+                <span
+                  class="text-input text-muted"
+                  :style="!dateRange.limitado.to ? 'font-size:1.2em' : 'font-size:0.6em'"
+                >
+                  Data Limite
+                </span>
+
+                <q-btn flat v-if="!dateRange.limitado.to">
+                  <IconCalendarEventFilled size="16" />
+                  <q-popup-proxy
+                    cover
+                    transition-show="scale"
+                    transition-hide="scale"
+                    ref="pickerLimite"
+                  >
+                    <q-date v-model="dateRange.limitado" range mask="DD/MM/YYYY">
+                      <div class="row items-center justify-end q-gutter-sm">
+                        <q-btn label="Cancel" color="primary" flat v-close-popup />
+                        <q-btn label="OK" color="primary" flat v-close-popup />
+                      </div>
+                    </q-date>
+                  </q-popup-proxy>
+                </q-btn>
+                <q-badge
+                  v-else
+                  class="custom-btn-info"
+                  style="font-size: 12px !important; border: 1px solid var(--Info-200, #b9e1ff)"
+                >
+                  {{ dateRange.limitado.from }} - {{ dateRange.limitado.to }}
+                  <IconX size="14" class="q-ml-xs cursor-pointer" @click.prevent="emptyDateRange" />
+                </q-badge>
+              </div>
             </div>
 
             <!-- Filtro por tipo -->
@@ -97,12 +98,65 @@
               <q-select
                 v-model="filters.tipo"
                 :options="tiposOptions"
-                label="Tipo de Movimentação"
                 outlined
                 dense
-                multiple
+                input-style="max-height: 50px !important;"
                 use-chips
-              />
+                dropdown-icon="keyboard_arrow_down"
+                v-bind:hide-dropdown-icon="filters.tipo != null"
+              >
+                <template v-slot:selected>
+                  <span class="text-muted" style="font-size: 14px">Tipo de movimentação </span>
+                  <q-badge
+                    v-if="filters.tipo"
+                    class="custom-btn-info"
+                    style="font-size: 12px !important; border: 1px solid var(--Info-200, #b9e1ff)"
+                  >
+                    {{ filters.tipo }}
+                    <IconX
+                      size="14"
+                      class="q-ml-xs cursor-pointer"
+                      @click.prevent="filters.tipo = null"
+                    />
+                  </q-badge>
+                </template>
+              </q-select>
+              <!-- label="Tipo de Movimentação" -->
+            </div>
+            <!-- Filtro por Nome -->
+            <div class="col-xs-12 col-sm-4 col-md-3">
+              <q-select
+                v-model="filters.clienteName"
+                :options="optionsClienteName"
+                outlined
+                dense
+                input-style="max-height: 50px !important;"
+                use-chips
+                dropdown-icon="keyboard_arrow_down"
+                aria-placeholder="Selecione teste"
+                :display-value="`Company: ${filters.clienteName ? filters.clienteName.label : '*none*'}`"
+                v-bind:hide-dropdown-icon="filters.clienteName != null"
+              >
+                <template v-slot:selected>
+                  <span class="text-muted">Cliente </span>
+                  <q-badge
+                    v-if="filters.clienteName"
+                    class="custom-btn-info"
+                    style="font-size: 12px !important; border: 1px solid var(--Info-200, #b9e1ff)"
+                  >
+                    {{ filters.clienteName.label }}
+                    <span v-if="dateRange.limitado.from && dateRange.limitado.to">
+                      - {{ dateRange.limitado.from }} - {{ dateRange.limitado.to }}</span
+                    >
+                    <IconX
+                      size="14"
+                      class="q-ml-xs cursor-pointer"
+                      @click.prevent="filters.clienteName = null"
+                    />
+                  </q-badge>
+                </template>
+              </q-select>
+              <!-- :label="filters.clienteName ? '' : 'Pesquisar por cliente'" -->
             </div>
 
             <!-- Filtro por status -->
@@ -110,16 +164,31 @@
               <q-select
                 v-model="filters.status"
                 :options="statusOptions"
-                label="Status"
                 outlined
                 dense
-                multiple
                 use-chips
-              />
+                dropdown-icon="keyboard_arrow_down"
+                v-bind:hide-dropdown-icon="filters.status != null"
+              >
+                <template v-slot:selected>
+                  <span class="text-muted" style="font-size: 14px">Status </span>
+                  <q-badge
+                    v-if="filters.status"
+                    class="custom-btn-info"
+                    style="font-size: 12px !important; border: 1px solid var(--Info-200, #b9e1ff)"
+                  >
+                    {{ filters.status }}
+                    <IconX
+                      size="14"
+                      class="q-ml-xs cursor-pointer"
+                      @click.prevent="filters.status = null"
+                    />
+                  </q-badge>
+                </template>
+              </q-select>
             </div>
             <div class="col self-end items-end" style="text-align-last: end">
-              <q-btn flat color="grey" no-caps label="Limpar Filtros" @click="clearFilters" />
-              <!-- class="float-right" -->
+              <span class="text-muted cursor-pointer" @click="clearFilters"> Limpar Filtros</span>
             </div>
           </div>
         </div>
@@ -170,7 +239,19 @@
           />
         </q-td>
       </template>
-
+      <!-- Coluna de Tipo -->
+      <template v-slot:body-cell-tipo="props">
+        <q-td :props="props">
+          <q-btn
+            size="xs"
+            outline
+            padding="xs"
+            class="custom-btn-muted"
+            :label="props.row.tipo"
+            no-caps
+          />
+        </q-td>
+      </template>
       <!-- Coluna de documentos personalizada -->
       <template v-slot:body-cell-documentos="props">
         <q-td :props="props">
@@ -241,14 +322,27 @@ export default defineComponent({
 
     // Modelos para filtros
     const filters = ref({
-      tipo: [],
-      status: [],
+      tipo: null,
+      status: null,
+      clienteName: null,
     })
+    const optionsClienteName = rowsMovement.map((row) => ({
+      label: row.cliente.name,
+      value: row.cliente.name,
+    }))
 
     const dateRange = ref({
       solicitado: { from: '', to: '' },
       limitado: { from: '', to: '' },
     })
+    const emptyDateRange = () => {
+      pickerSolitado.value = null
+      dateRange.value.solicitado = { from: '', to: '' }
+      dateRange.value.limitado = { from: '', to: '' }
+      dateRangeInput.value.solicitado = ''
+      dateRangeInput.value.limitado = ''
+    }
+    // Funç
 
     // Função para converter data string para objeto Date
     const parseDate = (dateStr) => {
@@ -298,19 +392,22 @@ export default defineComponent({
         }
 
         // Filtro por tipo
-        if (
-          filters.value.tipo.length > 0 &&
-          !filters.value.tipo.some((tipo) => row.tipo.includes(tipo))
-        ) {
+        if (filters.value.tipo && !row.tipo.includes(filters.value.tipo)) {
           return false
         }
 
         // Filtro por status
-        if (
-          filters.value.status.length > 0 &&
-          !filters.value.status.some((status) => row.status.includes(status))
-        ) {
+        if (filters.value.status && !row.status.includes(filters.value.status)) {
           return false
+        }
+
+        // Filtro por nome do cliente
+        if (filters.value.clienteName) {
+          const clienteName = filters.value.clienteName.value.toLowerCase()
+          console.log(`Filtrando por cliente: ${clienteName}`)
+          if (!row.cliente.name.toLowerCase().includes(clienteName)) {
+            return false
+          }
         }
 
         return true
@@ -346,8 +443,9 @@ export default defineComponent({
     const clearFilters = () => {
       filter.value = ''
       filters.value = {
-        tipo: [],
-        status: [],
+        tipo: null,
+        status: null,
+        clienteName: null,
       }
       dateRange.value = {
         solicitado: { from: '', to: '' },
@@ -407,7 +505,18 @@ export default defineComponent({
         dateRangeInput.value[field] = ''
       }
     }
+    const pickerSolitado = ref(null)
+    const pickerLimite = ref(null)
+    const openDatePicker = () => {
+      pickerSolitado.value.show()
+    }
     return {
+      openDatePickerLimite: () => {
+        pickerLimite.value.show()
+      },
+      pickerSolitado,
+      openDatePicker,
+      pickerLimite,
       selected,
       columnsMovement,
       rowsMovement,
@@ -434,7 +543,8 @@ export default defineComponent({
       clearSolicitado,
       clearLimitado,
       getClasseStatus,
-
+      optionsClienteName,
+      emptyDateRange,
       getSelectedString() {
         return selected.value.length === 0
           ? ''
