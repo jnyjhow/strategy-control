@@ -64,10 +64,11 @@ const sendPasswordAction = ref(false)
 const storeAuth = useAuthStore()
 const { auth } = storeToRefs(storeAuth)
 const actionSelected = (type) => {
-  activeSection.value = type
   if (!auth.value.password) {
     sendPasswordAction.value = true
+    return
   }
+  activeSection.value = type
 
   console.log(`Ação selecionada: ${type}`)
 }
