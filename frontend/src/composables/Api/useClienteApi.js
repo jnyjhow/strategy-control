@@ -89,19 +89,28 @@ export default function useClienteApi() {
 
   async function createClient(data) {
     const payload = data
-  const res = await api.post('/clients', payload)
+    try {
+      console.log('[useClienteApi] createClient payload', payload)
+    } catch (e) {}
+    const res = await api.post('/clients', payload)
     // refresh list and return created
     await refresh()
     return res.data
   }
 
   async function updateClient(id, data) {
+  try {
+    console.log('[useClienteApi] updateClient id=', id, 'data=', data)
+  } catch (e) {}
   const res = await api.put(`/clients/${id}`, data)
     await refresh()
     return res.data
   }
 
   async function deleteClient(id) {
+  try {
+    console.log('[useClienteApi] deleteClient id=', id)
+  } catch (e) {}
   await api.delete(`/clients/${id}`)
     await refresh()
     return true
