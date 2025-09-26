@@ -59,18 +59,18 @@
             <q-item-section avatar>
               <q-avatar size="32px" class="q-mr-sm">
                 <q-img
-                  :src="props.row.cliente.avatar"
-                  :alt="props.row.cliente.name"
-                  :title="props.row.cliente.name"
+                  :src="props.row?.cliente?.avatar || ''"
+                  :alt="props.row?.cliente?.name || ''"
+                  :title="props.row?.cliente?.name || ''"
                 />
               </q-avatar>
             </q-item-section>
             <q-item-section align="left">
               <q-item-label>
-                {{ props.row.cliente.name }}
+                {{ props.row?.cliente?.name || '-' }}
               </q-item-label>
               <q-item-label caption>
-                {{ props.row.cliente.email }}
+                {{ props.row?.cliente?.email || '-' }}
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -94,8 +94,8 @@
       <template v-slot:body-cell-dividendo="props">
         <q-td :props="props">
           <p>
-            {{ $filtersString.formatPartternCurrency(props.row.dividendo.total) }} <br />
-            <span class="text-muted text-small">Data: {{ props.row.dividendo.data }}</span>
+            {{ $filtersString.formatPartternCurrency(props.row?.dividendo?.total || 0) }} <br />
+            <span class="text-muted text-small">Data: {{ props.row?.dividendo?.data || '-' }}</span>
           </p>
         </q-td>
       </template>
@@ -103,8 +103,8 @@
       <template v-slot:body-cell-contrato="props">
         <q-td :props="props">
           <p>
-            {{ $filtersString.formatPartternCurrency(props.row.contrato.total) }} <br />
-            <span class="text-muted text-small">{{ props.row.contrato.quantity }}</span>
+            {{ $filtersString.formatPartternCurrency(props.row?.contrato?.total || 0) }} <br />
+            <span class="text-muted text-small">{{ props.row?.contrato?.quantity || '-' }}</span>
           </p>
         </q-td>
       </template>
@@ -296,12 +296,12 @@ const filter = ref('')
 // Filtra as linhas com base nos filtros aplicados
 const filteredRows = computed(() => {
   return rowsClient.filter((row) => {
+    // ensure row has cliente object before accessing
+    if (!row || !row.cliente) return false
     // Filtro de pesquisa geral
     if (
       filter.value &&
-      !Object.values(row.cliente).some((val) =>
-        String(val).toLowerCase().includes(filter.value.toLowerCase()),
-      )
+      !Object.values(row.cliente || {}).some((val) => String(val).toLowerCase().includes(filter.value.toLowerCase()))
     ) {
       return false
     }
@@ -333,12 +333,14 @@ const lastItemIndex = computed(() => {
 })
 
 function wrapCsvValue(val, formatFn, row) {
-  console.log('wrapCsvValue', val, formatFn, row)
-  let formatted = formatFn !== void 0 ? formatFn(val, row) : val
-
-  formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
-
-  formatted = formatted.split('"').join('""')
+  let formatted = ''
+  try {
+    formatted = formatFn !== void 0 ? formatFn(val, row) : val
+    formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
+    formatted = formatted.split('"').join('""')
+  } catch (e) {
+    formatted = ''
+  }
   /**
    * Excel accepts \n and \r in strings, but some other CSV parsers do not
    * Uncomment the next two lines to escape new lines
