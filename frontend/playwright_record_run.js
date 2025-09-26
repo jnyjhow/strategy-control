@@ -554,15 +554,26 @@ async function main() {
           } catch (e) {}
           await page.screenshot({ path: path.join(outDir, 'dialog-filled.png') }).catch(()=>{})
         }
-        // click Salvar if present
-        const save = page.locator('button:has-text("Salvar")').first()
-        if (await save.count() > 0) {
-          await save.click().catch(()=>{})
-          console.log('clicked Salvar')
-          await page.waitForTimeout(1000)
+        // click Salvar scoped to the dialog if present (avoid clicking unrelated buttons)
+        const saveScoped = dialog.locator('button:has-text("Salvar")').first()
+        if (await saveScoped.count() > 0) {
+          await saveScoped.scrollIntoViewIfNeeded()
+          await saveScoped.click().catch((e)=>{console.log('save click error', e && e.message)})
+          console.log('clicked Salvar (scoped)')
+          // wait a bit longer for Vue to process and for adapter/network calls to fire
+          await page.waitForTimeout(1500)
           await page.screenshot({ path: path.join(outDir, 'after-save.png') }).catch(()=>{})
         } else {
-          console.log('no Salvar button found in dialog')
+          // fallback: try any button text match on page
+          const saveFallback = page.locator('button:has-text("Salvar")').first()
+          if (await saveFallback.count() > 0) {
+            await saveFallback.click().catch(()=>{})
+            console.log('clicked Salvar (fallback)')
+            await page.waitForTimeout(1500)
+            await page.screenshot({ path: path.join(outDir, 'after-save.png') }).catch(()=>{})
+          } else {
+            console.log('no Salvar button found in dialog or page')
+          }
         }
       } else {
         console.log('dialog not visible after click')
