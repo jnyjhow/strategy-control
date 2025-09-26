@@ -1,0 +1,23 @@
+https://github.com/WillTbn/strategy-control
+
+nvm install 20
+
+nvm use v20.19.0
+
+node --version
+
+1. node instalado na maqina (npm) v20
+2. quasar framework instalar o quasar CLI https://quasar.dev/start/quasar-cli
+3. vá na pasta do projeto e instalar as dependências "npm install"
+4. rode o projeto com "quasar dev"
+
+https://mail.hostinger.com/
+jhonatanyamane@strategyanalytics.com.br
+Jhonatan132%
+
+
+https://www.figma.com/design/jIgMhNRIStlkUcrGni2GIv/S.A---LP-e-Painel-de-Dados---Akaishi-Design-Studio?node-id=404-83262&p=f&t=dX8O0qev4jlBgmiv-0
+
+
+https://www.figma.com/design/BmG6bcIpu2ZO1MGpXxWAhk/S.A---%C3%81rea-do-Cliente---Akaishi-Design-Studio?node-id=0-1&p=f&t=jXpzKGuXcayKZqTf-0
+
