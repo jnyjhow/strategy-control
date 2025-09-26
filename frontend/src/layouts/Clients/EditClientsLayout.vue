@@ -183,11 +183,14 @@ const $q = useQuasar()
 const saveClient = async () => {
   const payload = clientEdit.value || {}
   try {
+    console.log('saveClient payload', JSON.stringify(payload))
     if (payload.id) {
-      await updateClient(payload.id, payload)
+      const res = await updateClient(payload.id, payload)
+      console.log('updateClient result', res)
       $q.notify({ message: 'Cliente atualizado com sucesso', color: 'positive' })
     } else {
-      await createClient(payload)
+      const created = await createClient(payload)
+      console.log('createClient result', created)
       $q.notify({ message: 'Cliente criado com sucesso', color: 'positive' })
     }
     layoutStore.setClientDialog(false)
