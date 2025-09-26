@@ -22,6 +22,10 @@ if (useApi) {
     apiAdapterLoaded = null
   }
 }
+// Debug: expose a console log so Playwright can detect which adapter was chosen
+try {
+  console.log('[useCliente] useApi=', useApi, 'apiAdapterLoaded=', !!apiAdapterLoaded)
+} catch (e) {}
 
 export default function useCliente() {
   const storeLayout = useLayoutStore()
