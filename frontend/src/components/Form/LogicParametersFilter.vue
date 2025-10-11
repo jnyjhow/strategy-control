@@ -35,7 +35,7 @@
           outlined
           v-model="filter.fatorialDiaria"
           type="text"
-          placeholder="value"
+          placeholder=""
           dense
           reverse-fill-mask
           unmasked-value
@@ -46,7 +46,7 @@
           outlined
           v-model="filter.fatorialMensal"
           type="text"
-          placeholder="value"
+          placeholder=""
           dense
           reverse-fill-mask
           unmasked-value
@@ -57,7 +57,7 @@
           outlined
           v-model="filter.fatorialAnual"
           type="text"
-          placeholder="value"
+          placeholder=""
           dense
           reverse-fill-mask
           unmasked-value
@@ -70,7 +70,7 @@
           outlined
           v-model="filter.fatorialDiaria"
           type="text"
-          placeholder="value"
+          placeholder=""
           dense
           reverse-fill-mask
           unmasked-value
@@ -81,7 +81,7 @@
           outlined
           v-model="filter.fatorialMensal"
           type="text"
-          placeholder="value"
+          placeholder=""
           dense
           reverse-fill-mask
           unmasked-value
@@ -92,7 +92,7 @@
           outlined
           v-model="filter.fatorialAnual"
           type="text"
-          placeholder="value"
+          placeholder=""
           dense
           reverse-fill-mask
           unmasked-value
@@ -103,7 +103,7 @@
           outlined
           v-model="filter.fatorialAnual"
           type="text"
-          placeholder="value"
+          placeholder=""
           dense
           reverse-fill-mask
           unmasked-value

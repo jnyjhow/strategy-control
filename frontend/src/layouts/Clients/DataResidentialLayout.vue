@@ -6,7 +6,7 @@
           outlined
           v-model="clientEdit.residential.register"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>
@@ -15,7 +15,7 @@
           outlined
           v-model="clientEdit.residential.property"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>
@@ -26,7 +26,7 @@
           outlined
           v-model="clientEdit.residential.number_redisential"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>
@@ -35,7 +35,7 @@
           outlined
           v-model="clientEdit.residential.real_state_registration"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>

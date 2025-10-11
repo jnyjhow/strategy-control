@@ -37,7 +37,7 @@
           outlined
           v-model="commission.value"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
           readonly
           :hint="`Atual: R$ ${$filtersString.formatPartternCurrency(advisorEdit.commission.value)}`"
@@ -48,7 +48,7 @@
           outlined
           v-model="commission.future"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
           type="date"
         ></q-input>

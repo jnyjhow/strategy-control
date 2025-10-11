@@ -30,7 +30,7 @@
           outlined
           v-model="advisorEdit.gastos.value"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
           readonly
         ></q-input>
@@ -40,7 +40,7 @@
           outlined
           v-model="advisorEdit.gastos.limite"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
           readonly
         ></q-input>

@@ -9,7 +9,7 @@
           outlined
           v-model="leadEdit.bank.name"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>
@@ -18,7 +18,7 @@
           outlined
           v-model="leadEdit.bank.agency"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>
@@ -27,7 +27,7 @@
           outlined
           v-model="leadEdit.bank.agency"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>

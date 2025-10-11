@@ -32,13 +32,23 @@
       <info-compare-layout
         v-if="item.id != 0"
         class="col-12 q-pa-md"
-        :item_one="item.cliente.cpf"
-        :item_two="item.cliente.rg"
-        :item_three="item.cliente.birth"
-        :item_four="item.cliente.email"
-        :item_five="item.cliente.telefone"
-        :item_six="item.cliente.profissao"
-        :item_seven="item.cliente.renda"
+        v-bind="
+          (function () {
+            const c = (item && item.cliente) || {}
+            return {
+              item_one:
+                typeof $filtersString !== 'undefined' && $filtersString.formatCpf
+                  ? $filtersString.formatCpf(c.cpf || c.cpf_cnpj || null) || '-'
+                  : c.cpf || c.cpf_cnpj || '-',
+              item_two: c.rg || '-',
+              item_three: c.birth || '-',
+              item_four: c.email || '-',
+              item_five: c.telefone || '-',
+              item_six: c.profissao || '-',
+              item_seven: c.renda || '-',
+            }
+          })()
+        "
       />
     </div>
   </div>

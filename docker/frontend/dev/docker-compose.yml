@@ -1,5 +1,5 @@
 services:
-  strategy-frontend-dev:
+  strategy-frontend:
     build:
       context: ../../..
       dockerfile: docker/frontend/dev/Dockerfile
@@ -31,10 +31,10 @@ services:
       timeout: 3s
       retries: 5
     networks:
-      - strategy-network
+      - strategy-network-dev
 
 networks:
-  strategy-network:
+  strategy-network-dev:
     driver: bridge
 
 volumes:

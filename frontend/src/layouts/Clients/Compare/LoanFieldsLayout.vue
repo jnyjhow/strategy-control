@@ -34,15 +34,22 @@
       <info-compare-layout
         v-if="item.id != 0"
         class="col-12 q-pa-md"
-        :item_one="item.weLend[0].status"
-        :item_two="item.weLend[0].valor"
-        :item_three="item.weLend[0].data_loan"
-        :item_four="item.weLend[0].value_dividendo"
-        :item_five="item.weLend[0].value_now_dividendo"
-        :item_six="item.weLend[0].value_finish"
-        :item_seven="item.weLend[0].value_before"
-        :item_eight="item.weLend[0].number_parcelas"
-        :item_nine="item.weLend[0].date_payment"
+        v-bind="
+          (function () {
+            const wl = (item && item.weLend && item.weLend[0]) || {}
+            return {
+              item_one: wl.status || '-',
+              item_two: wl.valor || '-',
+              item_three: wl.data_loan || '-',
+              item_four: wl.value_dividendo || '-',
+              item_five: wl.value_now_dividendo || '-',
+              item_six: wl.value_finish || '-',
+              item_seven: wl.value_before || '-',
+              item_eight: wl.number_parcelas || '-',
+              item_nine: wl.date_payment || '-',
+            }
+          })()
+        "
       />
     </div>
   </div>

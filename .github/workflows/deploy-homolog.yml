@@ -1,0 +1,73 @@
+name: Deploy Homolog to VM
+
+on:
+  push:
+    branches: [dev_backend]
+  # pull_request:
+  #   branches: [main]
+
+jobs:
+  deploy:
+    name: Deploy to VM
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+
+      - name: Pre-clean remote app directory
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            echo "Preparing remote path /home/${{ secrets.ftp_user }}/app"
+            # Try to remove using sudo (passwordless) if available, fallback to normal rm
+            if sudo -n true 2>/dev/null; then
+              echo "Removing remote app with sudo"
+              sudo rm -rf /home/${{ secrets.ftp_user }}/app || true
+            else
+              echo "Removing remote app without sudo"
+              rm -rf /home/${{ secrets.ftp_user }}/app || true
+            fi
+            # Ensure parent exists
+            mkdir -p /home/${{ secrets.ftp_user }}
+
+      - name: Deploy files via SCP action
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "./"
+          target: "/home/${{ secrets.SSH_USER }}/app"
+
+      - name: Remote diagnostics
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            echo '--- REMOTE DIAGNOSTICS START ---'
+            echo "USER: $(whoami)"
+            echo "GROUPS: $(id -nG)"
+            echo '--- Docker socket ---'
+            ls -l /var/run/docker.sock || true
+            echo '--- docker version ---'
+            docker compose version 2>/dev/null || docker --version 2>/dev/null || echo 'docker not found'
+            echo '--- rsync ---'
+            which rsync || echo 'rsync not found'
+            echo '--- sudo check ---'
+            if sudo -n true 2>/dev/null; then echo 'sudo_nopasswd_ok'; else echo 'sudo_requires_password_or_not_installed'; fi
+            echo '--- REMOTE DIAGNOSTICS END ---'

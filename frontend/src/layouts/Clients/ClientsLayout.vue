@@ -68,7 +68,7 @@ const openCreate = () => {
         dividendo: null,
       },
       investment: {
-        register_classification: '',
+        classification: '',
         assessor: null,
         data_dividendo: null,
         data_value_welend: null,
@@ -92,6 +92,7 @@ const openCreate = () => {
     // log the error to aid debugging but don't block flow
     console.debug('setClientEdit failed:', err)
   }
+  storeLayout.setDialogOpengHeader('Inclusão de Cliente')
   storeLayout.setClientDialog(true)
 }
 const breadcrumbs = [

@@ -7,6 +7,7 @@
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
     "test": "jest --runInBand",
+  "reset-db": "node -e \"const fs=require('fs');try{fs.unlinkSync('./dev.sqlite');console.log('deleted dev.sqlite')}catch(e){console.log('no dev.sqlite to delete')}\"",
     "test:watch": "jest --watch"
   },
   "dependencies": {

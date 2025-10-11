@@ -6,7 +6,7 @@
           outlined
           v-model="clientEdit.bank.name"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>
@@ -15,7 +15,7 @@
           outlined
           v-model="clientEdit.bank.agency"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>
@@ -24,7 +24,7 @@
           outlined
           v-model="clientEdit.bank.agency"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>
@@ -43,6 +43,7 @@
           dense
           placeholder="0000000000000"
           class="q-my-sm"
+          :rules="cpfOrCnpjRule"
         ></q-input>
       </label-form>
       <label-form className="col d-block" textLabel="Chave Pix">
@@ -120,10 +121,12 @@
 <script setup>
 import labelForm from 'src/components/Form/LabelForm.vue'
 import { defineComponent } from 'vue'
+import useRules from 'src/composables/global/useRules'
 import { useLayoutStore } from 'src/stores/layout'
 import { storeToRefs } from 'pinia'
 const layoutStore = useLayoutStore()
 const { clientEdit } = storeToRefs(layoutStore)
+const { cpfOrCnpjRule } = useRules()
 const columnsBanks = [
   { name: 'name', label: 'Banco', field: 'name', align: 'left' },
   { name: 'agency', label: 'Agência', field: 'agency', align: 'left' },

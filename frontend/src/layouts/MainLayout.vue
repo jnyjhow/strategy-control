@@ -41,14 +41,14 @@
         </div>
 
         <q-space />
-        <q-badge outline color="primary" class="q-pa-sm">
+        <q-badge v-if="badgeVisible" outline color="primary" class="q-pa-sm">
           <IconUser class="trabler-icon-size" />
-          <span class="text-grey">Clientes:</span>
-          <span class="text-white text-bold"> 180</span>
+          <span class="text-grey">{{ badgeLabel }}:</span>
+          <span class="text-white text-bold q-ml-xs">{{ badgeCount }}</span>
         </q-badge>
         <div class="q-gutter-sm row items-center no-wrap">
           <div class="text-small q-px-md">
-            <span class="text-grey">Voce está em:</span>
+            <span class="text-grey">Você está em: </span>
             <span class="text-white text-bold"> {{ painel }} </span>
           </div>
           <q-btn round dense flat color="white">
@@ -84,9 +84,13 @@ import CompletBrand from 'src/components/brand/CompletBrand.vue'
 import MenuBar from 'src/components/navbar/menuBar.vue'
 import RequestSuccess from 'src/components/Card/RequestSuccess.vue'
 import { useRoute } from 'vue-router'
-import { defineComponent, onBeforeMount } from 'vue'
+import { defineComponent, onBeforeMount, computed, ref } from 'vue'
 import { useLayoutStore } from 'src/stores/layout'
 import { storeToRefs } from 'pinia'
+import useCliente from 'src/composables/Fakes/useCliente'
+import useAdvisors from 'src/composables/Fakes/useAdvisors'
+import useLeads from 'src/composables/Fakes/useLeads'
+import useLeadsApi from 'src/composables/Api/useLeadsApi'
 defineComponent({
   name: 'MainLayout',
 })
@@ -97,6 +101,70 @@ onBeforeMount(() => {
   if (route.meta.painel) layoutStore.setPainel(route.meta.painel)
 })
 const { dialogConfirmAction, painel } = storeToRefs(layoutStore)
+
+// counts from composables (will delegate to API adapter when configured)
+const clienteApi = useCliente()
+const { rowsClient } = clienteApi
+const clientCount = computed(() => (rowsClient ? rowsClient.length : 0))
+
+const advisorsApi = useAdvisors()
+const { rowsAssessores } = advisorsApi
+const advisorCount = computed(() => (rowsAssessores ? rowsAssessores.length : 0))
+
+// leads: prefer API adapter when VITE_USE_FAKES === 'false'
+// leads: prefer API adapter when VITE_USE_FAKES === 'false'
+// Runtime probe: try the API first (if reachable) and prefer it even if the env wasn't set.
+let leadsCount
+try {
+  const envPrefersApi =
+    import.meta && import.meta.env && String(import.meta.env.VITE_USE_FAKES) === 'false'
+  const api = useLeadsApi()
+  const leadsFakes = useLeads()
+  const usingApi = ref(Boolean(envPrefersApi))
+
+  // Try to fetch from API on mount. If successful, switch to API mode; otherwise use fakes.
+  onBeforeMount(async () => {
+    try {
+      await api.fetchLeads()
+      usingApi.value = true
+    } catch (err) {
+      // If env explicitly requests API but probe failed, log and fallback to fakes
+      if (envPrefersApi) console.error('Failed to fetch leads from API (env requested API):', err)
+      usingApi.value = false
+    }
+  })
+
+  leadsCount = computed(() => {
+    if (usingApi.value) {
+      const rows = api.rows
+      return rows && rows.value ? rows.value.length : 0
+    }
+    return leadsFakes.rowLeads ? leadsFakes.rowLeads.length : 0
+  })
+} catch {
+  // fallback to fake rows if env access or composables fail
+  const leadsApi = useLeads()
+  const { rowLeads } = leadsApi
+  leadsCount = computed(() => (rowLeads ? rowLeads.length : 0))
+}
+
+const badgeLabel = computed(() => {
+  const name = route.name
+  if (name === 'Clientes') return 'Clientes'
+  if (name === 'Assessores') return 'Assessores'
+  if (name === 'Leads') return 'Leads'
+  return ''
+})
+
+const badgeCount = computed(() => {
+  const name = route.name
+  if (name === 'Clientes') return clientCount.value
+  if (name === 'Assessores') return advisorCount.value
+  if (name === 'Leads') return leadsCount.value
+  return ''
+})
+
+const badgeVisible = computed(() => !!badgeLabel.value)
 
 const linkesRoutes = [
   {

@@ -13,7 +13,7 @@
           outlined
           v-model="splenEdit.value"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>
@@ -22,7 +22,7 @@
           outlined
           v-model="splenEdit.date"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>
@@ -34,7 +34,7 @@
           outlined
           v-model="splenEdit.cliente"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
           dropdown-icon="keyboard_arrow_down"
         />
@@ -47,7 +47,7 @@
           outlined
           v-model="splenEdit.category"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
           dropdown-icon="keyboard_arrow_down"
         />
@@ -57,7 +57,7 @@
           outlined
           v-model="splenEdit.location"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>

@@ -6,7 +6,7 @@ const state = () => {
     dialogConfirmHeader: 'Solicitação enviada com sucesso!',
     dialogConfirmBody:
       'A solicitação foi enviada com sucesso, você pode acompanhar o status dela na aba "Solicitações".',
-    dialogOpengHeader: 'Solicitação de Depósito',
+  dialogOpengHeader: '',
     dialogLabelButton: null,
     dataSolicitacao: {
       bank: '',

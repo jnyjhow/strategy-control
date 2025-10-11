@@ -33,7 +33,15 @@
             </q-input>
           </div>
           <div class="col self-end items-end" style="text-align-last: end">
-            <q-btn color="primary" no-caps label="Exportar" flat size="sm" @click="exportTable" />
+            <q-btn
+              color="primary"
+              no-caps
+              label="Exportar"
+              flat
+              size="sm"
+              :disable="rowsArray.length === 0"
+              @click="exportTable"
+            />
             <q-btn
               size="xs"
               padding="xs"
@@ -41,9 +49,10 @@
               outline
               label="Comparar Clientes"
               :class="!compareBtn ? 'text-muted' : 'text-primary'"
+              :disable="selected.length !== 2"
               @click.prevent.stop="compareSelected"
             />
-            <q-btn size="md" padding="xs" outline color="primary" class="border-radius-4">
+            <q-btn size="md" padding="xs" outline class="">
               <IconLayoutCards size="18" />
             </q-btn>
             <q-btn size="md" padding="xs" outline class="outline" color="primary">
@@ -57,48 +66,25 @@
         <q-td :props="props">
           <q-item>
             <q-item-section avatar>
-              <q-avatar size="32px" class="q-mr-sm">
-                <q-img
-                  :src="props.row?.cliente?.avatar || ''"
-                  :alt="props.row?.cliente?.name || ''"
-                  :title="props.row?.cliente?.name || ''"
-                />
-              </q-avatar>
+              <avatar-initials
+                :src="props.row.cliente && props.row.cliente.avatar"
+                :name="props.row.cliente && props.row.cliente.name"
+                size="32px"
+                class="q-mr-sm"
+              />
             </q-item-section>
             <q-item-section align="left">
               <q-item-label>
-                {{ props.row?.cliente?.name || '-' }}
+                {{ props.row.cliente && props.row.cliente.name }}
               </q-item-label>
               <q-item-label caption>
-                {{ props.row?.cliente?.email || '-' }}
+                {{ props.row.cliente && props.row.cliente.email }}
               </q-item-label>
             </q-item-section>
           </q-item>
         </q-td>
       </template>
 
-      <!-- Coluna de emprestimo -->
-      <template v-slot:body-cell-emprestimo="props">
-        <q-td :props="props">
-          <q-btn
-            size="xs"
-            outline
-            padding="xs"
-            no-caps
-            class="custom-btn-muted"
-            :label="props.row.emprestimo"
-          />
-        </q-td>
-      </template>
-      <!-- dividendo -->
-      <template v-slot:body-cell-dividendo="props">
-        <q-td :props="props">
-          <p>
-            {{ $filtersString.formatPartternCurrency(props.row?.dividendo?.total || 0) }} <br />
-            <span class="text-muted text-small">Data: {{ props.row?.dividendo?.data || '-' }}</span>
-          </p>
-        </q-td>
-      </template>
       <!-- contrato -->
       <template v-slot:body-cell-contrato="props">
         <q-td :props="props">
@@ -113,6 +99,24 @@
           <p>{{ $filtersString.formatPartternCurrency(props.row.saldo) }} <br /></p>
         </q-td>
       </template>
+      <!-- assessor (resolve id -> name using advisor store when possible) -->
+      <template v-slot:body-cell-assessor="props">
+        <q-td :props="props">
+          <p class="text-right">
+            {{ resolveAssessorName(props.row) }}
+          </p>
+        </q-td>
+      </template>
+
+      <!-- dividendo -->
+      <template v-slot:body-cell-dividendo="props">
+        <q-td :props="props">
+          <div class="text-right">
+            <div>{{ formatDividendoValue(props.row) }}</div>
+            <div class="text-muted text-small">{{ formatDividendoDate(props.row) }}</div>
+          </div>
+        </q-td>
+      </template>
       <!-- actions -->
       <template v-slot:body-cell-actions="props">
         <q-td :props="props">
@@ -122,6 +126,7 @@
             no-caps
             flat
             :icon="$filtersString.resolveUrl('img:icons/dots-vertical.svg')"
+            :data-test="'clients-row-actions-btn-' + props.row.id"
           >
             <q-menu transition-show="flip-right" transition-hide="flip-left">
               <div
@@ -140,7 +145,8 @@
                   no-caps
                   flat
                   style="min-width: 181px; align-items: start"
-                  @click.prevent="editClient(props.row.id)"
+                  @click.prevent="editAndClose(props.row.id)"
+                  :data-test="'clients-row-edit-' + props.row.id"
                 >
                   <q-icon
                     :name="$filtersString.resolveUrl('img:icons/edit.svg')"
@@ -150,10 +156,15 @@
                   <span class="q-ml-sm text-muted" style="font-size: small; color: #656565">
                     Editar
                   </span>
-                  <!-- <q-tooltip anchor="top middle" self="bottom middle" transition-show="scale">
-                  </q-tooltip> -->
                 </q-btn>
-                <q-btn class="q-mb-xs" no-caps flat style="min-width: 181px; align-items: start">
+                <q-btn
+                  class="q-mb-xs"
+                  no-caps
+                  flat
+                  style="min-width: 181px; align-items: start"
+                  :data-test="'clients-row-delete-' + props.row.id"
+                  @click.prevent="confirmRemoveAndClose(props.row.id)"
+                >
                   <q-icon
                     :name="$filtersString.resolveUrl('img:icons/trash.svg')"
                     size="0.8rem"
@@ -165,7 +176,6 @@
                   </span>
                 </q-btn>
               </div>
-              <!-- <q-list style="min-width: 100px; border-radius: 12px"> </q-list> -->
             </q-menu>
           </q-btn>
         </q-td>
@@ -232,9 +242,12 @@ import { useLayoutStore } from 'src/stores/layout'
 import { storeToRefs } from 'pinia'
 import { useClientStore } from 'src/stores/client'
 import useCliente from 'src/composables/Fakes/useCliente'
+import useAdvisors from 'src/composables/Fakes/useAdvisors'
+import filtersString from 'src/boot/filtersString'
 
 import EditClientsLayout from 'src/layouts/Clients/EditClientsLayout.vue'
 import CompareLayout from 'src/layouts/Clients/CompareLayout.vue'
+import AvatarInitials from 'src/components/Avatar/AvatarInitials.vue'
 defineComponent({
   name: 'ClientsTable',
 })
@@ -243,28 +256,80 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+  // optional override rows: if provided (non-null), the table will render these rows
+  rows: {
+    type: Array,
+    default: null,
+  },
 })
 const storeLayout = useLayoutStore()
 const storeClient = useClientStore()
 // const { compare } = storeToRefs(storeClient)
 const { clientDialog, dialogCompare } = storeToRefs(storeLayout)
-const { rowsClient, columnsClient, getClient } = useCliente()
+const { rowsClient, columnsClient, getClient, deleteClient } = useCliente()
+// prefer external override rows when provided (e.g. empty list when creating new advisor)
+const rowsSource = computed(() => {
+  return props.rows && Array.isArray(props.rows) ? props.rows : rowsClient
+})
+// ensure a safe array view for templates and consumers
+const rowsArray = computed(() => (Array.isArray(rowsSource.value) ? rowsSource.value : []))
+
+const confirmRemoveRow = (id) => {
+  // Use dialog event handlers to ensure deletion happens only after user confirms
+  $q.dialog({
+    title: 'Confirmar remoção',
+    message: 'Tem certeza que deseja remover este cliente? Esta ação não pode ser desfeita.',
+    cancel: true,
+    persistent: true,
+  })
+    .onOk(async () => {
+      try {
+        const res = await deleteClient(id)
+        if (res === true || res) {
+          $q.notify({ message: 'Cliente removido', color: 'positive' })
+        } else {
+          $q.notify({ message: 'Não foi possível remover o cliente', color: 'negative' })
+        }
+      } catch (err) {
+        console.error('remove client error', err)
+        $q.notify({ message: 'Erro ao remover cliente', color: 'negative' })
+      }
+    })
+    .onCancel(() => {
+      // usuário cancelou — nenhuma ação necessária
+    })
+}
+
+// helper used by template to close menu and trigger edit
+const editAndClose = (id) => editClient(id)
+const confirmRemoveAndClose = (id) => confirmRemoveRow(id)
+
+// menu uses default q-menu activator behavior
 // const classCompare = computed(() => {
 //   console.log('classCompare', compare.value.length)
 //   return compare.value.length < 3 ? 'control-width' : 'control-width-compare'
 // })
 
 const editClient = (id) => {
-  storeLayout.setDialogOpengHeader('Clientes')
+  // set header for editing mode
+  storeLayout.setDialogOpengHeader('Edição de Cliente')
   console.log('editClient', id)
-  storeLayout.setClientDialog(true)
-  storeLayout.setClientEdit(getClient(id))
+  try {
+    const payload = getClient(id)
+    // Log the payload received from the adapter before normalization
+    console.log('editClient payload before setClientEdit', payload)
+    storeLayout.setClientDialog(true)
+    storeLayout.setClientEdit(payload)
+  } catch (e) {
+    console.error('editClient: failed to get client payload', e && e.message)
+    storeLayout.setClientDialog(true)
+  }
 }
 
 const compareSelected = () => {
-  if (selected.value.length < 2) {
+  if (selected.value.length !== 2) {
     $q.notify({
-      message: 'Selecione pelo menos dois clientes para comparar.',
+      message: 'Selecione exatamente dois clientes para comparar.',
       color: 'negative',
       icon: 'warning',
     })
@@ -275,13 +340,11 @@ const compareSelected = () => {
   storeClient.setCompareSelect(selected.value)
 }
 const selected = ref([])
-const compareBtn = computed(() => {
-  return selected.value.length > 1
-})
+const compareBtn = computed(() => selected.value.length === 2)
 const getSelectedString = () => {
   return selected.value.length === 0
     ? ''
-    : `${selected.value.length} record${selected.value.length > 1 ? 's' : ''} selected of ${rowsClient.length}`
+    : `${selected.value.length} record${selected.value.length > 1 ? 's' : ''} selected of ${rowsArray.value.length}`
 }
 
 const pagination = ref({
@@ -295,13 +358,15 @@ const updatePagination = (val) => {
 const filter = ref('')
 // Filtra as linhas com base nos filtros aplicados
 const filteredRows = computed(() => {
-  return rowsClient.filter((row) => {
+  return rowsArray.value.filter((row) => {
     // ensure row has cliente object before accessing
     if (!row || !row.cliente) return false
     // Filtro de pesquisa geral
     if (
       filter.value &&
-      !Object.values(row.cliente || {}).some((val) => String(val).toLowerCase().includes(filter.value.toLowerCase()))
+      !Object.values(row.cliente || {}).some((val) =>
+        String(val).toLowerCase().includes(filter.value.toLowerCase()),
+      )
     ) {
       return false
     }
@@ -338,7 +403,7 @@ function wrapCsvValue(val, formatFn, row) {
     formatted = formatFn !== void 0 ? formatFn(val, row) : val
     formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
     formatted = formatted.split('"').join('""')
-  } catch (e) {
+  } catch {
     formatted = ''
   }
   /**
@@ -359,26 +424,35 @@ const exportTable = () => {
   // naive encoding to csv format
   const content = [columnsClient.map((col) => wrapCsvValue(col.label))]
     .concat(
-      rowsClient.map((row) =>
+      rowsArray.value.map((row) =>
         columnsClient
-          .map((col) =>
-            wrapCsvValue(
+          .map((col) => {
+            let val =
               typeof col.field === 'function'
                 ? col.field(row)
-                : row[col.field === void 0 ? col.name : col.field],
-              col.format,
-              row,
-            ),
-          )
+                : row[col.field === void 0 ? col.name : col.field]
+            // special handling for exportable values
+            if (col.name === 'assessor') {
+              val = resolveAssessorName(row)
+            } else if (col.name === 'contrato') {
+              if (val && typeof val === 'object') val = val.total != null ? val.total : ''
+            } else if (col.name === 'dividendo') {
+              if (val && typeof val === 'object') val = val.total != null ? val.total : ''
+            } else if (val && typeof val === 'object') {
+              val = val.name || (val.cliente && val.cliente.name) || ''
+            }
+            return wrapCsvValue(val, col.format, row)
+          })
           .join(','),
       ),
     )
     .join('\r\n')
   const date = new Date()
+  const bomContent = '\uFEFF' + content
   const status = exportFile(
-    `clientes-${date.getDate()}-${date.getMonth()}-${date.getTime()}.csv`,
-    content,
-    'text/csv',
+    `clients-${date.getDate()}-${date.getMonth()}-${date.getTime()}.csv`,
+    bomContent,
+    'text/csv;charset=utf-8',
   )
 
   if (status !== true) {
@@ -388,6 +462,70 @@ const exportTable = () => {
       icon: 'warning',
     })
   }
+}
+
+// helpers to display assessor and dividend info
+const { rowsAssessores } = useAdvisors()
+const resolveAssessorName = (row) => {
+  // prefer investment.assessor (may be id or object or name)
+  const inv = row && (row.investment || {})
+  const aid = inv && inv.assessor
+  // numeric id (number or numeric string)
+  if (aid !== undefined && aid !== null) {
+    if (typeof aid === 'number' || (typeof aid === 'string' && String(aid).match(/^\d+$/))) {
+      const id = Number(aid)
+      const found = (rowsAssessores || []).find((a) => Number(a.id) === id)
+      if (found && found.assessor && found.assessor.name) return found.assessor.name
+      if (found && found.name) return found.name
+      // if backend resolved to name but stored as id elsewhere, continue to fallbacks
+    }
+    // object with various shapes: { label, value }, { name }, { assessor: { name } }
+    if (typeof aid === 'object') {
+      // { label: 'Carlos Costa', value: 180 }
+      if (aid.label) return aid.label
+      // { name: 'Carlos Costa' }
+      if (aid.name) return aid.name
+      // { assessor: { name: 'Carlos Costa' } } or { assessor: 'Carlos Costa' }
+      if (aid.assessor) {
+        if (typeof aid.assessor === 'object') return aid.assessor.name || '-'
+        return aid.assessor
+      }
+      return '-'
+    }
+    // string name — try to normalize/verify by searching advisors list
+    if (typeof aid === 'string' && aid.trim()) {
+      // direct string — prefer to show it
+      // but try to find canonical casing in rowsAssessores
+      const name = aid.trim()
+      const foundByName = (rowsAssessores || []).find((a) => {
+        const aName = (a && ((a.assessor && a.assessor.name) || a.name)) || ''
+        return aName && String(aName).toLowerCase() === String(name).toLowerCase()
+      })
+      if (foundByName)
+        return (foundByName.assessor && foundByName.assessor.name) || foundByName.name
+      return name
+    }
+  }
+  // older data may place assessor at top-level
+  if (row && row.assessor) return row.assessor
+  return '-'
+}
+
+const formatDividendoValue = (row) => {
+  // prefer investment.valor_dividendo then dividendo.total then others
+  const inv = row && (row.investment || {})
+  if (inv && inv.valor_dividendo != null)
+    return filtersString.formatPartternCurrency(inv.valor_dividendo)
+  if (row && row.dividendo && row.dividendo.total != null)
+    return filtersString.formatPartternCurrency(row.dividendo.total)
+  return '-'
+}
+
+const formatDividendoDate = (row) => {
+  const inv = row && (row.investment || {})
+  if (inv && inv.data_dividendo) return inv.data_dividendo
+  if (row && row.dividendo && row.dividendo.data) return row.dividendo.data
+  return '-'
 }
 </script>
 <style lang="sass">

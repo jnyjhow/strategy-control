@@ -33,7 +33,15 @@
             </q-input>
           </div>
           <div class="col self-end items-end" style="text-align-last: end">
-            <q-btn color="primary" no-caps label="Exportar" flat size="sm" @click="exportTable" />
+            <q-btn
+              color="primary"
+              no-caps
+              label="Exportar"
+              flat
+              size="sm"
+              :disable="filteredRows.length === 0"
+              @click="exportTable"
+            />
             <q-btn size="md" padding="xs" outline class="">
               <IconLayoutCards size="18" />
             </q-btn>
@@ -48,20 +56,20 @@
         <q-td :props="props">
           <q-item>
             <q-item-section avatar>
-              <q-avatar size="32px" class="q-mr-sm">
-                <q-img
-                  :src="props.row.assessor.avatar"
-                  :alt="props.row.assessor.name"
-                  :title="props.row.assessor.name"
-                />
-              </q-avatar>
+              <avatar-initials
+                :src="(props.row.assessor && props.row.assessor.avatar) || props.row.avatar || ''"
+                :name="(props.row.assessor && props.row.assessor.name) || props.row.name || ''"
+                size="32px"
+                rounded
+                class="q-mr-sm"
+              />
             </q-item-section>
             <q-item-section align="left">
               <q-item-label>
-                {{ props.row.assessor.name }}
+                {{ (props.row.assessor && props.row.assessor.name) || props.row.name || '' }}
               </q-item-label>
               <q-item-label caption>
-                {{ props.row.assessor.email }}
+                {{ (props.row.assessor && props.row.assessor.email) || props.row.email || '' }}
               </q-item-label>
             </q-item-section>
           </q-item>
@@ -94,7 +102,7 @@
                   no-caps
                   flat
                   style="min-width: 181px; align-items: start"
-                  @click.prevent="editAdvisor(props.row.id)"
+                  @click.prevent="editAndClose(props.row.id)"
                 >
                   <q-icon
                     :name="$filtersString.resolveUrl('img:icons/edit.svg')"
@@ -104,10 +112,14 @@
                   <span class="q-ml-sm text-muted" style="font-size: small; color: #656565">
                     Editar
                   </span>
-                  <!-- <q-tooltip anchor="top middle" self="bottom middle" transition-show="scale">
-                  </q-tooltip> -->
                 </q-btn>
-                <q-btn class="q-mb-xs" no-caps flat style="min-width: 181px; align-items: start">
+                <q-btn
+                  class="q-mb-xs"
+                  no-caps
+                  flat
+                  style="min-width: 181px; align-items: start"
+                  @click.prevent="confirmRemoveAndClose(props.row.id)"
+                >
                   <q-icon
                     :name="$filtersString.resolveUrl('img:icons/trash.svg')"
                     size="0.8rem"
@@ -119,7 +131,6 @@
                   </span>
                 </q-btn>
               </div>
-              <!-- <q-list style="min-width: 100px; border-radius: 12px"> </q-list> -->
             </q-menu>
           </q-btn>
         </q-td>
@@ -197,6 +208,7 @@ import { useAdvisorStore } from 'src/stores/advisor'
 import { storeToRefs } from 'pinia'
 import EditAdvisorLayout from 'src/layouts/Advisors/EditAdvisorLayout.vue'
 import useAdvisors from 'src/composables/Fakes/useAdvisors'
+import AvatarInitials from 'src/components/Avatar/AvatarInitials.vue'
 import HistoricSplentLayout from 'src/layouts/Advisors/HistoricSplentLayout.vue'
 import AddCommissionFormLayout from 'src/layouts/Advisors/Form/AddCommissionFormLayout.vue'
 defineComponent({
@@ -204,7 +216,7 @@ defineComponent({
 })
 const storeLayout = useLayoutStore()
 const storeAdvisor = useAdvisorStore()
-const { columnsAssessores, rowsAssessores, getAdvisor } = useAdvisors()
+const { columnsAssessores, rowsAssessores, getAdvisor, removeAdvisor } = useAdvisors()
 // const { compare } = storeToRefs(storeClient)
 const { advisorsDialog, splentHistoricDialog, commissionDialog } = storeToRefs(storeLayout)
 // const classCompare = computed(() => {
@@ -241,14 +253,10 @@ const filter = ref('')
 // Filtra as linhas com base nos filtros aplicados
 const filteredRows = computed(() => {
   return rowsAssessores.filter((row) => {
-    // Filtro de pesquisa geral
-    if (
-      filter.value &&
-      !Object.values(row.assessor.name).some((val) =>
-        String(val).toLowerCase().includes(filter.value.toLowerCase()),
-      )
-    ) {
-      return false
+    // Filtro de pesquisa geral: pesquisar por nome do assessor
+    if (filter.value) {
+      const name = String(row.assessor && row.assessor.name ? row.assessor.name : '').toLowerCase()
+      if (!name.includes(filter.value.toLowerCase())) return false
     }
     return true
   })
@@ -278,12 +286,14 @@ const lastItemIndex = computed(() => {
 })
 
 function wrapCsvValue(val, formatFn, row) {
-  console.log('wrapCsvValue', val, formatFn, row)
-  let formatted = formatFn !== void 0 ? formatFn(val, row) : val
-
-  formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
-
-  formatted = formatted.split('"').join('""')
+  let formatted = ''
+  try {
+    formatted = formatFn !== void 0 ? formatFn(val, row) : val
+    formatted = formatted === void 0 || formatted === null ? '' : String(formatted)
+    formatted = formatted.split('"').join('""')
+  } catch {
+    formatted = ''
+  }
   /**
    * Excel accepts \n and \r in strings, but some other CSV parsers do not
    * Uncomment the next two lines to escape new lines
@@ -302,26 +312,28 @@ const exportTable = () => {
   // naive encoding to csv format
   const content = [columnsAssessores.map((col) => wrapCsvValue(col.label))]
     .concat(
-      rowsAssessores.map((row) =>
+      filteredRows.value.map((row) =>
         columnsAssessores
-          .map((col) =>
-            wrapCsvValue(
+          .map((col) => {
+            let val =
               typeof col.field === 'function'
                 ? col.field(row)
-                : row[col.field === void 0 ? col.name : col.field],
-              col.format,
-              row,
-            ),
-          )
+                : row[col.field === void 0 ? col.name : col.field]
+            if (val && typeof val === 'object') {
+              val = val.name || (val.assessor && val.assessor.name) || ''
+            }
+            return wrapCsvValue(val, col.format, row)
+          })
           .join(','),
       ),
     )
     .join('\r\n')
   const date = new Date()
+  const bomContent = '\uFEFF' + content
   const status = exportFile(
-    `clientes-${date.getDate()}-${date.getMonth()}-${date.getTime()}.csv`,
-    content,
-    'text/csv',
+    `advisors-${date.getDate()}-${date.getMonth()}-${date.getTime()}.csv`,
+    bomContent,
+    'text/csv;charset=utf-8',
   )
 
   if (status !== true) {
@@ -332,6 +344,47 @@ const exportTable = () => {
     })
   }
 }
+
+const idToRemove = ref(null)
+
+const confirmRemoveAdvisor = async () => {
+  const id = idToRemove.value
+  if (!id) return
+  try {
+    await Promise.resolve(removeAdvisor(id))
+    $q.notify({ message: 'Assessor removido com sucesso.', color: 'positive' })
+  } catch (e) {
+    console.error('removeAdvisor failed', e)
+    $q.notify({ message: 'Erro ao remover assessor', color: 'negative' })
+  } finally {
+    idToRemove.value = null
+  }
+}
+
+const onRemoveAdvisor = async (id) => {
+  // store id and open a dialog like clients flow
+  idToRemove.value = id
+  // open dialog; only proceed on OK
+  $q.dialog({
+    title: 'Confirmar remoção',
+    message: 'Tem certeza que deseja remover este assessor? Essa ação não pode ser desfeita.',
+    cancel: true,
+    persistent: true,
+  })
+    .onOk(async () => {
+      await confirmRemoveAdvisor()
+    })
+    .onCancel(() => {
+      idToRemove.value = null
+    })
+}
+
+// helpers used by template to close menu and trigger actions
+const editAndClose = (id) => editAdvisor(id)
+const confirmRemoveAndClose = (id) => onRemoveAdvisor(id)
+
+// action menu control
+// q-menu uses default activator behavior
 </script>
 <style lang="sass">
 .custom-btn-warning

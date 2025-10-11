@@ -12,6 +12,7 @@
           no-caps
           dense
           style="border-radius: 8px"
+          @click.prevent="onCreate"
         />
       </div>
     </title-page>
@@ -21,12 +22,28 @@
 
 <script setup>
 import { defineComponent } from 'vue'
+import { useLayoutStore } from 'src/stores/layout'
+import { useAdvisorStore } from 'src/stores/advisor'
 import TitlePage from 'src/components/TitlePage.vue'
 import AdvisorsTable from 'src/components/Table/Advisors/AdvisorsTable.vue'
 // \\wsl.localhost\Ubuntu-22.04\home\jorgenunes\Projetos\strategy-control\src\components\Table\Advisors\advisorsTable.vue
 defineComponent({
   name: 'AdvisorsLayout',
 })
+const layoutStore = useLayoutStore()
+const advisorStore = useAdvisorStore()
+
+const onCreate = () => {
+  advisorStore.setAdvisorEdit({
+    id: null,
+    assessor: { name: '', avatar: '', email: '' },
+    clients_count: 0,
+    gastos: { value: 0, limite: 0, data: [] },
+    commission: { received: 0, future: 0, value: 0 },
+  })
+  layoutStore.setDialogOpengHeader('Novo Assessor')
+  layoutStore.seAdvisorsDialog(true)
+}
 const breadcrumbs = [
   {
     label: 'Clientes',

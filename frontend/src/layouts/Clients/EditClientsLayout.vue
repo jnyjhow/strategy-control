@@ -1,7 +1,7 @@
 <template>
   <q-card class="EditClientsLayout">
     <title-card
-      :title="dialogOpengHeader"
+      :title="titleHeader"
       :advisor="advisorEdit.assessor ? advisorEdit.assessor.name : ''"
     />
 
@@ -125,10 +125,50 @@
     </q-card-section>
     <q-card-actions vertical>
       <div class="row justify-end q-pa-md">
-        <q-btn flat color="negative" class="q-mr-sm" icon="$filtersString.resolveUrl('img:icons/trash.svg')" label="Remover" @click.prevent="removeClient" />
-        <q-btn flat color="primary" unelevated label="Salvar" @click.prevent="saveClient" />
+        <q-btn
+          size="sm"
+          unelevated
+          color="negative"
+          class="q-mr-sm"
+          label="Remover"
+          icon="delete"
+          data-test="clients-remove-btn"
+          @click.prevent="confirmRemove = true"
+          :disable="!clientEdit.id"
+        />
+        <div class="row items-center">
+          <q-tooltip v-if="!canSave"
+            >Preencha todos os campos obrigatórios corretamente (Nome, CPF, E-mail, Data de
+            Nascimento)</q-tooltip
+          >
+          <q-btn
+            :disable="!canSave"
+            size="sm"
+            unelevated
+            color="primary"
+            label="Salvar"
+            icon="save"
+            data-test="clients-save-btn"
+            @click.prevent="saveClient"
+          />
+        </div>
       </div>
     </q-card-actions>
+    <!-- confirmation dialog for delete -->
+    <q-dialog v-model="confirmRemove" persistent>
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Confirmar remoção</div>
+          <div class="text-subtitle2 q-mt-sm">
+            Tem certeza que deseja remover este cliente? Esta ação não pode ser desfeita.
+          </div>
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancelar" color="primary" @click="confirmRemove = false" />
+          <q-btn flat label="Remover" color="negative" @click="onConfirmRemove" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-card>
 </template>
 <script setup>
@@ -149,6 +189,8 @@ import InvestmentFormLayout from 'src/layouts/Clients/Form/InvestmentFormLayout.
 import WeLendFormLayout from 'src/layouts/Clients/Form/WeLendFormLayout.vue'
 import ContractClientTable from 'src/components/Table/Clients/ContractClientTable.vue'
 import useCliente from 'src/composables/Fakes/useCliente'
+import useAdvisors from 'src/composables/Fakes/useAdvisors'
+import useRules from 'src/composables/global/useRules'
 defineComponent({
   name: 'EditClientsLayout',
 })
@@ -156,12 +198,15 @@ defineComponent({
 const layoutStore = useLayoutStore()
 const clientStore = useClientStore()
 const advisorStore = useAdvisorStore()
-const { clientEdit, dialogOpengHeader } = storeToRefs(layoutStore)
+const { clientEdit } = storeToRefs(layoutStore)
 const { advisorEdit } = storeToRefs(advisorStore)
 const showLevelOptions = ref(false)
 const showCompareOptions = ref(false)
 const clienteApi = useCliente()
-const { getClientIdName, getClient, createClient, updateClient, deleteClient } = clienteApi
+const { rowsClient, getClientIdName, getClient, createClient, updateClient, deleteClient } =
+  clienteApi
+const { rowsAssessores } = useAdvisors()
+const confirmRemove = ref(false)
 const selectClient = (id) => {
   layoutStore.setClientEdit(getClient(id))
   showLevelOptions.value = false
@@ -177,26 +222,162 @@ const clientesSelected = computed(() => {
   return getClientIdName()
 })
 
+const titleHeader = computed(() => {
+  try {
+    const payload = clientEdit.value || {}
+    // if clientEdit has a truthy numeric id -> editing, otherwise inclusion
+    if (payload && payload.id) return 'Edição de Cliente'
+  } catch {
+    /* ignore */
+  }
+  return 'Inclusão de Cliente'
+})
+
+// validation helpers for enabling/disabling save button
+const { nameRule, emailRule, cpfRule } = useRules()
+
+const isFieldValid = (rules, value) => {
+  if (!rules || !Array.isArray(rules)) return true
+  for (const r of rules) {
+    try {
+      const res = r(value)
+      if (res !== true) return false
+    } catch {
+      return false
+    }
+  }
+  return true
+}
+
+const canSave = computed(() => {
+  const payload = clientEdit.value || {}
+  const cliente = payload.cliente || {}
+  const name = cliente.name
+  const email = cliente.email
+  const cpf = cliente.cpf
+  const birth = cliente.birth
+  if (!name || !email || !cpf || !birth) return false
+  if (!isFieldValid(nameRule, name)) return false
+  if (!isFieldValid(emailRule, email)) return false
+  if (!isFieldValid(cpfRule, cpf)) return false
+  return true
+})
+
 // Save / Delete actions
 const $q = useQuasar()
 
 const saveClient = async () => {
   const payload = clientEdit.value || {}
+  // basic client-side validation to avoid sending invalid payloads to the backend
+  const cliente = payload.cliente || {}
+  // simple email validation
+  const isValidEmail = (e) => typeof e === 'string' && /^\S+@\S+\.\S+$/.test(e)
+  if (!cliente.name || String(cliente.name).trim() === '') {
+    $q.notify({ message: 'O campo Nome é obrigatório.', color: 'negative' })
+    return
+  }
+  // validação: nome completo (nome e sobrenome)
+  if (!isFieldValid(nameRule, cliente.name)) {
+    $q.notify({ message: 'Informe nome completo (nome e sobrenome).', color: 'negative' })
+    return
+  }
+  if (!cliente.email || !isValidEmail(cliente.email)) {
+    $q.notify({ message: 'Informe um e-mail válido.', color: 'negative' })
+    return
+  }
+  // frontend uniqueness checks to avoid duplicate name/email
   try {
-    console.log('saveClient payload', JSON.stringify(payload))
+    const nameNormalized = String(cliente.name || '')
+      .trim()
+      .toLowerCase()
+    const emailNormalized = String(cliente.email || '')
+      .trim()
+      .toLowerCase()
+    const dupByName = (rowsClient || []).find(
+      (r) =>
+        r &&
+        r.cliente &&
+        String(r.cliente.name || '')
+          .trim()
+          .toLowerCase() === nameNormalized &&
+        r.id !== payload.id,
+    )
+    if (dupByName) {
+      $q.notify({ message: 'Já existe um cliente com este nome.', color: 'negative' })
+      return
+    }
+    const dupByEmail = (rowsClient || []).find(
+      (r) =>
+        r &&
+        r.cliente &&
+        String(r.cliente.email || '')
+          .trim()
+          .toLowerCase() === emailNormalized &&
+        r.id !== payload.id,
+    )
+    if (dupByEmail) {
+      $q.notify({ message: 'Já existe um cliente com este e-mail.', color: 'negative' })
+      return
+    }
+  } catch (e) {
+    // não bloquear salvamento caso a verificação de duplicidade falhe por algum motivo
+    console.debug('dup check failed', e && e.message)
+  }
+  try {
+    // prepare payload copy to avoid mutating reactive clientEdit directly
+    const toSend = JSON.parse(JSON.stringify(payload))
+    // normalize assessor into { label, value } when possible
+    try {
+      const inv = toSend.investment || {}
+      const a = inv.assessor
+      if (a !== undefined && a !== null) {
+        // object with value
+        if (typeof a === 'object' && a.value !== undefined) {
+          inv.assessor = { label: String(a.label || ''), value: String(a.value) }
+        } else if (typeof a === 'number' || (typeof a === 'string' && String(a).match(/^\d+$/))) {
+          const id = String(a)
+          const found = (rowsAssessores || []).find((r) => String(r.id) === id)
+          if (found)
+            inv.assessor = {
+              label: (found.assessor && found.assessor.name) || found.name || id,
+              value: id,
+            }
+          else inv.assessor = String(a)
+        } else if (typeof a === 'string') {
+          const name = a.trim()
+          const foundByName = (rowsAssessores || []).find((r) => {
+            const n = (r.assessor && r.assessor.name) || r.name || ''
+            return n && n.toLowerCase() === name.toLowerCase()
+          })
+          if (foundByName)
+            inv.assessor = {
+              label: (foundByName.assessor && foundByName.assessor.name) || foundByName.name,
+              value: String(foundByName.id),
+            }
+          else inv.assessor = name
+        }
+      }
+    } catch (e) {
+      console.debug('assessor normalization failed', e && e.message)
+    }
+
+    console.log('saveClient payload', JSON.stringify(toSend))
     if (payload.id) {
-      const res = await updateClient(payload.id, payload)
+      const res = await updateClient(payload.id, toSend)
       console.log('updateClient result', res)
       $q.notify({ message: 'Cliente atualizado com sucesso', color: 'positive' })
     } else {
-      const created = await createClient(payload)
+      const created = await createClient(toSend)
       console.log('createClient result', created)
       $q.notify({ message: 'Cliente criado com sucesso', color: 'positive' })
     }
     layoutStore.setClientDialog(false)
   } catch (err) {
     console.error('saveClient error', err)
-    $q.notify({ message: err && err.message ? err.message : 'Erro ao salvar cliente', color: 'negative' })
+    $q.notify({
+      message: err && err.message ? err.message : 'Erro ao salvar cliente',
+      color: 'negative',
+    })
   }
 }
 
@@ -211,5 +392,10 @@ const removeClient = async () => {
     console.error('removeClient error', err)
     $q.notify({ message: 'Erro ao remover cliente', color: 'negative' })
   }
+}
+
+const onConfirmRemove = async () => {
+  confirmRemove.value = false
+  await removeClient()
 }
 </script>

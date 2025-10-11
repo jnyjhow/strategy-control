@@ -25,11 +25,34 @@
       <info-compare-layout
         v-if="item.id != 0"
         class="col-12 q-pa-md"
-        :item_one="item.investment.classification"
-        :item_two="item.investment.saldo"
-        :item_three="item.investment.assessor"
-        :item_four="item.investment.data_dividendo"
-        :item_five="item.investment.valor_dividendo"
+        v-bind="
+          (function () {
+            const inv = (item && item.investment) || {}
+            // normalize assessor into a displayable string
+            let assessorDisplay = '-'
+            const a = inv.assessor
+            if (a !== undefined && a !== null) {
+              if (typeof a === 'string' || typeof a === 'number') {
+                assessorDisplay = a
+              } else if (typeof a === 'object') {
+                // common shapes: { label, value }, { name }, { assessor: { name } }
+                if (a.label) assessorDisplay = a.label
+                else if (a.name) assessorDisplay = a.name
+                else if (a.assessor) {
+                  assessorDisplay =
+                    typeof a.assessor === 'object' ? a.assessor.name || '-' : a.assessor
+                }
+              }
+            }
+            return {
+              item_one: inv.classification || '-',
+              item_two: inv.saldo || '-',
+              item_three: assessorDisplay,
+              item_four: inv.data_dividendo || '-',
+              item_five: inv.valor_dividendo || '-',
+            }
+          })()
+        "
       />
     </div>
   </div>

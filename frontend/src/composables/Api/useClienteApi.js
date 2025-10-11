@@ -91,7 +91,9 @@ export default function useClienteApi() {
     const payload = data
     try {
       console.log('[useClienteApi] createClient payload', payload)
-    } catch (e) {}
+    } catch {
+      /* ignore logging errors */
+    }
     const res = await api.post('/clients', payload)
     // refresh list and return created
     await refresh()
@@ -101,7 +103,9 @@ export default function useClienteApi() {
   async function updateClient(id, data) {
   try {
     console.log('[useClienteApi] updateClient id=', id, 'data=', data)
-  } catch (e) {}
+  } catch {
+    /* ignore logging errors */
+  }
   const res = await api.put(`/clients/${id}`, data)
     await refresh()
     return res.data
@@ -110,7 +114,9 @@ export default function useClienteApi() {
   async function deleteClient(id) {
   try {
     console.log('[useClienteApi] deleteClient id=', id)
-  } catch (e) {}
+  } catch {
+    /* ignore logging errors */
+  }
   await api.delete(`/clients/${id}`)
     await refresh()
     return true

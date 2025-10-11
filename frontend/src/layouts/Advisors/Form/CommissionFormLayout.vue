@@ -19,7 +19,7 @@
           outlined
           v-model="advisorEdit.commission.received"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
           readonly
         ></q-input>
@@ -29,7 +29,7 @@
           outlined
           v-model="advisorEdit.commission.future"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
           readonly
         ></q-input>
@@ -39,7 +39,7 @@
           outlined
           v-model="advisorEdit.commission.value"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
           readonly
         ></q-input>

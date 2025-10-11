@@ -1,5 +1,5 @@
 services:
-  strategy-backend-dev:
+  strategy-backend:
     build:
       context: ../../..
       dockerfile: docker/backend/dev/Dockerfile
@@ -14,10 +14,10 @@ services:
     environment:
       - NODE_ENV=development
     networks:
-      - strategy-network
+      - strategy-network-dev
 
 networks:
-  strategy-network:
+  strategy-network-dev:
     driver: bridge
 
 volumes:

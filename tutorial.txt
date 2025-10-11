@@ -1,3 +1,9 @@
+ssh -p 65002 u713831646@82.180.156.27
+
+Password: iPMa#wmLo0za3Io4
+
+++++++++++++++++++++++++++++++++++++++++++++++
+
 https://github.com/WillTbn/strategy-control
 
 nvm install 20
@@ -20,4 +26,35 @@ https://www.figma.com/design/jIgMhNRIStlkUcrGni2GIv/S.A---LP-e-Painel-de-Dados--
 
 
 https://www.figma.com/design/BmG6bcIpu2ZO1MGpXxWAhk/S.A---%C3%81rea-do-Cliente---Akaishi-Design-Studio?node-id=0-1&p=f&t=jXpzKGuXcayKZqTf-0
+
+
+#inseri em massa via api
+BASE_URL=http://localhost:3333 node scripts/populate_clients.js --count 500 --processes 4 --concurrency 10
+
+#insere em massa direto no db
+node scripts/populate_clients_db.js --count 500 --db ./backend/dev.sqlite
+node scripts/populate_clients_db.js --count 5 --db ./backend/dev.sqlite
+
+#limpar banco de Dados
+node ./scripts/populate_clients_db.js --clear
+
+NODE_PATH=./backend/node_modules node ./scripts/populate_clients_db.js --clear --avatar random
+
+NODE_PATH=./backend/node_modules node ./scripts/populate_advisors_db.js --clear --avatar random
+
+NODE_PATH=./backend/node_modules node ./scripts/populate_clients_with_assessors.js --clear --avatar random
+
+NODE_PATH=./backend/node_modules node ./scripts/populate_leads_db.js --clear --avatar random
+
+# Atalho: executar ambos os scripts em sequência
+./scripts/populate_all.sh
+node scripts/clear_dbs.js --yes
+
+sqlite3 backend/dev.sqlite "DELETE FROM clients; DELETE FROM clients_audit;"
+
+NODE_PATH=./backend/node_modules node ./scripts/populate_clients_with_assessors.js --db ./backend/dev.sqlite --clear --count 10
+
+http://localhost:3333/api/clients
+http://localhost:3333/api/advisors
+http://localhost:3333/api/leads
 

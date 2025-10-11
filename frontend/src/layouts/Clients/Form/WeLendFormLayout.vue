@@ -15,7 +15,7 @@
           outlined
           v-model="clientEdit.newWeLend.value"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>
@@ -46,7 +46,7 @@
           outlined
           v-model="clientEdit.newWeLend.value_before"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>
@@ -66,7 +66,7 @@
           outlined
           v-model="clientEdit.newWeLend.value_before"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>
@@ -77,7 +77,7 @@
           outlined
           v-model="clientEdit.newWeLend.value_before"
           dense
-          placeholder="value"
+          placeholder=""
           class="q-my-sm"
         ></q-input>
       </label-form>

@@ -38,6 +38,16 @@ const filtersStrings = {
     return dateObj.toLocaleDateString('pt-BR', options)
   },
 
+  /**
+   * Formata CPF (apenas exibição). Recebe string de 11 dígitos ou NULL e retorna 000.000.000-00
+   */
+  formatCpf(value) {
+    if (!value) return ''
+    const s = String(value).replace(/\D/g, '')
+    if (s.length !== 11) return value
+    return `${s.substring(0, 3)}.${s.substring(3, 6)}.${s.substring(6, 9)}-${s.substring(9, 11)}`
+  },
+
   getBankObjct(bank) {
     const banks = {
       banco_do_brasil: { name: 'Banco do Brasil', code: '001', icon: 'img:icons/banco_brasil.png' },

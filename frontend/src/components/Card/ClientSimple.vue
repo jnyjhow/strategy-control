@@ -2,9 +2,7 @@
   <!-- <q-banner class="ClientSimple bg-grey-2" bordered flat> -->
   <q-item clickable v-ripple class="rounded-borders nameCliente">
     <q-item-section avatar>
-      <q-avatar rounded>
-        <img :src="avatar" />
-      </q-avatar>
+      <avatar-initials :src="avatar" :name="name" rounded />
     </q-item-section>
 
     <q-item-section>
@@ -36,9 +34,7 @@
           style="border-radius: 6px; margin-inline: 2px"
         >
           <q-item-section avatar>
-            <q-avatar size="32px">
-              <q-img :src="userClient.avatar" :alt="userClient.name" :title="userClient.name" />
-            </q-avatar>
+            <avatar-initials :src="userClient.avatar" :name="userClient.name" size="32px" />
           </q-item-section>
           <q-item-section align="left">
             {{ userClient.name }}
@@ -51,12 +47,16 @@
 </template>
 <script>
 import { defineComponent, ref, computed } from 'vue'
+import AvatarInitials from 'src/components/Avatar/AvatarInitials.vue'
 import useCliente from 'src/composables/Fakes/useCliente'
 
 import { useClientStore } from 'src/stores/client'
 import { storeToRefs } from 'pinia'
 export default defineComponent({
   name: 'ClientSimple',
+  components: {
+    AvatarInitials,
+  },
   props: {
     id: {
       type: [String, Number],

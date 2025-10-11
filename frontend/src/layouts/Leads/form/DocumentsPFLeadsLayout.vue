@@ -7,180 +7,184 @@
 
     <label-form
       className="q-mt-sm"
-      textLabel="Certidão negativa de débitos relativos aos tributos fendereis e à dívida da ativa da união"
+      textLabel="Certidão negativa de débitos relativos aos tributos federais e à dívida da ativa da união"
+      helperText=".jpg, .png, .pdf — até 5MB"
     >
-    </label-form>
-    <div class="row q-gutter-sm justify-between q-mt-xs">
-      <q-btn
-        label="Upload"
-        color="primary"
-        icon="upload"
-        outline
-        no-caps
-        style="border-radius: 6px; border: 2px solid #00a3ff"
-        @click="triggerFileInput"
-      />
-      <div class="" v-if="uploadedFiles.length > 0">
+      <div class="row q-gutter-sm q-mt-xs" style="margin-top: 0; align-items: center">
         <q-btn
-          v-for="(item, index) in uploadedFiles"
-          :key="index"
-          size="sm"
+          label="Upload"
+          color="primary"
+          icon="upload"
           outline
-          padding="xs"
-          icon="description"
-          color="secondary"
-          :label="item.name"
           no-caps
-          class="q-ma-sm text-muted"
+          style="border-radius: 6px; border: 2px solid #00a3ff"
+          @click="triggerFileInput"
         />
-        <q-icon
-          :name="$filtersString.resolveUrl('img:icons/trash.svg')"
-          size="0.8rem"
-          class="text-muted"
-          color="grey-4"
+        <div class="" v-if="uploadedFiles.length > 0">
+          <q-btn
+            v-for="(item, index) in uploadedFiles"
+            :key="index"
+            size="sm"
+            outline
+            padding="xs"
+            icon="description"
+            color="secondary"
+            :label="item.name"
+            no-caps
+            class="q-ma-sm text-muted"
+          />
+          <q-icon
+            :name="$filtersString.resolveUrl('img:icons/trash.svg')"
+            size="0.8rem"
+            class="text-muted"
+            color="grey-4"
+          />
+        </div>
+        <input
+          type="file"
+          ref="fileInput"
+          style="display: none"
+          @change="handleFileUpload"
+          multiple
+          accept=".jpg, .jpeg, .png, .pdf"
+          class="col upload-negative"
         />
       </div>
-      <input
-        type="file"
-        ref="fileInput"
-        style="display: none"
-        @change="handleFileUpload"
-        multiple
-        accept=".jpg, .jpeg, .png, .pdf"
-        class="col upload-negative"
-      />
-    </div>
+    </label-form>
     <!-- Upload de Declaracao IRPF -->
 
-    <label-form className="q-mt-sm" textLabel="Declaração IRPF"> </label-form>
-    <div class="row q-gutter-sm justify-between q-mt-xs">
-      <q-btn
-        label="Upload"
-        color="primary"
-        icon="upload"
-        outline
-        no-caps
-        style="border-radius: 6px; border: 2px solid #00a3ff"
-        @click="triggerFileInputIrpf"
-      />
-      <div class="" v-if="uploadedIrpf.length > 0">
+    <label-form className="q-mt-sm" textLabel="Declaração IRPF" helperText=".jpg, .png, .pdf — até 5MB">
+      <div class="row q-gutter-sm q-mt-xs" style="margin-top: 0; align-items: center">
         <q-btn
-          v-for="(item, index) in uploadedIrpf"
-          :key="index"
-          size="sm"
+          label="Upload"
+          color="primary"
+          icon="upload"
           outline
-          padding="xs"
-          icon="description"
-          color="secondary"
-          :label="item.name"
           no-caps
-          class="q-ma-sm text-muted"
+          style="border-radius: 6px; border: 2px solid #00a3ff"
+          @click="triggerFileInputIrpf"
         />
-        <q-icon
-          :name="$filtersString.resolveUrl('img:icons/trash.svg')"
-          size="0.8rem"
-          class="text-muted"
-          color="grey-4"
+        <div class="" v-if="uploadedIrpf.length > 0">
+          <q-btn
+            v-for="(item, index) in uploadedIrpf"
+            :key="index"
+            size="sm"
+            outline
+            padding="xs"
+            icon="description"
+            color="secondary"
+            :label="item.name"
+            no-caps
+            class="q-ma-sm text-muted"
+          />
+          <q-icon
+            :name="$filtersString.resolveUrl('img:icons/trash.svg')"
+            size="0.8rem"
+            class="text-muted"
+            color="grey-4"
+          />
+        </div>
+        <input
+          type="file"
+          ref="fileInput"
+          style="display: none"
+          @change="handleFileUploadIrpf"
+          multiple
+          accept=".jpg, .jpeg, .png, .pdf"
+          class="col upload-irpf"
         />
       </div>
-      <input
-        type="file"
-        ref="fileInput"
-        style="display: none"
-        @change="handleFileUploadIrpf"
-        multiple
-        accept=".jpg, .jpeg, .png, .pdf"
-        class="col upload-irpf"
-      />
-    </div>
+    </label-form>
 
     <!-- Upload de Recibo IRPF -->
 
-    <label-form className="q-mt-sm" textLabel="Recibo IRPF"> </label-form>
-    <div class="row q-gutter-sm justify-between q-mt-xs">
-      <q-btn
-        label="Upload"
-        color="primary"
-        icon="upload"
-        outline
-        no-caps
-        style="border-radius: 6px; border: 2px solid #00a3ff"
-        @click="triggerFileInputIrpfRecibo"
-      />
-      <div class="" v-if="uploadedIrpfRecibo.length > 0">
+    <label-form className="q-mt-sm" textLabel="Recibo IRPF" helperText=".jpg, .png, .pdf — até 5MB">
+      <div class="row q-gutter-sm q-mt-xs" style="margin-top: 0; align-items: center">
         <q-btn
-          v-for="(item, index) in uploadedIrpfRecibo"
-          :key="index"
-          size="sm"
+          label="Upload"
+          color="primary"
+          icon="upload"
           outline
-          padding="xs"
-          icon="description"
-          color="secondary"
-          :label="item.name"
           no-caps
-          class="q-ma-sm text-muted"
+          style="border-radius: 6px; border: 2px solid #00a3ff"
+          @click="triggerFileInputIrpfRecibo"
         />
-        <q-icon
-          :name="$filtersString.resolveUrl('img:icons/trash.svg')"
-          size="0.8rem"
-          class="text-muted"
-          color="grey-4"
+        <div class="" v-if="uploadedIrpfRecibo.length > 0">
+          <q-btn
+            v-for="(item, index) in uploadedIrpfRecibo"
+            :key="index"
+            size="sm"
+            outline
+            padding="xs"
+            icon="description"
+            color="secondary"
+            :label="item.name"
+            no-caps
+            class="q-ma-sm text-muted"
+          />
+          <q-icon
+            :name="$filtersString.resolveUrl('img:icons/trash.svg')"
+            size="0.8rem"
+            class="text-muted"
+            color="grey-4"
+          />
+        </div>
+        <input
+          type="file"
+          ref="fileInput"
+          style="display: none"
+          @change="handleFileUploadIrpfRecibo"
+          multiple
+          accept=".jpg, .jpeg, .png, .pdf"
+          class="col upload-irpf"
         />
       </div>
-      <input
-        type="file"
-        ref="fileInput"
-        style="display: none"
-        @change="handleFileUploadIrpfRecibo"
-        multiple
-        accept=".jpg, .jpeg, .png, .pdf"
-        class="col upload-irpf"
-      />
-    </div>
+    </label-form>
 
     <!-- Upload de Extrato Bancario-->
 
-    <label-form className="q-mt-sm" textLabel="Extrato bancário dos últimos 6 meses"> </label-form>
-    <div class="row q-gutter-sm justify-between q-mt-xs">
-      <q-btn
-        label="Upload"
-        color="primary"
-        icon="upload"
-        outline
-        no-caps
-        style="border-radius: 6px; border: 2px solid #00a3ff"
-        @click="triggerFileInputExtrato"
-      />
-      <div class="" v-if="uploadedExtrato.length > 0">
+    <label-form className="q-mt-sm" textLabel="Extrato bancário dos últimos 6 meses" helperText=".jpg, .png, .pdf — até 5MB">
+      <div class="row q-gutter-sm q-mt-xs" style="margin-top: 0; align-items: center">
         <q-btn
-          v-for="(item, index) in uploadedExtrato"
-          :key="index"
-          size="sm"
+          label="Upload"
+          color="primary"
+          icon="upload"
           outline
-          padding="xs"
-          icon="description"
-          color="secondary"
-          :label="item.name"
           no-caps
-          class="q-ma-sm text-muted"
+          style="border-radius: 6px; border: 2px solid #00a3ff"
+          @click="triggerFileInputExtrato"
         />
-        <q-icon
-          :name="$filtersString.resolveUrl('img:icons/trash.svg')"
-          size="0.8rem"
-          class="text-muted"
-          color="grey-4"
+        <div class="" v-if="uploadedExtrato.length > 0">
+          <q-btn
+            v-for="(item, index) in uploadedExtrato"
+            :key="index"
+            size="sm"
+            outline
+            padding="xs"
+            icon="description"
+            color="secondary"
+            :label="item.name"
+            no-caps
+            class="q-ma-sm text-muted"
+          />
+          <q-icon
+            :name="$filtersString.resolveUrl('img:icons/trash.svg')"
+            size="0.8rem"
+            class="text-muted"
+            color="grey-4"
+          />
+        </div>
+        <input
+          type="file"
+          ref="fileInput"
+          style="display: none"
+          @change="handleFileUploadExtrato"
+          multiple
+          accept=".jpg, .jpeg, .png, .pdf"
+          class="col upload-extrato"
         />
       </div>
-      <input
-        type="file"
-        ref="fileInput"
-        style="display: none"
-        @change="handleFileUploadExtrato"
-        multiple
-        accept=".jpg, .jpeg, .png, .pdf"
-        class="col upload-extrato"
-      />
-    </div>
+    </label-form>
   </div>
 </template>
 <script setup>

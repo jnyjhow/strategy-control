@@ -205,8 +205,29 @@ const onSubmit = async () => {
   router.push({ name: 'TokenValidation', query: { email: auth.value.email, register: true } })
   console.log('Form submitted')
 }
+const isFieldValid = (rules, value) => {
+  if (!rules || !Array.isArray(rules)) return true
+  for (const r of rules) {
+    try {
+      const res = r(value)
+      if (res !== true) return false
+    } catch {
+      return false
+    }
+  }
+  return true
+}
+
 const onSubmitFinished = async () => {
   validateDataErrorMsg()
+  // validação de nome completo
+  if (!isFieldValid(nameRule, auth.value.name)) {
+    msgErrorReset.value = 'Informe nome completo (nome e sobrenome).'
+    // força a validação visual do campo
+    if (nameRef && nameRef.value && typeof nameRef.value.validate === 'function')
+      nameRef.value.validate()
+    return
+  }
   if (auth.value.password !== auth.value.passwordConfirm) {
     msgErrorReset.value = 'As senhas não conferem'
     passwordRef.value.validate()

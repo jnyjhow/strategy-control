@@ -1,6 +1,7 @@
 import { storeToRefs } from 'pinia'
 import { useAuthStore } from 'src/stores/auth'
 import { ref, computed, watch } from 'vue'
+import { isFullName } from 'src/utils/validators/nameValidator'
 
 export default function useRules() {
   const personRef = ref(null)
@@ -32,10 +33,74 @@ export default function useRules() {
     (val) => !!val || 'Campo é obrigatorio.',
     (val) => val.length == 18 || 'Campo incompleto',
   ]
+  // CPF validation (simple digits-only length and checksum)
+  const isValidCPF = (str) => {
+    if (!str) return false
+    const s = String(str).replace(/\D/g, '')
+    if (!/^\d{11}$/.test(s)) return false
+    if (/^(\d)\1+$/.test(s)) return false
+    let sum = 0
+    for (let i = 0; i < 9; i++) sum += Number(s.charAt(i)) * (10 - i)
+    let rev = 11 - (sum % 11)
+    if (rev === 10 || rev === 11) rev = 0
+    if (rev !== Number(s.charAt(9))) return false
+    sum = 0
+    for (let i = 0; i < 10; i++) sum += Number(s.charAt(i)) * (11 - i)
+    rev = 11 - (sum % 11)
+    if (rev === 10 || rev === 11) rev = 0
+    if (rev !== Number(s.charAt(10))) return false
+    return true
+  }
+  const cpfRule = [
+    (val) => !!val || 'Campo é obrigatorio.',
+    (val) => isValidCPF(val) || 'CPF inválido',
+  ]
+  // CNPJ validation (basic checksum)
+  const isValidCNPJ = (str) => {
+    if (!str) return false
+    const s = String(str).replace(/\D/g, '')
+    if (!/^\d{14}$/.test(s)) return false
+    if (/^(\d)\1+$/.test(s)) return false
+    const calc = (n) => {
+      let size = n.length - 2
+      let numbers = n.substring(0, size)
+      let digits = n.substring(size)
+      let sum = 0
+      let pos = size - 7
+      for (let i = size; i >= 1; i--) {
+        sum += Number(numbers.charAt(size - i)) * pos--
+        if (pos < 2) pos = 9
+      }
+      let result = sum % 11 < 2 ? 0 : 11 - (sum % 11)
+      if (result != Number(digits.charAt(0))) return false
+      size = size + 1
+      numbers = n.substring(0, size)
+      sum = 0
+      pos = size - 7
+      for (let i = size; i >= 1; i--) {
+        sum += Number(numbers.charAt(size - i)) * pos--
+        if (pos < 2) pos = 9
+      }
+      result = sum % 11 < 2 ? 0 : 11 - (sum % 11)
+      return result == Number(digits.charAt(1))
+    }
+    return calc(s)
+  }
+  const cpfOrCnpjRule = [
+    (val) => !!val || 'Campo é obrigatorio.',
+    (val) => {
+      const clean = String(val || '').replace(/\D/g, '')
+      if (clean.length === 11) return isValidCPF(clean) || 'CPF inválido'
+      if (clean.length === 14) return isValidCNPJ(clean) || 'CNPJ inválido'
+      return 'CPF ou CNPJ inválido'
+    },
+  ]
   const nameRule = [
     (val) => !!val || 'Campo é obrigatorio.',
     (val) => val.length >= 3 || 'Campo não tem mímino',
     (val) => !/\d/.test(val) || 'Adicione um Nome válido!',
+    // exige nome completo: pelo menos duas palavras (nome e sobrenome)
+    (val) => (val ? isFullName(val) || 'Informe nome completo (nome e sobrenome)' : true),
   ]
   const emailRule = [
     (val) => !!val || 'Campo é obrigatorio.',
@@ -90,6 +155,8 @@ export default function useRules() {
     passwordRef,
     passwordConfirmRef,
     cnpjRule,
+    cpfRule,
+    cpfOrCnpjRule,
     fiedValidate,
     requiredRole,
     nameRule,

@@ -1,4 +1,38 @@
+// If VITE_USE_FAKES is 'false' we will delegate to the API composable
+let useApi = false
+try {
+  useApi = import.meta && import.meta.env && import.meta.env.VITE_USE_FAKES === 'false'
+} catch {
+  useApi = false
+}
+
+let apiAdapterLoaded = null
+if (useApi) {
+  try {
+    const mod = await import('src/composables/Api/useLeadsApi')
+    apiAdapterLoaded = mod.default()
+  } catch (e) {
+    console.error('useLeads: failed to import api adapter at module load', e && e.message)
+    apiAdapterLoaded = null
+  }
+}
+
+// If we were able to load the API adapter at module evaluation time, return it immediately
+// leave a single export at module end; inside the function we'll return the API adapter
+// if it was successfully loaded at module evaluation time (keeps same behavior as useCliente.js)
 export default function useLeads() {
+  if (apiAdapterLoaded) {
+    const apiAdapter = apiAdapterLoaded
+    // apiAdapter.rows is a ref([]) in Api adapter. Components expect fakeRowLeads to be a plain array.
+    const rowsArray = apiAdapter.rows && apiAdapter.rows.value ? apiAdapter.rows.value : []
+    return {
+      columnLeads: apiAdapter.columnLeads || [],
+      rowLeads: rowsArray,
+      getClientLead: apiAdapter.getClientLead || (() => null),
+      getLeadOptions: apiAdapter.getLeadOptions || (() => []),
+      fetchLeads: apiAdapter.fetchLeads || (() => Promise.resolve({ rows: [] })),
+    }
+  }
   const columnLeads = [
     {
       name: 'cliente',
@@ -1294,11 +1328,19 @@ export default function useLeads() {
     return null
   }
   const getLeadOptions = () => {
-    return rowLeads.map((lead) => ({
-      label: lead.cliente.name,
-      value: lead.id,
-      avatar: lead.cliente.avatar,
-    }))
+    return rowLeads.map((lead) => {
+      const label =
+        (lead._raw && (lead._raw.name || lead._raw.nome)) ||
+        lead.name ||
+        (lead.cliente && (lead.cliente.name || lead.cliente.nome)) ||
+        '-'
+      const avatar = (lead.cliente && lead.cliente.avatar) || (lead._raw && lead._raw.avatar) || ''
+      return {
+        label,
+        value: lead.id,
+        avatar,
+      }
+    })
   }
   return {
     columnLeads,
