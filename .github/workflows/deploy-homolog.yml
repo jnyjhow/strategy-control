@@ -2,7 +2,7 @@ name: Deploy Homolog to VM
 
 on:
   push:
-    branches: [dev_backend]
+    branches: [dev_backend, jnyjhow:dev_backend]
   # pull_request:
   #   branches: [main]
 
