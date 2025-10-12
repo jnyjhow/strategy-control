@@ -1,5 +1,6 @@
 import { reactive } from 'vue'
 import { api } from 'src/boot/axios'
+import { debugLog } from 'src/utils/debugLog'
 
 export default function useClienteApi() {
   // Keep same columns as fake implementation so UI doesn't need changes
@@ -56,7 +57,7 @@ export default function useClienteApi() {
 
   async function refresh() {
     try {
-  const res = await api.get('/clients')
+      const res = await api.get('/clients')
       const list = Array.isArray(res.data) ? res.data : []
       // replace contents of reactive array
       rowsClient.splice(0, rowsClient.length, ...list)
@@ -80,20 +81,24 @@ export default function useClienteApi() {
     } else {
       clientes = rowsClient.filter((client) => client.id !== (clientEdit && clientEdit.id))
     }
-    return clientes.map((client) => ({ id: client.id, name: client.cliente && client.cliente.name, avatar: client.cliente && client.cliente.avatar }))
+    return clientes.map((client) => ({
+      id: client.id,
+      name: client.cliente && client.cliente.name,
+      avatar: client.cliente && client.cliente.avatar,
+    }))
   }
 
   function getClientOptions() {
-    return rowsClient.map((client) => ({ label: client.cliente && client.cliente.name, value: client.id, avatar: client.cliente && client.cliente.avatar }))
+    return rowsClient.map((client) => ({
+      label: client.cliente && client.cliente.name,
+      value: client.id,
+      avatar: client.cliente && client.cliente.avatar,
+    }))
   }
 
   async function createClient(data) {
     const payload = data
-    try {
-      console.log('[useClienteApi] createClient payload', payload)
-    } catch {
-      /* ignore logging errors */
-    }
+    debugLog('useClienteApi', 'createClient payload', payload)
     const res = await api.post('/clients', payload)
     // refresh list and return created
     await refresh()
@@ -101,23 +106,15 @@ export default function useClienteApi() {
   }
 
   async function updateClient(id, data) {
-  try {
-    console.log('[useClienteApi] updateClient id=', id, 'data=', data)
-  } catch {
-    /* ignore logging errors */
-  }
-  const res = await api.put(`/clients/${id}`, data)
+    debugLog('useClienteApi', 'updateClient id=', id, 'data=', data)
+    const res = await api.put(`/clients/${id}`, data)
     await refresh()
     return res.data
   }
 
   async function deleteClient(id) {
-  try {
-    console.log('[useClienteApi] deleteClient id=', id)
-  } catch {
-    /* ignore logging errors */
-  }
-  await api.delete(`/clients/${id}`)
+    debugLog('useClienteApi', 'deleteClient id=', id)
+    await api.delete(`/clients/${id}`)
     await refresh()
     return true
   }
