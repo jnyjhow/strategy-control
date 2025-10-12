@@ -21,14 +21,14 @@ jobs:
           fetch-depth: 0
           submodules: true
 
-      - name: Validate SSH secrets
+      - name: Validate required secrets
         run: |
-          echo "Checking required SSH secrets..."
+          echo "Checking required secrets..."
           missing=0
           if [ -z "${{ secrets.ftp_host }}" ]; then echo "ERROR: ftp_host is not set"; missing=1; fi
           if [ -z "${{ secrets.ftp_user }}" ]; then echo "ERROR: ftp_user is not set"; missing=1; fi
-          if [ -z "${{ secrets.ftp_password }}" ] && [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
-            echo "ERROR: either ftp_password or SSH_PRIVATE_KEY must be set"; missing=1
+          if [ -z "${{ secrets.ftp_password }}" ]; then
+            echo "ERROR: ftp_password must be set"; missing=1
           fi
           if [ "$missing" -ne 0 ]; then exit 1; fi
 
@@ -83,6 +83,4 @@ jobs:
             if sudo -n true 2>/dev/null; then echo 'sudo_nopasswd_ok'; else echo 'sudo_requires_password_or_not_installed'; fi
             echo '--- REMOTE DIAGNOSTICS END ---'
 
-# Note: prefer using SSH_PRIVATE_KEY secret instead of ftp_password for better security.
-# Example: set a secret named SSH_PRIVATE_KEY (contents of your private key) and configure
-# the action with 'key: ${{ secrets.SSH_PRIVATE_KEY }}' instead of 'password'.
+# Note: this workflow expects ftp_host, ftp_user and ftp_password secrets.
