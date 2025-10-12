@@ -25,22 +25,22 @@ jobs:
         run: |
           echo "Checking required SSH secrets..."
           missing=0
-          if [ -z "${{ secrets.SSH_HOST }}" ]; then echo "ERROR: SSH_HOST is not set"; missing=1; fi
-          if [ -z "${{ secrets.SSH_USER }}" ]; then echo "ERROR: SSH_USER is not set"; missing=1; fi
-          if [ -z "${{ secrets.SSH_PASSWORD }}" ] && [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
-            echo "ERROR: either SSH_PASSWORD or SSH_PRIVATE_KEY must be set"; missing=1
+          if [ -z "${{ secrets.ftp_host }}" ]; then echo "ERROR: ftp_host is not set"; missing=1; fi
+          if [ -z "${{ secrets.ftp_user }}" ]; then echo "ERROR: ftp_user is not set"; missing=1; fi
+          if [ -z "${{ secrets.ftp_password }}" ] && [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then
+            echo "ERROR: either ftp_password or SSH_PRIVATE_KEY must be set"; missing=1
           fi
           if [ "$missing" -ne 0 ]; then exit 1; fi
 
       - name: Pre-clean remote app directory
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
+          host: ${{ secrets.ftp_host }}
+          username: ${{ secrets.ftp_user }}
+          password: ${{ secrets.ftp_password }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            echo "Preparing remote path /home/${{ secrets.SSH_USER }}/app"
+            echo "Preparing remote path /home/${{ secrets.ftp_user }}/app"
             # Try to remove using sudo (passwordless) if available, fallback to normal rm
             if sudo -n true 2>/dev/null; then
               echo "Removing remote app with sudo"
@@ -50,24 +50,24 @@ jobs:
               rm -rf /home/${{ secrets.ftp_user }}/app || true
             fi
             # Ensure parent exists
-            mkdir -p /home/${{ secrets.SSH_USER }}
+            mkdir -p /home/${{ secrets.ftp_user }}
 
       - name: Deploy files via SCP action
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
+          host: ${{ secrets.ftp_host }}
+          username: ${{ secrets.ftp_user }}
+          password: ${{ secrets.ftp_password }}
           port: ${{ secrets.SSH_PORT }}
           source: "./"
-          target: "/home/${{ secrets.SSH_USER }}/app"
+          target: "/home/${{ secrets.ftp_user }}/app"
 
       - name: Remote diagnostics
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          password: ${{ secrets.SSH_PASSWORD }}
+          host: ${{ secrets.ftp_host }}
+          username: ${{ secrets.ftp_user }}
+          password: ${{ secrets.ftp_password }}
           port: ${{ secrets.SSH_PORT }}
           script: |
             echo '--- REMOTE DIAGNOSTICS START ---'
@@ -83,6 +83,6 @@ jobs:
             if sudo -n true 2>/dev/null; then echo 'sudo_nopasswd_ok'; else echo 'sudo_requires_password_or_not_installed'; fi
             echo '--- REMOTE DIAGNOSTICS END ---'
 
-# Note: prefer using SSH_PRIVATE_KEY secret instead of SSH_PASSWORD for better security.
+# Note: prefer using SSH_PRIVATE_KEY secret instead of ftp_password for better security.
 # Example: set a secret named SSH_PRIVATE_KEY (contents of your private key) and configure
 # the action with 'key: ${{ secrets.SSH_PRIVATE_KEY }}' instead of 'password'.
