@@ -1,4 +1,6 @@
 // If VITE_USE_FAKES is 'false' we will delegate to the API composable
+import { debugLog } from 'src/utils/debugLog'
+
 let useApi = false
 try {
   useApi = import.meta && import.meta.env && import.meta.env.VITE_USE_FAKES === 'false'
@@ -20,6 +22,8 @@ if (useApi) {
 // If we were able to load the API adapter at module evaluation time, return it immediately
 // leave a single export at module end; inside the function we'll return the API adapter
 // if it was successfully loaded at module evaluation time (keeps same behavior as useCliente.js)
+// Debug: expose which adapter was chosen (only when VITE_DEBUG=true)
+debugLog('useLeads', 'adapter=', useApi ? 'api' : 'fake', 'apiAdapterLoaded=', !!apiAdapterLoaded)
 export default function useLeads() {
   if (apiAdapterLoaded) {
     const apiAdapter = apiAdapterLoaded
@@ -1324,7 +1328,7 @@ export default function useLeads() {
         ...client,
       }
     }
-    console.log('Lead not found', client)
+    debugLog('useLeads', 'Lead not found', client)
     return null
   }
   const getLeadOptions = () => {
