@@ -1,11 +1,12 @@
 import { useLayoutStore } from 'src/stores/layout'
 import { storeToRefs } from 'pinia'
+import { debugLog } from 'src/utils/debugLog'
 
 // If VITE_USE_FAKES is 'false' we will delegate to the API composable
 let useApi = false
 try {
   // Vite exposes env vars prefixed with VITE_ to import.meta.env
-  useApi = (import.meta && import.meta.env && import.meta.env.VITE_USE_FAKES === 'false')
+  useApi = import.meta && import.meta.env && import.meta.env.VITE_USE_FAKES === 'false'
 } catch {
   useApi = false
 }
@@ -23,11 +24,7 @@ if (useApi) {
   }
 }
 // Debug: expose a console log so Playwright can detect which adapter was chosen
-try {
-  console.log('[useCliente] useApi=', useApi, 'apiAdapterLoaded=', !!apiAdapterLoaded)
-} catch {
-  /* ignore logging errors in older runtimes */
-}
+debugLog('useCliente', 'adapter=', useApi ? 'api' : 'fake', 'apiAdapterLoaded=', !!apiAdapterLoaded)
 
 export default function useCliente() {
   const storeLayout = useLayoutStore()
@@ -701,7 +698,8 @@ export default function useCliente() {
       columnsClient: apiAdapter.columnsClient,
       rowsClient: apiAdapter.rowsClient,
       getClient: apiAdapter.getClient,
-      getClientIdName: (arrayRemove = []) => apiAdapter.getClientIdName(arrayRemove, clientEdit.value),
+      getClientIdName: (arrayRemove = []) =>
+        apiAdapter.getClientIdName(arrayRemove, clientEdit.value),
       getClientOptions: apiAdapter.getClientOptions,
       refresh: apiAdapter.refresh,
       createClient: apiAdapter.createClient,
