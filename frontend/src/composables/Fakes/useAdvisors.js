@@ -2,9 +2,31 @@ import { useAdvisorStore } from 'src/stores/advisor'
 import { storeToRefs } from 'pinia'
 import { reactive } from 'vue'
 import useAdvisorsApi from 'src/composables/Api/useAdvisorsApi'
+import { debugLog } from 'src/utils/debugLog'
 
 const useFakes =
   import.meta && import.meta.env && String(import.meta.env.VITE_USE_FAKES) !== 'false'
+
+// If configured to use API, try to initialize API adapter at module load
+let apiAdapterLoaded = null
+if (!useFakes) {
+  try {
+    // reuse statically imported adapter when available
+    apiAdapterLoaded = useAdvisorsApi()
+  } catch (e) {
+    console.error('useAdvisors: failed to init api adapter at module load', e && e.message)
+    apiAdapterLoaded = null
+  }
+}
+
+// Debug: report which adapter mode is active (only when VITE_DEBUG=true)
+debugLog(
+  'useAdvisors',
+  'adapter=',
+  useFakes ? 'fake' : 'api',
+  'apiAdapterLoaded=',
+  !!apiAdapterLoaded,
+)
 
 // Shared reactive array used when delegating to API so every composable instance
 // observes the same list and table updates across the app.
@@ -485,7 +507,7 @@ export default function useAdvisors() {
 
   // If configured to use API, delegate operations to API composable
   if (!useFakes) {
-    const api = useAdvisorsApi()
+    const api = apiAdapterLoaded || useAdvisorsApi()
     // use shared reactive array so all composable instances observe updates
     const rowsAssessores = sharedApiRowsAssessores
     const getAdvisor = (id) => rowsAssessores.find((a) => a.id === id) || null
@@ -528,15 +550,16 @@ export default function useAdvisors() {
 
     const removeAdvisor = async (id) => {
       try {
-        console.log(
-          'useAdvisors.removeAdvisor called id=',
+        debugLog(
+          'useAdvisors.removeAdvisor',
+          'called id=',
           id,
           'rows snapshot=',
           JSON.parse(JSON.stringify(rowsAssessores)),
         )
         await api.remove(id)
         const idx = rowsAssessores.findIndex((r) => r.id === id)
-        console.log('after api.remove, found idx=', idx)
+        debugLog('useAdvisors.removeAdvisor', 'after api.remove, found idx=', idx)
         if (idx !== -1) rowsAssessores.splice(idx, 1)
         return true
       } catch (e) {
