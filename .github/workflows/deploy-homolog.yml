@@ -75,6 +75,7 @@ jobs:
           fi
 
       - name: Pre-clean remote app directory
+        if: steps.validate_secrets.outputs.secrets_ok == 'true'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VM_HOST }}
@@ -96,6 +97,7 @@ jobs:
           if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Ensure 'deploy' user exists on remote
+        if: steps.validate_secrets.outputs.secrets_ok == 'true'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VM_HOST }}
@@ -157,6 +159,7 @@ jobs:
             fi
 
       - name: Deploy files via SCP action
+        if: steps.validate_secrets.outputs.secrets_ok == 'true'
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.VM_HOST }}
@@ -168,6 +171,7 @@ jobs:
           if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Remote diagnostics
+        if: steps.validate_secrets.outputs.secrets_ok == 'true'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VM_HOST }}
@@ -190,6 +194,7 @@ jobs:
           if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Move uploaded app to deploy home and fix permissions
+        if: steps.validate_secrets.outputs.secrets_ok == 'true'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VM_HOST }}
@@ -220,6 +225,7 @@ jobs:
           if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Ensure Docker installed and deploy can use it
+        if: steps.validate_secrets.outputs.secrets_ok == 'true'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VM_HOST }}
@@ -329,6 +335,7 @@ jobs:
             fi
 
       - name: Fix docker socket perms and ensure deploy can run docker (CI-applied)
+        if: steps.validate_secrets.outputs.secrets_ok == 'true'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VM_HOST }}
@@ -381,6 +388,7 @@ jobs:
           if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Grant docker permissions to deploy (CI)
+        if: steps.validate_secrets.outputs.secrets_ok == 'true'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VM_HOST }}
@@ -429,6 +437,7 @@ jobs:
           if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Ensure /home/deploy/app ownership and perms (CI)
+        if: steps.validate_secrets.outputs.secrets_ok == 'true'
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.VM_HOST }}
