@@ -6,7 +6,7 @@ on:
       pr_number:
         description: "PR number to deploy (optional)"
         required: false
-        default: 1
+        default: ""
       ref:
         description: "Git ref or sha to deploy (optional). If provided overrides pr_number."
         required: false
@@ -25,13 +25,36 @@ jobs:
         id: set_ref
         run: |
           set -euo pipefail
+          # Prefer explicit ref input when provided
           if [ "${{ inputs.ref }}" != "" ]; then
             echo "ref=${{ inputs.ref }}" >> $GITHUB_OUTPUT
-          elif [ "${{ inputs.pr_number }}" != "" ]; then
-            echo "ref=refs/pull/${{ inputs.pr_number }}/merge" >> $GITHUB_OUTPUT
-          else
-            echo "ref=${{ github.ref }}" >> $GITHUB_OUTPUT
+            exit 0
           fi
+
+          # If a PR number was provided, prefer the merge ref which GitHub provides when available.
+          # However, for some repos or contexts (notably workflow_dispatch) the special merge ref
+          # refs/pull/<n>/merge may not exist. To avoid fetch failures in actions/checkout, try
+          # refs/pull/<n>/merge first and fall back to refs/pull/<n>/head when the merge ref is missing.
+          if [ "${{ inputs.pr_number }}" != "" ]; then
+            PR_NUM="${{ inputs.pr_number }}"
+            MERGE_REF="refs/pull/${PR_NUM}/merge"
+            HEAD_REF="refs/pull/${PR_NUM}/head"
+
+            # Probe the GitHub API for the merge ref; if present use it, otherwise fall back to head ref.
+            # Use the GITHUB_TOKEN (workflow has contents: read permission) so this works for private repos.
+            # The REST API expects the ref path without a duplicated leading 'refs/' segment
+            API_REF="${MERGE_REF#refs/}"
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github+json" "$GITHUB_API_URL/repos/${{ github.repository }}/git/refs/$API_REF" || true)
+            if [ "$HTTP_STATUS" = "200" ]; then
+              echo "ref=$MERGE_REF" >> $GITHUB_OUTPUT
+            else
+              echo "ref=$HEAD_REF" >> $GITHUB_OUTPUT
+            fi
+            exit 0
+          fi
+
+          # Default to the workflow's ref
+          echo "ref=${{ github.ref }}" >> $GITHUB_OUTPUT
 
       - name: Checkout repository at requested ref
         uses: actions/checkout@v4
