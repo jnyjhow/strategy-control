@@ -21,6 +21,28 @@ jobs:
           fetch-depth: 0
           submodules: true
 
+      - name: Validate required deployment secrets
+        run: |
+          set -euo pipefail
+          MISSING=()
+          : "${{ secrets.VM_HOST:-}}" || true
+          if [ -z "${{ secrets.VM_HOST }}" ]; then MISSING+=(VM_HOST); fi
+          if [ -z "${{ secrets.VM_USER }}" ]; then MISSING+=(VM_USER); fi
+          if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then MISSING+=(SSH_PRIVATE_KEY); fi
+          if [ -n "${{ secrets.SSH_PORT }}" ]; then
+            # ensure port is numeric
+            if ! echo "${{ secrets.SSH_PORT }}" | grep -E '^[0-9]+$' >/dev/null 2>&1; then
+              echo "Invalid SSH_PORT: must be numeric" >&2
+              exit 1
+            fi
+          fi
+          if [ ${#MISSING[@]} -ne 0 ]; then
+            echo "Missing required secrets: ${MISSING[*]}" >&2
+            echo "Please add the missing secrets in the repository settings: Settings → Secrets → Actions" >&2
+            exit 1
+          fi
+          echo "All required deployment secrets present (VM_HOST, VM_USER, SSH_PRIVATE_KEY)"
+
       - name: Pre-clean remote app directory
         uses: appleboy/ssh-action@master
         with:
@@ -108,8 +130,8 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
-          source: './'
-          target: '/home/${{ secrets.VM_USER }}/app'
+          source: "./"
+          target: "/home/${{ secrets.VM_USER }}/app"
 
       - name: Remote diagnostics
         uses: appleboy/ssh-action@master
