@@ -70,8 +70,15 @@ jobs:
             echo "This run will skip remote deployment steps. If you expect deploy to run, ensure secrets are set in Settings → Secrets → Actions or run from a branch in this repository (not a fork)." >&2
             echo "secrets_ok=false" >> "$GITHUB_OUTPUT"
           else
-            echo "All required deployment secrets present (VM_HOST, VM_USER, SSH_PRIVATE_KEY)"
-            echo "secrets_ok=true" >> "$GITHUB_OUTPUT"
+            # detect common mistake: user uploaded public key instead of private key
+            PKG="${SSH_PRIVATE_KEY//\n/ }"
+            if echo "$PKG" | grep -E '^ssh-(rsa|ed25519|dss) ' >/dev/null 2>&1 || echo "$PKG" | grep -i 'BEGIN PUBLIC KEY' >/dev/null 2>&1 || echo "$PKG" | grep -E '\.pub$' >/dev/null 2>&1; then
+              echo "SSH_PRIVATE_KEY looks like a public key or not a private key. Make sure you set the private key content (e.g. cat ~/.ssh/id_ed25519) as the secret, not the .pub file." >&2
+              echo "secrets_ok=false" >> "$GITHUB_OUTPUT"
+            else
+              echo "All required deployment secrets present (VM_HOST, VM_USER, SSH_PRIVATE_KEY)"
+              echo "secrets_ok=true" >> "$GITHUB_OUTPUT"
+            fi
           fi
 
       - name: Pre-clean remote app directory
