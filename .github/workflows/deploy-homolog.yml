@@ -27,7 +27,7 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          #port: ${{ secrets.SSH_PORT }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             echo "Preparing remote path /home/${{ secrets.VM_USER }}/app"
             # Try to remove using sudo (passwordless) if available, fallback to normal rm
@@ -47,7 +47,7 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          #port: ${{ secrets.SSH_PORT }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             set -euo pipefail
             DEPLOY_USER=deploy
@@ -107,7 +107,7 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          #port: ${{ secrets.SSH_PORT }}
+          port: ${{ secrets.SSH_PORT }}
           source: './'
           target: '/home/${{ secrets.VM_USER }}/app'
 
@@ -117,7 +117,7 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          #port: ${{ secrets.SSH_PORT }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             echo '--- REMOTE DIAGNOSTICS START ---'
             echo "USER: $(whoami)"
@@ -138,7 +138,7 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          #port: ${{ secrets.SSH_PORT }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             set -euo pipefail
             SRC="/home/${{ secrets.VM_USER }}/app"
@@ -167,7 +167,7 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          #port: ${{ secrets.SSH_PORT }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             set -euo pipefail
             echo "Checking Docker availability"
@@ -275,7 +275,7 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          #port: ${{ secrets.SSH_PORT }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             set -euo pipefail
             echo "Ensuring deploy is in docker group and socket perms are correct (CI-applied)"
@@ -326,7 +326,7 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          #port: ${{ secrets.SSH_PORT }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             set -euo pipefail
             echo "Granting docker permissions to user 'deploy'"
@@ -373,7 +373,7 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          #port: ${{ secrets.SSH_PORT }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             set -euo pipefail
             APP_DIR="/home/deploy/app"
@@ -398,7 +398,7 @@ jobs:
           host: ${{ secrets.VM_HOST }}
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          #port: ${{ secrets.SSH_PORT }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             set -euo pipefail
             APP_DIR="/home/deploy/app"
