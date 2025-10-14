@@ -21,6 +21,28 @@ jobs:
           fetch-depth: 0
           submodules: true
 
+      - name: Debug secrets presence (safe)
+        env:
+          VM_HOST: ${{ secrets.VM_HOST }}
+          VM_USER: ${{ secrets.VM_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          set -euo pipefail
+          echo "--- DEBUG CONTEXT (safe) ---"
+          echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
+          echo "GITHUB_EVENT_NAME: $GITHUB_EVENT_NAME"
+          echo "GITHUB_REF: $GITHUB_REF"
+          echo "GITHUB_HEAD_REF: ${GITHUB_HEAD_REF:-<empty>}"
+          echo "GITHUB_BASE_REF: ${GITHUB_BASE_REF:-<empty>}"
+          echo "Actor: ${GITHUB_ACTOR:-<unknown>}"
+          # Indicar apenas presença (NÃO imprimir conteúdo das secrets)
+          echo "VM_HOST set? ${VM_HOST:+yes}" 
+          echo "VM_USER set? ${VM_USER:+yes}" 
+          echo "SSH_PRIVATE_KEY set? ${SSH_PRIVATE_KEY:+yes}" 
+          echo "SSH_PORT set? ${SSH_PORT:+yes}" 
+          echo "--- END DEBUG ---"
+
       - name: Validate required deployment secrets
         env:
           VM_HOST: ${{ secrets.VM_HOST }}
