@@ -3,8 +3,7 @@ const path = require("path");
 const Database = require("better-sqlite3");
 const args = process.argv.slice(2);
 const id = Number(args[0]);
-const dbFile =
-  process.env.SQLITE_FILE || path.join(__dirname, "../backend/dev.sqlite");
+const dbFile = process.env.SQLITE_FILE || path.join(__dirname, "../dev.sqlite");
 if (!id) {
   console.error("Usage: node scripts/inspect_client.js <id>");
   process.exit(1);

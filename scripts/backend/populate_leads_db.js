@@ -195,6 +195,7 @@ async function main() {
   const adapterPath = path.join(
     __dirname,
     "..",
+    "..",
     "backend",
     "src",
     "services",
@@ -217,7 +218,7 @@ async function main() {
       const Database = require("better-sqlite3");
       const dbFile =
         process.env.SQLITE_FILE ||
-        path.join(__dirname, "../backend/dev.sqlite");
+        path.join(__dirname, "..", "..", "backend", "dev.sqlite");
       const db = new Database(dbFile);
       db.prepare("DELETE FROM leads").run();
       db.prepare("DELETE FROM leads_audit").run();

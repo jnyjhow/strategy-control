@@ -274,8 +274,7 @@ async function main() {
     try {
       const Database = require("better-sqlite3");
       const dbFile =
-        process.env.SQLITE_FILE ||
-        path.join(__dirname, "../backend/dev.sqlite");
+        process.env.SQLITE_FILE || path.join(__dirname, "../dev.sqlite");
       const db = new Database(dbFile);
       db.prepare("DELETE FROM clients").run();
       db.prepare("DELETE FROM clients_audit").run();

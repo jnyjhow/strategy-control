@@ -36,9 +36,7 @@ async function main() {
   const path = require("path");
   const Database = require("better-sqlite3");
   const dbFile =
-    args.db ||
-    process.env.SQLITE_FILE ||
-    path.join(__dirname, "../backend/dev.sqlite");
+    args.db || process.env.SQLITE_FILE || path.join(__dirname, "../dev.sqlite");
   const db = new Database(dbFile);
 
   const rows = db.prepare("SELECT id, data FROM clients").all();

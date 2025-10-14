@@ -50,46 +50,100 @@ async function main() {
   const args = parseArgs();
   if (args.db) process.env.SQLITE_FILE = args.db;
 
-  const advisorsAdapter = require(path.join(
-    __dirname,
-    "..",
-    "backend",
-    "src",
-    "services",
-    "sqlite",
-    "advisors.js"
-  ));
-  const clientsAdapter = require(path.join(
-    __dirname,
-    "..",
-    "backend",
-    "src",
-    "services",
-    "sqlite",
-    "clients.js"
-  ));
+  // Adaptadores estao no backend/src/services/sqlite
+  const tryResolve = (parts) => {
+    const p = path.join(...parts);
+    try {
+      return require(p);
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const advisorsAdapter =
+    tryResolve([
+      __dirname,
+      "..",
+      "..",
+      "backend",
+      "src",
+      "services",
+      "sqlite",
+      "advisors.js",
+    ]) ||
+    tryResolve([__dirname, "..", "src", "services", "sqlite", "advisors.js"]);
+
+  const clientsAdapter =
+    tryResolve([
+      __dirname,
+      "..",
+      "..",
+      "backend",
+      "src",
+      "services",
+      "sqlite",
+      "clients.js",
+    ]) ||
+    tryResolve([__dirname, "..", "src", "services", "sqlite", "clients.js"]);
+
+  if (!advisorsAdapter || !clientsAdapter) {
+    console.error(
+      "Could not locate adapters for advisors/clients. Checked backend/src/services/sqlite and scripts/src/services/sqlite."
+    );
+    process.exit(1);
+  }
 
   // clear tables
   try {
     const Database = require("better-sqlite3");
-    const dbFile =
-      process.env.SQLITE_FILE || path.join(__dirname, "../backend/dev.sqlite");
+    const defaultDbFile = path.join(
+      __dirname,
+      "..",
+      "..",
+      "backend",
+      "dev.sqlite"
+    );
+    const dbFile = process.env.SQLITE_FILE || defaultDbFile;
     const db = new Database(dbFile);
-    db.prepare("DELETE FROM clients").run();
-    db.prepare("DELETE FROM clients_audit").run();
-    db.prepare("DELETE FROM advisors").run();
-    db.close();
-    console.log("Cleared clients, clients_audit and advisors tables");
+    try {
+      db.prepare("DELETE FROM clients").run();
+      db.prepare("DELETE FROM clients_audit").run();
+      db.prepare("DELETE FROM advisors").run();
+      console.log("Cleared clients, clients_audit and advisors tables");
+    } catch (innerErr) {
+      // If the tables don't exist yet, continue — adapter code will create them when required.
+      if (
+        innerErr &&
+        String(innerErr.message).toLowerCase().includes("no such table")
+      ) {
+        console.log(
+          "Some tables did not exist yet; continuing. Adapter code will create necessary tables."
+        );
+      } else {
+        console.error("Could not clear tables:", innerErr && innerErr.message);
+        process.exit(1);
+      }
+    } finally {
+      try {
+        db.close();
+      } catch (e) {}
+    }
   } catch (e) {
-    console.error("Could not clear tables:", e && e.message);
+    console.error("Could not open database to clear tables:", e && e.message);
     process.exit(1);
   }
 
   // insert sample advisors
   // Populate advisors using the existing script so we get rich advisor data
   const child = require("child_process");
-  const dbFile =
-    process.env.SQLITE_FILE || path.join(__dirname, "../backend/dev.sqlite");
+  const defaultDbFile = path.join(
+    __dirname,
+    "..",
+    "..",
+    "backend",
+    "dev.sqlite"
+  );
+  const dbFile = process.env.SQLITE_FILE || defaultDbFile;
   const advCount = args.advisors || Math.min(10, args.count || 10);
   const advScript = path.join(__dirname, "populate_advisors_db.js");
   try {

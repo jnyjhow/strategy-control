@@ -21,6 +21,8 @@ function parseArgs() {
       i++;
     } else if (a === "--yes") {
       args.yes = true;
+    } else if (a === "--remove-file" || a === "--delete-file") {
+      args.removeFile = true;
     } else if (a === "-h" || a === "--help") {
       args.help = true;
     }
@@ -47,7 +49,9 @@ async function main() {
   const args = parseArgs();
   if (args.help) return showHelp();
 
-  const dbPath = args.db || path.join(__dirname, "..", "backend", "dev.sqlite");
+  // padrão esperado: <project-root>/backend/dev.sqlite
+  const dbPath =
+    args.db || path.join(__dirname, "..", "..", "backend", "dev.sqlite");
   if (!fs.existsSync(dbPath)) {
     console.error(`Arquivo de DB não encontrado: ${dbPath}`);
     process.exit(1);
@@ -66,10 +70,19 @@ async function main() {
   console.log("Tabelas alvo:");
   toDelete.forEach((t) => console.log(`  - ${t}`));
 
+  if (args.removeFile) {
+    console.log("Opção: remover arquivo do DB após limpar as tabelas.");
+  }
+
   if (!args.yes) {
     console.log(
       "\nSem --yes: execução em modo dry-run. Use --yes para confirmar e executar as deleções."
     );
+    if (args.removeFile) {
+      console.log(
+        "Com --remove-file mas sem --yes: o arquivo do DB NÃO será removido. Use --yes para confirmar remoção."
+      );
+    }
     process.exit(0);
   }
 
@@ -133,7 +146,7 @@ async function main() {
         sqlite3 = require("sqlite3");
       } catch (e2) {
         console.error(
-          "Nenhum driver sqlite disponível (better-sqlite3 ou sqlite3). Instale one ou use NODE_PATH=./backend/node_modules"
+          "Nenhum driver sqlite disponível (better-sqlite3 ou sqlite3). Instale um ou use NODE_PATH=./backend/node_modules"
         );
         process.exit(1);
       }
@@ -154,6 +167,19 @@ async function main() {
               toDelete.join(", ") +
               ")"
           );
+          // se solicitado, remover o arquivo do DB (apenas quando --yes foi passado)
+          if (args.removeFile) {
+            try {
+              fs.unlinkSync(dbPath);
+              console.log(`Arquivo removido: ${dbPath}`);
+            } catch (e) {
+              console.warn(
+                `Aviso: não foi possível remover arquivo ${dbPath}: ${
+                  e && e.message
+                }`
+              );
+            }
+          }
           return;
         }
         const t = toDelete[i];
@@ -181,6 +207,18 @@ async function main() {
       toDelete.join(", ") +
       ")"
   );
+
+  // se solicitado, remover o arquivo do DB (apenas quando --yes foi passado)
+  if (args.removeFile) {
+    try {
+      fs.unlinkSync(dbPath);
+      console.log(`Arquivo removido: ${dbPath}`);
+    } catch (e) {
+      console.warn(
+        `Aviso: não foi possível remover arquivo ${dbPath}: ${e && e.message}`
+      );
+    }
+  }
 }
 
 main();
