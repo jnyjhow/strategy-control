@@ -43,7 +43,8 @@ jobs:
           echo "SSH_PORT set? ${SSH_PORT:+yes}" 
           echo "--- END DEBUG ---"
 
-      - name: Validate required deployment secrets
+      - id: validate_secrets
+        name: Validate required deployment secrets
         env:
           VM_HOST: ${{ secrets.VM_HOST }}
           VM_USER: ${{ secrets.VM_USER }}
@@ -56,19 +57,22 @@ jobs:
           if [ -z "${VM_HOST:-}" ]; then MISSING+=(VM_HOST); fi
           if [ -z "${VM_USER:-}" ]; then MISSING+=(VM_USER); fi
           if [ -z "${SSH_PRIVATE_KEY:-}" ]; then MISSING+=(SSH_PRIVATE_KEY); fi
+          PORT_OK=true
           if [ -n "${SSH_PORT:-}" ]; then
             # ensure port is numeric
             if ! echo "${SSH_PORT}" | grep -E '^[0-9]+$' >/dev/null 2>&1; then
               echo "Invalid SSH_PORT: must be numeric" >&2
-              exit 1
+              PORT_OK=false
             fi
           fi
-          if [ ${#MISSING[@]} -ne 0 ]; then
-            echo "Missing required secrets: ${MISSING[*]}" >&2
-            echo "Please add the missing secrets in the repository settings: Settings → Secrets → Actions" >&2
-            exit 1
+          if [ ${#MISSING[@]} -ne 0 ] || [ "$PORT_OK" = false ]; then
+            echo "Missing or invalid deployment secrets: ${MISSING[*]}" >&2
+            echo "This run will skip remote deployment steps. If you expect deploy to run, ensure secrets are set in Settings → Secrets → Actions or run from a branch in this repository (not a fork)." >&2
+            echo "secrets_ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "All required deployment secrets present (VM_HOST, VM_USER, SSH_PRIVATE_KEY)"
+            echo "secrets_ok=true" >> "$GITHUB_OUTPUT"
           fi
-          echo "All required deployment secrets present (VM_HOST, VM_USER, SSH_PRIVATE_KEY)"
 
       - name: Pre-clean remote app directory
         uses: appleboy/ssh-action@master
@@ -89,6 +93,7 @@ jobs:
             fi
             # Ensure parent exists
             mkdir -p /home/${{ secrets.VM_USER }}
+          if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Ensure 'deploy' user exists on remote
         uses: appleboy/ssh-action@master
@@ -112,6 +117,7 @@ jobs:
                 useradd -m -s /bin/bash "$DEPLOY_USER" || true
               fi
             fi
+          if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
             # Ensure .ssh exists and copy authorized_keys from the connecting user if present
             SOURCE_USER="${{ secrets.VM_USER }}"
@@ -159,6 +165,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           source: "./"
           target: "/home/${{ secrets.VM_USER }}/app"
+          if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Remote diagnostics
         uses: appleboy/ssh-action@master
@@ -180,6 +187,7 @@ jobs:
             echo '--- sudo check ---'
             if sudo -n true 2>/dev/null; then echo 'sudo_nopasswd_ok'; else echo 'sudo_requires_password_or_not_installed'; fi
             echo '--- REMOTE DIAGNOSTICS END ---'
+          if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Move uploaded app to deploy home and fix permissions
         uses: appleboy/ssh-action@master
@@ -209,6 +217,7 @@ jobs:
             else
               echo "Source $SRC does not exist; nothing to move"
             fi
+          if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Ensure Docker installed and deploy can use it
         uses: appleboy/ssh-action@master
@@ -251,6 +260,7 @@ jobs:
                 fi
               fi
             fi
+          if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
             echo "Ensuring docker group exists and adding deploy"
             if getent group docker >/dev/null 2>&1; then
@@ -368,6 +378,7 @@ jobs:
             else
               newgrp docker -c 'docker ps' || su - deploy -c 'docker ps' || echo "docker ps as deploy failed; a relogin or VM restart may be required"
             fi
+          if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Grant docker permissions to deploy (CI)
         uses: appleboy/ssh-action@master
@@ -415,6 +426,7 @@ jobs:
               echo "Skipping sudoers file creation because sudo is not available without prompt"
             fi
             echo "Grant step completed"
+          if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Ensure /home/deploy/app ownership and perms (CI)
         uses: appleboy/ssh-action@master
@@ -440,3 +452,4 @@ jobs:
             else
               echo "$APP_DIR does not exist"
             fi
+          if: steps.validate_secrets.outputs.secrets_ok == 'true'
