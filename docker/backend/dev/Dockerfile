@@ -4,7 +4,9 @@ FROM node:20-bullseye-slim
 WORKDIR /app
 
 # Instalar dependências do sistema necessárias
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends ca-certificates curl jq \
+	&& rm -rf /var/lib/apt/lists/*
 
 # Copiar somente arquivos de dependências e instalar para aproveitar cache
 COPY backend/package*.json ./
