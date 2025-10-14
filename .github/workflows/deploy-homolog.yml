@@ -22,16 +22,21 @@ jobs:
           submodules: true
 
       - name: Validate required deployment secrets
+        env:
+          VM_HOST: ${{ secrets.VM_HOST }}
+          VM_USER: ${{ secrets.VM_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
         run: |
           set -euo pipefail
           MISSING=()
-          : "${{ secrets.VM_HOST:-}}" || true
-          if [ -z "${{ secrets.VM_HOST }}" ]; then MISSING+=(VM_HOST); fi
-          if [ -z "${{ secrets.VM_USER }}" ]; then MISSING+=(VM_USER); fi
-          if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ]; then MISSING+=(SSH_PRIVATE_KEY); fi
-          if [ -n "${{ secrets.SSH_PORT }}" ]; then
+          # Use POSIX variable checks on injected env vars to avoid GH expression parsing
+          if [ -z "${VM_HOST:-}" ]; then MISSING+=(VM_HOST); fi
+          if [ -z "${VM_USER:-}" ]; then MISSING+=(VM_USER); fi
+          if [ -z "${SSH_PRIVATE_KEY:-}" ]; then MISSING+=(SSH_PRIVATE_KEY); fi
+          if [ -n "${SSH_PORT:-}" ]; then
             # ensure port is numeric
-            if ! echo "${{ secrets.SSH_PORT }}" | grep -E '^[0-9]+$' >/dev/null 2>&1; then
+            if ! echo "${SSH_PORT}" | grep -E '^[0-9]+$' >/dev/null 2>&1; then
               echo "Invalid SSH_PORT: must be numeric" >&2
               exit 1
             fi
