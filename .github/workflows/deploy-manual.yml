@@ -6,7 +6,7 @@ on:
       pr_number:
         description: "PR number to deploy (optional)"
         required: false
-        default: 1
+        default: ""
       ref:
         description: "Git ref or sha to deploy (optional). If provided overrides pr_number."
         required: false
@@ -85,23 +85,40 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           script: |
             echo "Preparing remote path /home/${{ secrets.VM_USER }}/app"
+            # remove both the user's upload path and the final deploy path to avoid leftover files
             if sudo -n true 2>/dev/null; then
               sudo rm -rf /home/${{ secrets.VM_USER }}/app || true
+              sudo rm -rf /home/deploy/app || true
             else
               rm -rf /home/${{ secrets.VM_USER }}/app || true
+              rm -rf /home/deploy/app || true
             fi
             mkdir -p /home/${{ secrets.VM_USER }}
 
-      - name: Deploy files via SCP action
+      - name: Deploy files via rsync over SSH
         if: steps.validate_secrets.outputs.secrets_ok == 'true'
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.VM_HOST }}
-          username: ${{ secrets.VM_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          source: "./"
-          target: "/home/${{ secrets.VM_USER }}/app"
+        env:
+          VM_HOST: ${{ secrets.VM_HOST }}
+          VM_USER: ${{ secrets.VM_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          set -euo pipefail
+          echo "Preparing ssh key and known_hosts for $VM_HOST"
+          mkdir -p ~/.ssh
+          printf "%s\n" "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          # add host key to known_hosts (use port if provided)
+          if [ -n "$SSH_PORT" ]; then
+            ssh-keyscan -p "$SSH_PORT" "$VM_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+            RSYNC_SSH="ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts -o StrictHostKeyChecking=no -p $SSH_PORT"
+          else
+            ssh-keyscan "$VM_HOST" >> ~/.ssh/known_hosts 2>/dev/null || true
+            RSYNC_SSH="ssh -i ~/.ssh/id_rsa -o UserKnownHostsFile=~/.ssh/known_hosts -o StrictHostKeyChecking=no"
+          fi
+          echo "Running rsync to $VM_USER@$VM_HOST:/home/$VM_USER/app"
+          # exclude .git by default; adjust excludes as needed
+          rsync -az --delete --exclude='.git' -e "$RSYNC_SSH" ./ "$VM_USER@$VM_HOST":/home/"$VM_USER"/app
 
       - name: Move uploaded app to deploy home and fix permissions
         if: steps.validate_secrets.outputs.secrets_ok == 'true'
@@ -130,4 +147,3 @@ jobs:
             else
               echo "Source $SRC does not exist; nothing to move"
             fi
-
