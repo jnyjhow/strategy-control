@@ -6,7 +6,7 @@ on:
       pr_number:
         description: "PR number to deploy (optional)"
         required: false
-        default: ""
+        default: 1
       ref:
         description: "Git ref or sha to deploy (optional). If provided overrides pr_number."
         required: false
