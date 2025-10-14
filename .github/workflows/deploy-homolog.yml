@@ -94,7 +94,6 @@ jobs:
             fi
             # Ensure parent exists
             mkdir -p /home/${{ secrets.VM_USER }}
-          if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Ensure 'deploy' user exists on remote
         if: steps.validate_secrets.outputs.secrets_ok == 'true'
@@ -119,7 +118,6 @@ jobs:
                 useradd -m -s /bin/bash "$DEPLOY_USER" || true
               fi
             fi
-          if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
             # Ensure .ssh exists and copy authorized_keys from the connecting user if present
             SOURCE_USER="${{ secrets.VM_USER }}"
@@ -168,7 +166,6 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           source: "./"
           target: "/home/${{ secrets.VM_USER }}/app"
-          if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Remote diagnostics
         if: steps.validate_secrets.outputs.secrets_ok == 'true'
@@ -191,7 +188,6 @@ jobs:
             echo '--- sudo check ---'
             if sudo -n true 2>/dev/null; then echo 'sudo_nopasswd_ok'; else echo 'sudo_requires_password_or_not_installed'; fi
             echo '--- REMOTE DIAGNOSTICS END ---'
-          if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Move uploaded app to deploy home and fix permissions
         if: steps.validate_secrets.outputs.secrets_ok == 'true'
@@ -222,7 +218,6 @@ jobs:
             else
               echo "Source $SRC does not exist; nothing to move"
             fi
-          if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Ensure Docker installed and deploy can use it
         if: steps.validate_secrets.outputs.secrets_ok == 'true'
@@ -266,7 +261,6 @@ jobs:
                 fi
               fi
             fi
-          if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
             echo "Ensuring docker group exists and adding deploy"
             if getent group docker >/dev/null 2>&1; then
@@ -385,7 +379,6 @@ jobs:
             else
               newgrp docker -c 'docker ps' || su - deploy -c 'docker ps' || echo "docker ps as deploy failed; a relogin or VM restart may be required"
             fi
-          if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Grant docker permissions to deploy (CI)
         if: steps.validate_secrets.outputs.secrets_ok == 'true'
@@ -434,7 +427,6 @@ jobs:
               echo "Skipping sudoers file creation because sudo is not available without prompt"
             fi
             echo "Grant step completed"
-          if: steps.validate_secrets.outputs.secrets_ok == 'true'
 
       - name: Ensure /home/deploy/app ownership and perms (CI)
         if: steps.validate_secrets.outputs.secrets_ok == 'true'
@@ -461,4 +453,3 @@ jobs:
             else
               echo "$APP_DIR does not exist"
             fi
-          if: steps.validate_secrets.outputs.secrets_ok == 'true'
