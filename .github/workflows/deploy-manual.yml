@@ -1,0 +1,163 @@
+name: Manual Deploy to VM
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "PR number to deploy (optional)"
+        required: false
+        default: ""
+      ref:
+        description: "Git ref or sha to deploy (optional). If provided overrides pr_number."
+        required: false
+        default: ""
+
+jobs:
+  deploy_manual:
+    name: Manual Deploy to VM
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Determine ref to checkout
+        id: set_ref
+        run: |
+          set -euo pipefail
+          if [ "${{ inputs.ref }}" != "" ]; then
+            echo "ref=${{ inputs.ref }}" >> $GITHUB_OUTPUT
+          elif [ "${{ inputs.pr_number }}" != "" ]; then
+            echo "ref=refs/pull/${{ inputs.pr_number }}/merge" >> $GITHUB_OUTPUT
+          else
+            echo "ref=${{ github.ref }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Checkout repository at requested ref
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ steps.set_ref.outputs.ref }}
+          submodules: true
+
+      - name: Validate required deployment secrets
+        id: validate_secrets
+        env:
+          VM_HOST: ${{ secrets.VM_HOST }}
+          VM_USER: ${{ secrets.VM_USER }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          set -euo pipefail
+          MISSING=()
+          if [ -z "${VM_HOST:-}" ]; then MISSING+=(VM_HOST); fi
+          if [ -z "${VM_USER:-}" ]; then MISSING+=(VM_USER); fi
+          if [ -z "${SSH_PRIVATE_KEY:-}" ]; then MISSING+=(SSH_PRIVATE_KEY); fi
+          PORT_OK=true
+          if [ -n "${SSH_PORT:-}" ]; then
+            if ! echo "${SSH_PORT}" | grep -E '^[0-9]+$' >/dev/null 2>&1; then
+              echo "Invalid SSH_PORT: must be numeric" >&2
+              PORT_OK=false
+            fi
+          fi
+          if [ ${#MISSING[@]} -ne 0 ] || [ "$PORT_OK" = false ]; then
+            echo "Missing or invalid deployment secrets: ${MISSING[*]}" >&2
+            echo "secrets_ok=false" >> "$GITHUB_OUTPUT"
+            exit 1
+          else
+            echo "secrets_ok=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Pre-clean remote app directory
+        if: steps.validate_secrets.outputs.secrets_ok == 'true'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            echo "Preparing remote path /home/${{ secrets.VM_USER }}/app"
+            if sudo -n true 2>/dev/null; then
+              sudo rm -rf /home/${{ secrets.VM_USER }}/app || true
+            else
+              rm -rf /home/${{ secrets.VM_USER }}/app || true
+            fi
+            mkdir -p /home/${{ secrets.VM_USER }}
+
+      - name: Deploy files via SCP action
+        if: steps.validate_secrets.outputs.secrets_ok == 'true'
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          source: "./"
+          target: "/home/${{ secrets.VM_USER }}/app"
+
+      - name: Move uploaded app to deploy home and fix permissions
+        if: steps.validate_secrets.outputs.secrets_ok == 'true'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -euo pipefail
+            SRC="/home/${{ secrets.VM_USER }}/app"
+            DST="/home/deploy/app"
+            if [ -d "$SRC" ]; then
+              if sudo -n true 2>/dev/null; then
+                sudo rm -rf "$DST" || true
+                sudo mv "$SRC" "$DST"
+                sudo chown -R deploy:deploy "/home/deploy"
+                sudo chmod -R 755 "$DST" || true
+              else
+                rm -rf "$DST" || true
+                mv "$SRC" "$DST" || true
+                chown -R deploy:deploy "/home/deploy" || true
+                chmod -R 755 "$DST" || true
+              fi
+            else
+              echo "Source $SRC does not exist; nothing to move"
+            fi
+
+      - name: Run docker compose as deploy (CI)
+        if: steps.validate_secrets.outputs.secrets_ok == 'true'
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -euo pipefail
+            APP_DIR="/home/deploy/app"
+            COMPOSE_FILE="$APP_DIR/docker-compose.production.yaml"
+            if sudo -n true 2>/dev/null; then
+              if ! sudo test -f "$COMPOSE_FILE"; then
+                echo "Compose file not found at $COMPOSE_FILE; listing $APP_DIR with sudo"
+                sudo ls -la "$APP_DIR" || true
+                exit 0
+              fi
+            else
+              if su - deploy -c "test -f '$COMPOSE_FILE'" >/dev/null 2>&1; then
+                echo "Compose file present (checked as deploy)"
+              else
+                echo "Compose file not found at $COMPOSE_FILE when checked as deploy; attempting to list as deploy"
+                su - deploy -c "ls -la '$APP_DIR'" || echo "ls as deploy failed"
+                exit 0
+              fi
+            fi
+
+            if sudo -n true 2>/dev/null; then
+              sudo docker compose -f "$COMPOSE_FILE" up -d postgres redis pgadmin || true
+            else
+              if command -v sg >/dev/null 2>&1; then
+                sg docker -c "cd '$APP_DIR' && docker compose -f '$COMPOSE_FILE' up -d postgres redis pgadmin" || true
+              else
+                newgrp docker -c "cd '$APP_DIR' && docker compose -f '$COMPOSE_FILE' up -d postgres redis pgadmin" || su - deploy -c "cd '$APP_DIR' && docker compose -f '$COMPOSE_FILE' up -d postgres redis pgadmin" || true
+              fi
+            fi
