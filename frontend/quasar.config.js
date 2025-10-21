@@ -33,8 +33,9 @@ export default defineConfig((ctx) => {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#build
     build: {
+      // Usar 'esnext' no início do browser target para permitir top-level await
       target: {
-        browser: ['es2022', 'firefox115', 'chrome115', 'safari14'],
+        browser: ['esnext', 'es2022', 'firefox115', 'chrome115', 'safari14'],
         node: 'node20',
       },
 
@@ -86,6 +87,14 @@ export default defineConfig((ctx) => {
           { server: false },
         ],
       ],
+      // Forçar o target do esbuild/vite para 'esnext' durante o build
+      extendViteConf (viteConf) {
+        viteConf.esbuild = viteConf.esbuild || {}
+        viteConf.esbuild.target = 'esnext'
+        // também garantir que build.target no vite use esnext
+        viteConf.build = viteConf.build || {}
+        viteConf.build.target = 'esnext'
+      },
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#devserver
