@@ -88,7 +88,7 @@ export default defineConfig((ctx) => {
         ],
       ],
       // Forçar o target do esbuild/vite para 'esnext' durante o build
-      extendViteConf (viteConf) {
+      extendViteConf(viteConf) {
         viteConf.esbuild = viteConf.esbuild || {}
         viteConf.esbuild.target = 'esnext'
         // também garantir que build.target no vite use esnext
@@ -101,6 +101,19 @@ export default defineConfig((ctx) => {
     devServer: {
       // https: true,
       open: true, // opens browser window automatically
+      proxy: {
+        // encaminhar chamadas à API e arquivos estáticos (/storage) para o backend local
+        '/api': {
+          target: 'http://localhost:3333',
+          changeOrigin: true,
+          secure: false,
+        },
+        '/storage': {
+          target: 'http://localhost:3333',
+          changeOrigin: true,
+          secure: false,
+        },
+      },
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework

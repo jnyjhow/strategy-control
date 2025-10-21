@@ -67,7 +67,12 @@
           <q-item>
             <q-item-section avatar>
               <avatar-initials
-                :src="props.row.cliente && props.row.cliente.avatar"
+                :src="
+                  (props.row.cliente &&
+                    (props.row.cliente.avatar || props.row.cliente.avatar_url)) ||
+                  props.row.avatar ||
+                  props.row.avatar_url
+                "
                 :name="props.row.cliente && props.row.cliente.name"
                 size="32px"
                 class="q-mr-sm"
@@ -187,6 +192,7 @@
       full-height
       full-width
       maximized
+      persistent
       class="control-width"
       data-test="clients-create-dialog"
     >
