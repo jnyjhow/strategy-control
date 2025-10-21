@@ -59,7 +59,8 @@
           outlined
           v-model="clientEdit.cliente.telefone"
           dense
-          placeholder="000 0000-0000"
+          placeholder="+55 (11) 99999-9999"
+          mask="+## (##) #####-####"
         ></q-input>
       </label-form>
     </div>
@@ -174,14 +175,14 @@
       <label-form
         className="col"
         textLabel="Telefone do Contato"
-        helperText="Formato: (99) 99999-9999"
+        helperText="Formato: +CC (DD) NNNNN-NNNN"
       >
         <q-input
           outlined
           v-model="clientEdit.cliente.contato_telefone"
           dense
-          placeholder="(99) 99999-9999"
-          mask="(##) #####-####"
+          placeholder="+55 (11) 99999-9999"
+          mask="+## (##) #####-####"
         />
       </label-form>
     </div>
