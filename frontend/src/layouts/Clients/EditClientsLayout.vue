@@ -7,7 +7,7 @@
 
     <q-separator />
 
-    <q-banner inline-actions rounded class="q-ma-md border-pattern">
+   <q-banner inline-actions rounded class="q-ma-md border-pattern" v-if="titleHeader != 'Inclusão de Cliente'">
       <div class="row">
         <div class="col-1">
           <q-avatar size="32px">
@@ -76,14 +76,14 @@
       <we-lend-form-layout class="q-my-lg" />
     </q-card-section>
 
-    <q-card-actions vertical>
+    <q-card-actions align="right">
       <div class="row justify-end q-pa-md">
         <q-btn
           id="footer-remove-btn"
           size="sm"
           unelevated
-          color="negative"
-          class="q-mr-sm"
+          class="q-mx-md text-negative"
+          padding="sm lg"
           label="Remover"
           icon="delete"
           data-test="clients-remove-btn"
@@ -95,14 +95,16 @@
             >Preencha todos os campos obrigatórios corretamente (Nome, CPF, E-mail, Data de
             Nascimento)</q-tooltip
           >
-          <q-btn
+           <q-btn
             :disable="!canSave"
-            size="sm"
-            unelevated
+            class="q-mr-sm"
             color="primary"
+            padding="sm lg"
             label="Salvar"
-            icon="save"
-            data-test="clients-save-btn"
+            no-caps
+            dense
+            style="border-radius: 8px"
+            data-test="clients-create-btn"
             @click.prevent="saveClient"
           />
         </div>
@@ -133,7 +135,7 @@ import { useLayoutStore } from 'src/stores/layout'
 import { useAdvisorStore } from 'src/stores/advisor'
 import { storeToRefs } from 'pinia'
 import TitleCard from 'src/components/Card/TitleCard.vue'
-import CompareButton from 'src/components/Button/CompareButton.vue'
+// import CompareButton from 'src/components/Button/CompareButton.vue'
 import PersonalDataLayout from 'src/layouts/Clients/PersonalDataLayout.vue'
 import BankDetailsLayout from 'src/layouts/Clients/BankDetailsLayout.vue'
 import DataResidentialLayout from 'src/layouts/Clients/DataResidentialLayout.vue'
@@ -164,15 +166,15 @@ const { rowsClient, createClient, updateClient, deleteClient } = clienteApi
 
 const { rowsAssessores } = useAdvisors()
 const confirmRemove = ref(false)
-const onHeaderRemove = () => {
-  try {
-    console.debug('onHeaderRemove clicked for client id=', clientEdit.value && clientEdit.value.id)
-    // reuse the same confirmation dialog
-    confirmRemove.value = true
-  } catch {
-    /* ignore */
-  }
-}
+// const onHeaderRemove = () => {
+//   try {
+//     console.debug('onHeaderRemove clicked for client id=', clientEdit.value && clientEdit.value.id)
+//     // reuse the same confirmation dialog
+//     confirmRemove.value = true
+//   } catch {
+//     /* ignore */
+//   }
+// }
 const onFooterRemove = () => {
   try {
     console.debug('onFooterRemove clicked for client id=', clientEdit.value && clientEdit.value.id)

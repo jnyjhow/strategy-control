@@ -1,6 +1,41 @@
 <template>
   <q-form class="PersonalDataLayout">
+    <div class="row">
+      <label-form className="col row" textLabel="Foto (Avatar)">
+        <div class="col">
+          <q-btn
+             label=""
+             color="primary"
+             icon="photo_camera"
+             flat
+             size="sm"
+             no-caps
+             @click="triggerPhotoInput"
+           />
+
+        </div>
+
+        <div class="row q-gutter-sm q-mt-xs" style="margin-top: 0; align-items: center">
+           <div v-if="uploadedPhoto">
+            <q-avatar size="156px" class="q-ml-sm">
+              <img :src="uploadedPhoto" alt="foto" />
+            </q-avatar>
+
+            <q-btn flat dense round icon="delete" color="negative" @click="clearPhoto" />
+          </div>
+
+          <input
+            type="file"
+            ref="filePhotoInput"
+            style="display: none"
+            @change="handleFilePhoto"
+            accept=".jpg, .jpeg, .png"
+          />
+        </div>
+      </label-form>
+    </div>
     <div class="row q-gutter-sm">
+
       <label-form className="col" :required="true" textLabel="Nome">
         <q-input
           outlined
@@ -99,6 +134,7 @@
           navigation-min-year-month="1990/07"
           type="date"
           dense
+          :hint="`idade - ${ computedAgeDisplay }`"
           placeholder="value"
           :rules="[(val) => !!val || 'Campo é obrigatorio.']"
           :error="birthError"
@@ -107,11 +143,11 @@
           @input="onInputBirth"
         ></q-input>
       </label-form>
-      <div class="col" style="display: flex; align-items: center">
+      <!-- <div class="col" style="display: flex; align-items: center">
         <div style="font-size: 0.9rem; color: #666; margin-left: 8px">
           Idade: <strong>{{ computedAgeDisplay }}</strong>
         </div>
-      </div>
+      </div> -->
 
       <label-form className="col" textLabel="Profissão">
         <q-select
@@ -153,33 +189,6 @@
           placeholder="Como o cliente é chamado"
         ></q-input>
       </label-form>
-
-      <label-form className="col" textLabel="Foto (Avatar)" helperText=".jpg, .png — até 5MB">
-        <div class="row q-gutter-sm q-mt-xs" style="margin-top: 0; align-items: center">
-          <q-btn
-            label="Upload Foto"
-            color="primary"
-            icon="photo_camera"
-            outline
-            no-caps
-            style="border-radius: 6px; border: 2px solid #00a3ff"
-            @click="triggerPhotoInput"
-          />
-          <div v-if="uploadedPhoto">
-            <q-avatar size="56px" class="q-ml-sm">
-              <img :src="uploadedPhoto" alt="foto" />
-            </q-avatar>
-            <q-btn flat dense round icon="delete" color="negative" @click="clearPhoto" />
-          </div>
-          <input
-            type="file"
-            ref="filePhotoInput"
-            style="display: none"
-            @change="handleFilePhoto"
-            accept=".jpg, .jpeg, .png"
-          />
-        </div>
-      </label-form>
     </div>
 
     <!-- Renda familiar e contato de confiança -->
@@ -206,10 +215,10 @@
       <label-form
         className="col"
         textLabel="Telefone do Contato"
-        helperText="Formato internacional: + seguido do código do país e número (ex: +5511912345678)"
       >
         <q-input
           outlined
+          hint="Formato internacional: + seguido do código do país e número (ex: +5511912345678)"
           v-model="clientEdit.cliente.contato_telefone"
           dense
           placeholder="+5511912345678"
@@ -295,9 +304,10 @@
         <q-input outlined v-model="clientEdit.cliente.naturalidade_uf" dense placeholder="UF" />
       </label-form>
 
-      <label-form className="col" textLabel="RG (formatação)" helperText="Formato: 00.000.000-0">
+      <label-form className="col" textLabel="RG (formatação)">
         <q-input
           outlined
+          hint="Formato: 00.000.000-0"
           v-model="clientEdit.cliente.rg"
           dense
           placeholder="00.000.000-0"
