@@ -20,9 +20,11 @@ app.use(
     origin: (origin, callback) => {
       // allow non-browser requests (curl, server-to-server) which have no origin
       if (!origin) return callback(null, true);
-      // if configured list contains this origin, allow
-      if (allowedOrigins.length && allowedOrigins.includes(origin))
-        return callback(null, true);
+        // if configured list contains '*', allow any origin
+        if (allowedOrigins.includes("*")) return callback(null, true);
+        // if configured list contains this origin, allow
+        if (allowedOrigins.length && allowedOrigins.includes(origin))
+          return callback(null, true);
       // allow any localhost origin (different dev ports like 9000,9001)
       try {
         const u = new URL(origin);
