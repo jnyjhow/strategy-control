@@ -34,6 +34,9 @@
         </div>
       </label-form>
     </div>
+
+      <slot></slot>
+
     <div class="row q-gutter-sm">
 
       <label-form className="col" :required="true" textLabel="Nome">
@@ -51,7 +54,7 @@
       </label-form>
 
       <label-form className="col" textLabel="RG">
-        <q-input outlined v-model="clientEdit.cliente.rg" dense placeholder=""></q-input>
+        <q-input outlined v-model="clientEdit.cliente.rg" dense placeholder="00.000.000-0"></q-input>
       </label-form>
 
       <label-form className="col" :required="true" textLabel="CPF">
@@ -72,7 +75,7 @@
 
     <div class="row q-gutter-sm">
       <label-form className="col" textLabel="CNH">
-        <q-input outlined v-model="clientEdit.cliente.cnh" dense placeholder=""></q-input>
+        <q-input outlined v-model="clientEdit.cliente.cnh" dense placeholder="Digite o número da CNH"></q-input>
       </label-form>
 
       <label-form className="col" :required="true" textLabel="E-mail">
@@ -235,7 +238,9 @@
       </label-form>
 
       <label-form className="col" textLabel="UF de Expedição (RG)">
-        <q-input outlined v-model="clientEdit.cliente.rg_expedicao_uf" dense placeholder="UF" />
+        <q-input outlined
+        v-model="clientEdit.cliente.rg_expedicao_uf" dense placeholder="Digite a UF de expedição" />
+
       </label-form>
 
       <label-form className="col" textLabel="Gênero">

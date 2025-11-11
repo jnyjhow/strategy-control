@@ -1,30 +1,9 @@
 <template>
   <div class="UploadResidential">
-    <!-- Endereço complementar para documentos residenciais -->
-    <div class="row q-gutter-sm q-mt-sm">
-      <label-form className="col" textLabel="Complemento">
-        <q-input
-          outlined
-          v-model="clientEdit.residential.complemento"
-          dense
-          placeholder="Apto / Bloco / Complemento"
-        ></q-input>
-      </label-form>
-
-      <label-form className="col" textLabel="CEP">
-        <q-input
-          outlined
-          v-model="clientEdit.residential.cep"
-          dense
-          placeholder="00000-000"
-          mask="#####-###"
-        ></q-input>
-      </label-form>
-    </div>
 
     <!-- Upload de IPTU CAPA -->
 
-    <label-form className="q-mt-sm" textLabel="UPTU Capa" helperText=".jpg, .png, .pdf — até 5MB">
+    <label-form className="q-mt-sm" textLabel="IPTU Capa" helperText=".jpg, .png, .pdf — até 5MB">
       <div class="row q-gutter-sm q-mt-xs" style="margin-top: 0; align-items: center">
         <q-btn
           label="Upload"
@@ -97,11 +76,11 @@
         />
       </div>
     </label-form>
-    <!-- Upload de Quitação de débitos UPTU -->
+    <!-- Upload de Quitação de débitos IPTU -->
 
     <label-form
       className="q-mt-sm"
-      textLabel="Quitação de débitos UPTU"
+      textLabel="Quitação de débitos IPTU"
       helperText=".jpg, .png, .pdf — até 5MB"
     >
       <div class="row q-gutter-sm q-mt-xs" style="margin-top: 0; align-items: center">
@@ -180,7 +159,7 @@
 
     <label-form
       className="q-mt-sm"
-      textLabel="Fotos da Residência (Tiradas pela Equipe Strategy)"
+      textLabel="Fotos do imóvel"
       helperText=".jpg, .png — até 5MB"
     >
       <div class="row q-gutter-sm q-mt-xs" style="margin-top: 0; align-items: center">

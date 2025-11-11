@@ -2,7 +2,7 @@
   <div class="UploadResidencialLeadsLayout">
     <!-- Upload de IPTU CAPA -->
 
-    <label-form className="q-mt-sm" textLabel="UPTU Capa" helperText=".jpg, .png, .pdf — até 5MB">
+    <label-form className="q-mt-sm" textLabel="IPTU Capa" helperText=".jpg, .png, .pdf — até 5MB">
       <div class="row q-gutter-sm q-mt-xs" style="margin-top: 0; align-items: center">
         <q-btn
           label="Upload"
@@ -44,11 +44,11 @@
         />
       </div>
     </label-form>
-    <!-- Upload de Quitação de débitos UPTU -->
+    <!-- Upload de Quitação de débitos IPTU -->
 
     <label-form
       className="q-mt-sm"
-      textLabel="Quitação de débitos UPTU"
+      textLabel="Quitação de débitos IPTU"
       helperText=".jpg, .png, .pdf — até 5MB"
     >
       <div class="row q-gutter-sm q-mt-xs" style="margin-top: 0; align-items: center">
@@ -96,7 +96,7 @@
 
     <label-form
       className="q-mt-sm"
-      textLabel="Fotos da Residência (Tiradas pela Equipe Strategy)"
+      textLabel="Fotos do imóvel"
       helperText=".jpg, .png — até 5MB"
     >
       <div class="row q-gutter-sm q-mt-xs" style="margin-top: 0; align-items: center">

@@ -56,18 +56,21 @@
 
     <q-card-section>
       <div class="text-h7 text-bold">Informações e Documentos Pessoais</div>
-      <personal-data-layout class="q-my-lg" />
-      <div class="text-h7 text-bold">Dados Bancários</div>
-      <bank-details-layout class="q-my-lg" />
+
+      <personal-data-layout class="q-my-lg">
+        <!-- <div class="text-h7 text-bold q-mt-lg">Carteira</div> -->
+        <investment-form-layout class="" />
+      </personal-data-layout>
       <div class="text-h7 text-bold">Documentos Residencias</div>
       <data-residential-layout class="q-my-lg" />
       <upload-residential-layout class="q-my-lg" />
+      <div class="text-h7 text-bold">Dados Bancários</div>
+      <bank-details-layout class="q-my-lg" />
       <div class="text-h7 text-bold q-mt-lg">Documentos Contábeis de Pessoa Física</div>
       <upload-documents-layout class="q-my-lg" />
       <div class="text-h7 text-bold q-mt-lg">Documentos Contábeis de Pessoa Jurídica</div>
       <upload-persona-layout class="q-my-lg" />
-      <div class="text-h7 text-bold q-mt-lg">Carteira</div>
-      <investment-form-layout class="q-my-lg" />
+
       <div class="text-h7 text-bold q-mt-lg">Contratos</div>
       <contract-client-table class="q-my-lg" />
       <!-- Campos da Carteira que ficam abaixo dos contratos e acima de Empréstimos -->
@@ -95,8 +98,8 @@
             >Preencha todos os campos obrigatórios corretamente (Nome, CPF, E-mail, Data de
             Nascimento)</q-tooltip
           >
+          <!-- :disable="!canSave" -->
            <q-btn
-            :disable="!canSave"
             class="q-mr-sm"
             color="primary"
             padding="sm lg"

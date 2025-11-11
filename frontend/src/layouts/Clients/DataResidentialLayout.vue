@@ -1,7 +1,7 @@
 <template>
   <div class="DataResidentialLayout">
     <div class="row justify-around q-gutter-sm">
-      <label-form className="col" textLabel="Cadastramento do imóvel">
+      <label-form className="col" textLabel="Nome do imóvel">
         <q-input
           outlined
           v-model="clientEdit.residential.register"
@@ -10,7 +10,7 @@
           class="q-my-sm"
         ></q-input>
       </label-form>
-      <label-form className="col" textLabel="Registro do imóvel">
+      <label-form className="col" textLabel="Matricula do imóvel">
         <q-input
           outlined
           v-model="clientEdit.residential.property"
@@ -86,6 +86,26 @@
           dense
           placeholder="000"
           class="q-my-sm"
+        ></q-input>
+      </label-form>
+    </div>
+    <div class="row justify-around q-gutter-sm">
+       <label-form className="col" textLabel="Complemento">
+        <q-input
+          outlined
+          v-model="clientEdit.residential.complemento"
+          dense
+          placeholder="Apto / Bloco / Complemento"
+        ></q-input>
+      </label-form>
+
+      <label-form className="col" textLabel="CEP">
+        <q-input
+          outlined
+          v-model="clientEdit.residential.cep"
+          dense
+          placeholder="00000-000"
+          mask="#####-###"
         ></q-input>
       </label-form>
     </div>
