@@ -281,6 +281,152 @@ function toShape(row) {
   };
 }
 
+// Capitaliza apenas a primeira letra de uma string (preserva o restante)
+function capitalizeFirst(str) {
+  if (!str || typeof str !== "string") return str;
+  const s = str.trim();
+  if (s.length === 0) return s;
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+// Normaliza campos de cliente:
+// - apelido: apenas primeira letra maiúscula
+// - ruas/bairros/cidades/país: Title Case (cada palavra inicial maiúscula)
+// - estado: se abreviação de 2 letras -> UPPERCASE (ex: sp -> SP), senão Title Case
+function titleCase(str) {
+  if (!str || typeof str !== "string") return str;
+  return str
+    .trim()
+    .split(/\s+/)
+    .map((word, idx) => {
+      const smallWords = new Set([
+        "da",
+        "de",
+        "do",
+        "das",
+        "dos",
+        "e",
+        "em",
+        "na",
+        "no",
+        "nas",
+        "nos",
+        "ao",
+        "a",
+        "à",
+        "às",
+        "pelo",
+        "pela",
+        "pelos",
+        "pelas",
+        "por",
+        "para",
+        "com",
+        "sem",
+        "sob",
+        "sobre",
+      ]);
+      const lower = word.toLowerCase();
+      if (idx > 0 && smallWords.has(lower)) return lower;
+      return word
+        .split("-")
+        .map((part) => {
+          const p = part.toLowerCase();
+          return p.length === 0 ? p : p.charAt(0).toUpperCase() + p.slice(1);
+        })
+        .join("-");
+    })
+    .join(" ");
+}
+
+function normalizeClientFields(cliente) {
+  if (!cliente || typeof cliente !== "object") return;
+
+  const apelidoKeys = ["apelido", "nickname"];
+  const titleKeys = [
+    "rua",
+    "ruas",
+    "street",
+    "streets",
+    "bairro",
+    "pais",
+    "país",
+    "country",
+    "address",
+    "address_city",
+    "address_neighborhood",
+    "address_country",
+  ];
+  const stateKeys = ["estado", "state", "address_state"];
+
+  for (const k of apelidoKeys) {
+    try {
+      if (cliente[k] && typeof cliente[k] === "string")
+        cliente[k] = capitalizeFirst(cliente[k]);
+    } catch (e) {}
+  }
+
+  for (const k of titleKeys) {
+    try {
+      if (cliente[k] && typeof cliente[k] === "string")
+        cliente[k] = titleCase(cliente[k]);
+      if (cliente[k] && Array.isArray(cliente[k])) {
+        cliente[k] = cliente[k].map((v) =>
+          typeof v === "string" ? titleCase(v) : v
+        );
+      }
+    } catch (e) {}
+  }
+
+  for (const k of stateKeys) {
+    try {
+      if (cliente[k] && typeof cliente[k] === "string") {
+        const s = cliente[k].trim();
+        cliente[k] = s.length <= 2 ? s.toUpperCase() : titleCase(s);
+      }
+    } catch (e) {}
+  }
+
+  if (Array.isArray(cliente.addresses)) {
+    cliente.addresses = cliente.addresses.map((a) => {
+      try {
+        if (a && typeof a === "object") {
+          if (a.logradouro && typeof a.logradouro === "string")
+            a.logradouro = titleCase(a.logradouro);
+          if (a.city && typeof a.city === "string") a.city = titleCase(a.city);
+          if (a.neighborhood && typeof a.neighborhood === "string")
+            a.neighborhood = titleCase(a.neighborhood);
+          if (a.state && typeof a.state === "string") {
+            const s = a.state.trim();
+            a.state = s.length <= 2 ? s.toUpperCase() : titleCase(s);
+          }
+          if (a.country && typeof a.country === "string")
+            a.country = titleCase(a.country);
+        }
+      } catch (e) {}
+      return a;
+    });
+  }
+
+  try {
+    if (cliente.address && typeof cliente.address === "string")
+      cliente.address = titleCase(cliente.address);
+    if (cliente.address_city && typeof cliente.address_city === "string")
+      cliente.address_city = titleCase(cliente.address_city);
+    if (
+      cliente.address_neighborhood &&
+      typeof cliente.address_neighborhood === "string"
+    )
+      cliente.address_neighborhood = titleCase(cliente.address_neighborhood);
+    if (cliente.address_state && typeof cliente.address_state === "string") {
+      const s = cliente.address_state.trim();
+      cliente.address_state = s.length <= 2 ? s.toUpperCase() : titleCase(s);
+    }
+    if (cliente.address_country && typeof cliente.address_country === "string")
+      cliente.address_country = titleCase(cliente.address_country);
+  } catch (e) {}
+}
+
 function list() {
   // include internal rowid so we can fallback when id column is null for legacy rows
   const rows = db.prepare("SELECT rowid, * FROM clients").all();
@@ -409,6 +555,11 @@ function create(data) {
       }
     }
   } catch (e) {}
+  // normalize text fields that should start with uppercase first letter
+  try {
+    normalizeClientFields(cliente);
+  } catch (e) {}
+
   const payload = JSON.stringify(
     payloadObj.cliente ? payloadObj : { cliente: payloadObj }
   );
@@ -520,6 +671,11 @@ function update(id, data) {
       delete obj.assessor;
     }
   } catch (e) {}
+  // normalize text fields that should start with uppercase first letter
+  try {
+    normalizeClientFields(cliente);
+  } catch (e) {}
+
   const payload = JSON.stringify(
     payloadObj.cliente ? payloadObj : { cliente: payloadObj }
   );
