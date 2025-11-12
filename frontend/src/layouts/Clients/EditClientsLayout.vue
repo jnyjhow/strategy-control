@@ -167,7 +167,7 @@ const resolveStorageUrl = (u) => {
     if (typeof u === 'string' && u.startsWith('/storage')) {
       const apiBase =
         (import.meta && import.meta.env && import.meta.env.VITE_API_BASE_URL) ||
-        'http://localhost:3333'
+        (import.meta && import.meta.env && import.meta.env.DEV ? '' : 'http://localhost:3333')
       return `${String(apiBase).replace(/\/$/, '')}${u}`
     }
     return u
