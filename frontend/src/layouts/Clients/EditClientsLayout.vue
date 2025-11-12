@@ -7,14 +7,19 @@
 
     <q-separator />
 
-   <q-banner inline-actions rounded class="q-ma-md border-pattern" v-if="titleHeader != 'Inclusão de Cliente'">
+    <q-banner
+      inline-actions
+      rounded
+      class="q-ma-md border-pattern"
+      v-if="titleHeader != 'Inclusão de Cliente'"
+    >
       <div class="row">
         <div class="col-1">
           <q-avatar size="32px">
             <q-img
-              :src="clientEdit.cliente.avatar"
-              :alt="clientEdit.cliente.name"
-              :title="clientEdit.cliente.name"
+              :src="resolveStorageUrl(clientEdit.cliente && clientEdit.cliente.avatar)"
+              :alt="clientEdit.cliente && clientEdit.cliente.name"
+              :title="clientEdit.cliente && clientEdit.cliente.name"
             />
           </q-avatar>
         </div>
@@ -99,7 +104,7 @@
             Nascimento)</q-tooltip
           >
           <!-- :disable="!canSave" -->
-           <q-btn
+          <q-btn
             class="q-mr-sm"
             color="primary"
             padding="sm lg"
@@ -108,6 +113,8 @@
             dense
             style="border-radius: 8px"
             data-test="clients-create-btn"
+            :loading="isSaving"
+            :disable="isSaving || !canSave"
             @click.prevent="saveClient"
           />
         </div>
@@ -138,7 +145,7 @@ import { useLayoutStore } from 'src/stores/layout'
 import { useAdvisorStore } from 'src/stores/advisor'
 import { storeToRefs } from 'pinia'
 import TitleCard from 'src/components/Card/TitleCard.vue'
-// import CompareButton from 'src/components/Button/CompareButton.vue'
+import CompareButton from 'src/components/Button/CompareButton.vue'
 import PersonalDataLayout from 'src/layouts/Clients/PersonalDataLayout.vue'
 import BankDetailsLayout from 'src/layouts/Clients/BankDetailsLayout.vue'
 import DataResidentialLayout from 'src/layouts/Clients/DataResidentialLayout.vue'
@@ -153,6 +160,21 @@ import useCliente from 'src/composables/Fakes/useCliente'
 import useAdvisors from 'src/composables/Fakes/useAdvisors'
 // useClientStore removed: compare functionality moved/removed from this layout
 import useRules from 'src/composables/global/useRules'
+// resolve /storage urls to backend API base (fallback http://localhost:3333)
+const resolveStorageUrl = (u) => {
+  try {
+    if (!u) return u
+    if (typeof u === 'string' && u.startsWith('/storage')) {
+      const apiBase =
+        (import.meta && import.meta.env && import.meta.env.VITE_API_BASE_URL) ||
+        'http://localhost:3333'
+      return `${String(apiBase).replace(/\/$/, '')}${u}`
+    }
+    return u
+  } catch {
+    return u
+  }
+}
 defineComponent({
   name: 'EditClientsLayout',
 })
@@ -169,15 +191,15 @@ const { rowsClient, createClient, updateClient, deleteClient } = clienteApi
 
 const { rowsAssessores } = useAdvisors()
 const confirmRemove = ref(false)
-// const onHeaderRemove = () => {
-//   try {
-//     console.debug('onHeaderRemove clicked for client id=', clientEdit.value && clientEdit.value.id)
-//     // reuse the same confirmation dialog
-//     confirmRemove.value = true
-//   } catch {
-//     /* ignore */
-//   }
-// }
+const isSaving = ref(false)
+const onHeaderRemove = () => {
+  try {
+    // reuse the same confirmation dialog as footer
+    confirmRemove.value = true
+  } catch {
+    /* ignore */
+  }
+}
 const onFooterRemove = () => {
   try {
     console.debug('onFooterRemove clicked for client id=', clientEdit.value && clientEdit.value.id)
@@ -186,10 +208,6 @@ const onFooterRemove = () => {
     /* ignore */
   }
 }
-// openEdit removed — comparison menu will handle actions
-
-// compare menu and selection removed; main button opens edit dialog via openEdit()
-
 const titleHeader = computed(() => {
   try {
     const payload = clientEdit.value || {}
@@ -247,6 +265,7 @@ const canSave = computed(() => {
 const $q = useQuasar()
 
 const saveClient = async () => {
+  if (isSaving.value) return
   const payload = clientEdit.value || {}
   // basic client-side validation to avoid sending invalid payloads to the backend
   const cliente = payload.cliente || {}
@@ -267,6 +286,7 @@ const saveClient = async () => {
   }
   // frontend uniqueness checks to avoid duplicate name/email
   try {
+    isSaving.value = true
     const nameNormalized = String(cliente.name || '')
       .trim()
       .toLowerCase()
@@ -358,6 +378,9 @@ const saveClient = async () => {
       message: err && err.message ? err.message : 'Erro ao salvar cliente',
       color: 'negative',
     })
+  } finally {
+    // allow subsequent saves
+    isSaving.value = false
   }
 }
 
