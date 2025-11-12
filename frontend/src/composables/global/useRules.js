@@ -108,9 +108,10 @@ export default function useRules() {
   ]
   const requiredRole = [(val) => !!val || 'Campo é obrigatorio.']
   // telefone internacional (E.164): + seguido apenas de dígitos, entre 8 e 15 dígitos
+  // telefone agora opcional; quando preenchido deve obedecer E.164 (ex: +5511912345678)
   const phoneRole = [
-    (val) => !!val || 'Campo é obrigatorio.',
     (val) =>
+      !val ||
       /^\+\d{8,15}$/.test(String(val || '')) ||
       'Formato inválido. Use + seguido apenas por números (ex: +5514981819999).',
   ]
