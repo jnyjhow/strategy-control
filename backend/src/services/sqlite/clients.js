@@ -3,9 +3,13 @@ const path = require("path");
 const fs = require("fs");
 // require advisors adapter to resolve advisor ids/names when storing/reading
 const advisors = require("./advisors");
+const { normalizeClientFields } = require("../../lib/normalize");
 
-const dbFile =
-  process.env.SQLITE_FILE || path.join(__dirname, "../../../dev.sqlite");
+const defaultDbFile =
+  process.env.NODE_ENV === "test"
+    ? path.join(__dirname, "../../../test.sqlite")
+    : path.join(__dirname, "../../../dev.sqlite");
+const dbFile = process.env.SQLITE_FILE || defaultDbFile;
 try {
   // ensure file exists so better-sqlite3 can open it in write mode
   const dir = path.dirname(dbFile);
@@ -280,152 +284,8 @@ function toShape(row) {
     },
   };
 }
-
-// Capitaliza apenas a primeira letra de uma string (preserva o restante)
-function capitalizeFirst(str) {
-  if (!str || typeof str !== "string") return str;
-  const s = str.trim();
-  if (s.length === 0) return s;
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-// Normaliza campos de cliente:
-// - apelido: apenas primeira letra maiúscula
-// - ruas/bairros/cidades/país: Title Case (cada palavra inicial maiúscula)
-// - estado: se abreviação de 2 letras -> UPPERCASE (ex: sp -> SP), senão Title Case
-function titleCase(str) {
-  if (!str || typeof str !== "string") return str;
-  return str
-    .trim()
-    .split(/\s+/)
-    .map((word, idx) => {
-      const smallWords = new Set([
-        "da",
-        "de",
-        "do",
-        "das",
-        "dos",
-        "e",
-        "em",
-        "na",
-        "no",
-        "nas",
-        "nos",
-        "ao",
-        "a",
-        "à",
-        "às",
-        "pelo",
-        "pela",
-        "pelos",
-        "pelas",
-        "por",
-        "para",
-        "com",
-        "sem",
-        "sob",
-        "sobre",
-      ]);
-      const lower = word.toLowerCase();
-      if (idx > 0 && smallWords.has(lower)) return lower;
-      return word
-        .split("-")
-        .map((part) => {
-          const p = part.toLowerCase();
-          return p.length === 0 ? p : p.charAt(0).toUpperCase() + p.slice(1);
-        })
-        .join("-");
-    })
-    .join(" ");
-}
-
-function normalizeClientFields(cliente) {
-  if (!cliente || typeof cliente !== "object") return;
-
-  const apelidoKeys = ["apelido", "nickname"];
-  const titleKeys = [
-    "rua",
-    "ruas",
-    "street",
-    "streets",
-    "bairro",
-    "pais",
-    "país",
-    "country",
-    "address",
-    "address_city",
-    "address_neighborhood",
-    "address_country",
-  ];
-  const stateKeys = ["estado", "state", "address_state"];
-
-  for (const k of apelidoKeys) {
-    try {
-      if (cliente[k] && typeof cliente[k] === "string")
-        cliente[k] = capitalizeFirst(cliente[k]);
-    } catch (e) {}
-  }
-
-  for (const k of titleKeys) {
-    try {
-      if (cliente[k] && typeof cliente[k] === "string")
-        cliente[k] = titleCase(cliente[k]);
-      if (cliente[k] && Array.isArray(cliente[k])) {
-        cliente[k] = cliente[k].map((v) =>
-          typeof v === "string" ? titleCase(v) : v
-        );
-      }
-    } catch (e) {}
-  }
-
-  for (const k of stateKeys) {
-    try {
-      if (cliente[k] && typeof cliente[k] === "string") {
-        const s = cliente[k].trim();
-        cliente[k] = s.length <= 2 ? s.toUpperCase() : titleCase(s);
-      }
-    } catch (e) {}
-  }
-
-  if (Array.isArray(cliente.addresses)) {
-    cliente.addresses = cliente.addresses.map((a) => {
-      try {
-        if (a && typeof a === "object") {
-          if (a.logradouro && typeof a.logradouro === "string")
-            a.logradouro = titleCase(a.logradouro);
-          if (a.city && typeof a.city === "string") a.city = titleCase(a.city);
-          if (a.neighborhood && typeof a.neighborhood === "string")
-            a.neighborhood = titleCase(a.neighborhood);
-          if (a.state && typeof a.state === "string") {
-            const s = a.state.trim();
-            a.state = s.length <= 2 ? s.toUpperCase() : titleCase(s);
-          }
-          if (a.country && typeof a.country === "string")
-            a.country = titleCase(a.country);
-        }
-      } catch (e) {}
-      return a;
-    });
-  }
-
-  try {
-    if (cliente.address && typeof cliente.address === "string")
-      cliente.address = titleCase(cliente.address);
-    if (cliente.address_city && typeof cliente.address_city === "string")
-      cliente.address_city = titleCase(cliente.address_city);
-    if (
-      cliente.address_neighborhood &&
-      typeof cliente.address_neighborhood === "string"
-    )
-      cliente.address_neighborhood = titleCase(cliente.address_neighborhood);
-    if (cliente.address_state && typeof cliente.address_state === "string") {
-      const s = cliente.address_state.trim();
-      cliente.address_state = s.length <= 2 ? s.toUpperCase() : titleCase(s);
-    }
-    if (cliente.address_country && typeof cliente.address_country === "string")
-      cliente.address_country = titleCase(cliente.address_country);
-  } catch (e) {}
-}
+// Normalização de campos centralizada em backend/src/lib/normalize.js
+// A função normalizeClientFields é importada do módulo compartilhado
 
 function list() {
   // include internal rowid so we can fallback when id column is null for legacy rows
@@ -774,7 +634,6 @@ function del(id, opts) {
 }
 
 function listAudit(clientId, opts) {
-  // opts: { page, pageSize, action, from, to, userId }
   const _opts = opts || {};
   const p = {
     page: _opts.page != null ? Number(_opts.page) : 1,
@@ -792,8 +651,7 @@ function listAudit(clientId, opts) {
   }
   const userIdFilter = p.userId;
   if (userIdFilter) {
-    // we'll handle userId filtering in JS to avoid SQL datatype/LIKE issues
-    // do not add SQL filter for user here
+    // handle in JS filtering like advisors
   }
   if (p.from) {
     filters.push("created_at >= ?");
@@ -806,13 +664,11 @@ function listAudit(clientId, opts) {
 
   const where = filters.length ? "WHERE " + filters.join(" AND ") : "";
   try {
-    // total count (without userId filtering)
     const countRow = db
       .prepare(`SELECT COUNT(1) as cnt FROM clients_audit ${where}`)
       .get(...params);
     let total = countRow && countRow.cnt ? countRow.cnt : 0;
 
-    // If userId filter is requested, fetch matching rows (without LIMIT) and filter in JS
     if (userIdFilter) {
       const rowsAll = db
         .prepare(
@@ -824,9 +680,7 @@ function listAudit(clientId, opts) {
         if (copy.user) {
           try {
             copy.user = JSON.parse(copy.user);
-          } catch (e) {
-            /* leave as-is */
-          }
+          } catch (e) {}
         }
         return copy;
       });
@@ -834,7 +688,6 @@ function listAudit(clientId, opts) {
         if (!r.user) return false;
         if (typeof r.user === "string") {
           if (r.user === userIdFilter) return true;
-          // match common JSON text patterns
           if (r.user.includes(`"id":"${userIdFilter}"`)) return true;
           if (r.user.includes(userIdFilter)) return true;
           return false;
@@ -854,14 +707,12 @@ function listAudit(clientId, opts) {
       return { rows: pageRows, total };
     }
 
-    // pagination (no userId filter)
     const offset = (Math.max(1, Number(p.page)) - 1) * Number(p.pageSize);
     const rows = db
       .prepare(
         `SELECT * FROM clients_audit ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`
       )
       .all(...params, Number(p.pageSize), offset);
-
     const parsed = rows.map((r) => {
       const copy = Object.assign({}, r);
       if (copy.user) {
