@@ -206,6 +206,7 @@
           outlined
           v-model="clientEdit.cliente.apelido"
           @input="(val) => onInputTextProp('apelido', val)"
+          @blur="onBlurText('apelido')"
           @keydown="onKeydownText"
           @paste="onPasteText('apelido', $event)"
           dense
@@ -263,6 +264,7 @@
         <q-input
           outlined
           v-model="clientEdit.cliente.rg_expedicao_uf"
+          @blur="onBlurText('rg_expedicao_uf')"
           dense
           placeholder="Digite a UF de expedição"
         />
@@ -583,6 +585,7 @@
         <q-input
           outlined
           v-model="clientEdit.cliente.estado"
+          @blur="onBlurText('estado')"
           dense
           placeholder="Estado (UF)"
         ></q-input>
@@ -831,11 +834,19 @@ const onInputName = () => {
   nameError.value = false
   nameErrorMessage.value = ''
 }
+
+// Ensure name field is normalized (title-case) on blur as well
 const onBlurName = () => {
-  const val = clientEdit.value?.cliente?.name
-  const res = evaluateRule(nameRule, val)
-  nameError.value = !res.ok
-  nameErrorMessage.value = res.ok ? '' : res.message
+  try {
+    const val = clientEdit.value?.cliente?.name
+    const res = evaluateRule(nameRule, val)
+    nameError.value = !res.ok
+    nameErrorMessage.value = res.ok ? '' : res.message
+    // reuse generic text blur normalizer to apply title-case
+    onBlurText('name')
+  } catch (e) {
+    void e
+  }
 }
 const onInputEmail = () => {
   emailError.value = false
