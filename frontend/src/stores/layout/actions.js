@@ -1,3 +1,5 @@
+import { normalizeClientForDisplay, titleCase } from 'src/utils/normalize'
+
 const actions = {
   setPainel(payload) {
     this.painel = payload
@@ -126,6 +128,19 @@ const actions = {
         console.debug('residential normalize failed')
       }
       console.log('setClientEdit: normalized copy', copy)
+      // Normalize textual fields for display (title case, UF uppercase)
+      try {
+        if (copy && copy.cliente) normalizeClientForDisplay(copy.cliente)
+        if (copy && copy.residential && typeof copy.residential === 'object') {
+          // normalize common residential/address fields for display
+          if (copy.residential.city) copy.residential.city = titleCase(copy.residential.city)
+          if (copy.residential.street) copy.residential.street = titleCase(copy.residential.street)
+          if (copy.residential.neighborhood)
+            copy.residential.neighborhood = titleCase(copy.residential.neighborhood)
+        }
+      } catch (e) {
+        void e
+      }
       // Normalize phones: remove leading '+' and non-digits for display
       try {
         if (copy.cliente) {
