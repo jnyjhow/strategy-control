@@ -28,6 +28,7 @@ router.get("/:id", (req, res) => {
 const Joi = require("joi");
 const path = require("path");
 const fs = require("fs");
+const { normalizeClientFields } = require("../lib/normalize");
 // storage roots for saving uploaded files (used both by multer and JSON dataURL fallback)
 const storageRoot = path.join(__dirname, "..", "..", "storage");
 const clientsStorage = path.join(storageRoot, "clients");
@@ -304,7 +305,7 @@ function normalizeClientPayload(payload) {
 
         // Text normalization: name, nacionalidade, naturalidade, nome_pai, nome_mae
         if (
-          /^(name|nome|nacionalidade|naturalidade_cidade|naturalidade_uf|nome_pai|nome_mae|apelido)$/i.test(
+          /^(name|nome|nacionalidade|naturalidade_cidade|naturalidade_uf|nome_pai|nome_mae)$/i.test(
             key
           ) &&
           typeof val === "string"
@@ -370,6 +371,10 @@ function normalizeClientPayload(payload) {
   }
 
   walk(obj);
+  // Apply centralized normalization for addresses, apelidos, UFs and related fields
+  try {
+    normalizeClientFields(obj);
+  } catch (e) {}
 }
 
 // Helper to handle multipart payloads: if multipart, expect 'payload' JSON and file 'avatar'
