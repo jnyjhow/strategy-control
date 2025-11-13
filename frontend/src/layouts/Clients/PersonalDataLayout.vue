@@ -234,6 +234,7 @@
           @input="(val) => onInputTextProp('contato_nome', val)"
           @keydown="onKeydownText"
           @paste="onPasteText('contato_nome', $event)"
+          @blur="onBlurText('contato_nome')"
           dense
           placeholder="Nome do contato"
         />
@@ -552,6 +553,7 @@
           dense
           placeholder="Rua"
           @input="(val) => onInputTextProp('rua', val)"
+          @blur="onBlurText('rua')"
           @keydown="onKeydownText"
           @paste="onPasteText('rua', $event)"
         ></q-input>
@@ -574,6 +576,7 @@
           dense
           placeholder="Cidade"
           @input="(val) => onInputTextProp('cidade', val)"
+          @blur="onBlurText('cidade')"
           @keydown="onKeydownText"
           @paste="onPasteText('cidade', $event)"
         ></q-input>
@@ -602,7 +605,13 @@
       </label-form>
 
       <label-form className="col" textLabel="País">
-        <q-input outlined v-model="clientEdit.cliente.pais" dense placeholder="Brasil"></q-input>
+        <q-input
+          outlined
+          v-model="clientEdit.cliente.pais"
+          @blur="onBlurText('pais')"
+          dense
+          placeholder="Brasil"
+        ></q-input>
       </label-form>
     </div>
 
@@ -786,6 +795,7 @@ import { defineComponent, ref, watch } from 'vue'
 import { useLayoutStore } from 'src/stores/layout'
 import { storeToRefs } from 'pinia'
 import useRules from 'src/composables/global/useRules'
+import { titleCase } from 'src/utils/normalize'
 
 const layoutStore = useLayoutStore()
 const { clientEdit } = storeToRefs(layoutStore)
@@ -984,11 +994,16 @@ const onBlurText = (field) => {
       obj[field] = val.toUpperCase()
       return
     }
-    // title case
-    obj[field] = val
-      .split(' ')
-      .map((w) => (w.length ? w[0].toUpperCase() + w.slice(1).toLowerCase() : w))
-      .join(' ')
+    // title case (use centralized titleCase util to match backend rules)
+    try {
+      obj[field] = titleCase(val)
+    } catch {
+      // fallback to simple capitalization
+      obj[field] = val
+        .split(' ')
+        .map((w) => (w.length ? w[0].toUpperCase() + w.slice(1).toLowerCase() : w))
+        .join(' ')
+    }
   } catch (e) {
     void e
   }
