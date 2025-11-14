@@ -64,7 +64,7 @@
 
       <personal-data-layout class="q-my-lg">
         <!-- <div class="text-h7 text-bold q-mt-lg">Carteira</div> -->
-        <investment-form-layout class="" />
+      <investment-form-layout class="" />
       </personal-data-layout>
       <div class="text-h7 text-bold">Documentos Residencias</div>
       <data-residential-layout class="q-my-lg" />
@@ -99,10 +99,10 @@
           :disable="!clientEdit.id"
         />
         <div class="row items-center">
-          <q-tooltip v-if="!canSave"
+          <!-- <q-tooltip v-if="!canSave"
             >Preencha todos os campos obrigatórios corretamente (Nome, CPF, E-mail, Data de
             Nascimento)</q-tooltip
-          >
+          > -->
           <!-- :disable="!canSave" -->
           <q-btn
             class="q-mr-sm"
@@ -114,9 +114,9 @@
             style="border-radius: 8px"
             data-test="clients-create-btn"
             :loading="isSaving"
-            :disable="isSaving || !canSave"
             @click.prevent="saveClient"
-          />
+            />
+            <!-- :disable="isSaving || !canSave" -->
         </div>
       </div>
     </q-card-actions>
@@ -220,7 +220,7 @@ const titleHeader = computed(() => {
 })
 
 // validation helpers for enabling/disabling save button
-const { nameRule, emailRule, cpfRule } = useRules()
+const { nameRule } = useRules()
 
 const isFieldValid = (rules, value) => {
   if (!rules || !Array.isArray(rules)) return true
@@ -235,31 +235,31 @@ const isFieldValid = (rules, value) => {
   return true
 }
 
-const canSave = computed(() => {
-  const payload = clientEdit.value || {}
-  const cliente = payload.cliente || {}
-  const name = cliente.name
-  const email = cliente.email
-  const cpf = cliente.cpf
-  const birth = cliente.birth
-  if (!name || !email || !cpf || !birth) return false
-  if (!isFieldValid(nameRule, name)) return false
-  if (!isFieldValid(emailRule, email)) return false
-  if (!isFieldValid(cpfRule, cpf)) return false
-  // compute age from birth and enforce 18..110
-  try {
-    const d = new Date(birth)
-    if (isNaN(d.getTime())) return false
-    const today = new Date()
-    let age = today.getFullYear() - d.getFullYear()
-    const m = today.getMonth() - d.getMonth()
-    if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--
-    if (age < 18 || age > 110) return false
-  } catch {
-    return false
-  }
-  return true
-})
+// const canSave = computed(() => {
+//   const payload = clientEdit.value || {}
+//   const cliente = payload.cliente || {}
+//   const name = cliente.name
+//   const email = cliente.email
+//   const cpf = cliente.cpf
+//   const birth = cliente.birth
+//   if (!name || !email || !cpf || !birth) return false
+//   if (!isFieldValid(nameRule, name)) return false
+//   if (!isFieldValid(emailRule, email)) return false
+//   if (!isFieldValid(cpfRule, cpf)) return false
+//   // compute age from birth and enforce 18..110
+//   try {
+//     const d = new Date(birth)
+//     if (isNaN(d.getTime())) return false
+//     const today = new Date()
+//     let age = today.getFullYear() - d.getFullYear()
+//     const m = today.getMonth() - d.getMonth()
+//     if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--
+//     if (age < 18 || age > 110) return false
+//   } catch {
+//     return false
+//   }
+//   return true
+// })
 
 // Save / Delete actions
 const $q = useQuasar()

@@ -7,7 +7,7 @@
           v-model="clientEdit.residential.register"
           @blur="onBlurResidential('register')"
           dense
-          placeholder=""
+          placeholder="Ex.:Casa Arkhansas"
           class="q-my-sm"
         ></q-input>
       </label-form>
@@ -17,7 +17,7 @@
           v-model="clientEdit.residential.property"
           @blur="onBlurResidential('property')"
           dense
-          placeholder=""
+          placeholder="Ex.:37.294"
           class="q-my-sm"
         ></q-input>
       </label-form>
@@ -28,7 +28,7 @@
           outlined
           v-model="clientEdit.residential.number_redisential"
           dense
-          placeholder=""
+          placeholder="Ex.:413124B0017800000"
           class="q-my-sm"
         ></q-input>
       </label-form>
@@ -38,7 +38,7 @@
           v-model="clientEdit.residential.real_state_registration"
           @blur="onBlurResidential('real_state_registration')"
           dense
-          placeholder=""
+          placeholder="Escritura pública de compra e venda ..."
           class="q-my-sm"
         ></q-input>
       </label-form>
