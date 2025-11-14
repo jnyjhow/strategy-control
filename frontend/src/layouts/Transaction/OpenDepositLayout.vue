@@ -16,8 +16,6 @@
           emit-value
           map-options
           dense
-          disable
-          bg-color="grey-2"
           dropdown-icon="keyboard_arrow_down"
         />
         <q-input

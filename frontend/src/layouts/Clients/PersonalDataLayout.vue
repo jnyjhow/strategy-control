@@ -144,9 +144,6 @@
           </template>
         </q-input>
       </label-form>
-    </div>
-
-    <div class="row q-gutter-sm">
       <label-form className="col" :required="true" textLabel="Data de Nascimento">
         <q-input
           outlined
@@ -163,13 +160,7 @@
           @input="onInputBirth"
         ></q-input>
       </label-form>
-      <!-- <div class="col" style="display: flex; align-items: center">
-        <div style="font-size: 0.9rem; color: #666; margin-left: 8px">
-          Idade: <strong>{{ computedAgeDisplay }}</strong>
-        </div>
-      </div> -->
-
-      <label-form className="col" textLabel="Profissão">
+       <label-form className="col" textLabel="Profissão">
         <q-select
           outlined
           v-model="clientEdit.cliente.profissao"
@@ -179,6 +170,18 @@
         ></q-select>
       </label-form>
 
+    </div>
+
+    <div class="row q-gutter-sm">
+
+      <!-- <div class="col" style="display: flex; align-items: center">
+        <div style="font-size: 0.9rem; color: #666; margin-left: 8px">
+          Idade: <strong>{{ computedAgeDisplay }}</strong>
+        </div>
+      </div> -->
+
+
+
       <label-form className="col" textLabel="Renda Anual">
         <q-select
           outlined
@@ -187,37 +190,21 @@
           dense
           placeholder="Selecione a renda anual"
         ></q-select>
-      </label-form>
-    </div>
 
-    <!-- Novos campos solicitados: ID alfanumérico, apelido, endereço e foto -->
-    <div class="row q-gutter-sm q-mt-sm">
-      <label-form className="col" textLabel="ID do Cliente (alfanumérico)">
+      </label-form>
+      <label-form className="col" textLabel="Valor aproximado dos bens">
         <q-input
           outlined
-          v-model="clientEdit.cliente.client_code"
+          v-model="clientEdit.cliente.patrimonio_valor"
+          @blur="onBlurPatrimonio"
+          @input="() => onInputNumeric('patrimonio_valor', true)"
           dense
-          placeholder="Ex: C123AB"
-        ></q-input>
+          v-currency-mask
+          inputmode="decimal"
+          placeholder="R$ 0,00"
+        />
       </label-form>
-
-      <label-form className="col" textLabel="Apelido">
-        <q-input
-          outlined
-          v-model="clientEdit.cliente.apelido"
-          @input="(val) => onInputTextProp('apelido', val)"
-          @blur="onBlurText('apelido')"
-          @keydown="onKeydownText"
-          @paste="onPasteText('apelido', $event)"
-          dense
-          placeholder="Como o cliente é chamado"
-        ></q-input>
-      </label-form>
-    </div>
-
-    <!-- Renda familiar e contato de confiança -->
-    <div class="row q-gutter-sm q-mt-sm">
-      <label-form className="col" textLabel="Renda Anual da Família">
+       <label-form className="col" textLabel="Renda Anual da Família">
         <q-select
           outlined
           v-model="clientEdit.cliente.rendaAnualFamilia"
@@ -226,6 +213,9 @@
           placeholder="Selecione a renda familiar"
         ></q-select>
       </label-form>
+    </div>
+ <!-- Renda familiar e contato de confiança -->
+    <div class="row q-gutter-sm q-mt-sm">
 
       <label-form className="col" textLabel="Nome do Contato de Confiança">
         <q-input
@@ -240,7 +230,7 @@
         />
       </label-form>
 
-      <label-form className="col" textLabel="Telefone do Contato">
+      <label-form className="col" textLabel="Telefone do Contato de Confiança">
         <q-input
           outlined
           hint="Formato: código do país seguido do número (ex: 5511912345678) — o '+' não é necessário"
@@ -253,25 +243,48 @@
           @input="() => onInputNumeric('contato_telefone')"
         />
       </label-form>
+       <label-form className="col" textLabel="ID do Cliente (alfanumérico)">
+        <q-input
+          outlined
+          v-model="clientEdit.cliente.client_code"
+          dense
+          placeholder="Ex: C123AB"
+        ></q-input>
+      </label-form>
     </div>
-
-    <!-- RG data/UF expedição, gênero, estado civil, nacionalidade -->
+    <!-- Novos campos solicitados: ID alfanumérico, apelido, endereço e foto -->
     <div class="row q-gutter-sm q-mt-sm">
+
+
+      <label-form className="col" textLabel="Apelido">
+        <q-input
+          outlined
+          v-model="clientEdit.cliente.apelido"
+          @input="(val) => onInputTextProp('apelido', val)"
+          @blur="onBlurText('apelido')"
+          @keydown="onKeydownText"
+          @paste="onPasteText('apelido', $event)"
+          dense
+          placeholder="Como o cliente é chamado"
+        ></q-input>
+      </label-form>
+
+       <label-form className="col" textLabel="Órgão emissor RG">
+        <q-input
+          outlined
+          v-model="clientEdit.cliente.rg_orgao_emissor"
+          @blur="onBlurText('rg_orgao_emissor')"
+          dense
+          placeholder="Digite órgao emissor"
+        />
+      </label-form>
       <label-form className="col" textLabel="Data de Expedição (RG)">
         <q-input outlined v-model="clientEdit.cliente.rg_expedicao_date" type="date" dense />
       </label-form>
+    </div>
 
-      <label-form className="col" textLabel="UF de Expedição (RG)">
-        <q-input
-          outlined
-          v-model="clientEdit.cliente.rg_expedicao_uf"
-          @blur="onBlurText('rg_expedicao_uf')"
-          dense
-          placeholder="Digite a UF de expedição"
-        />
-      </label-form>
-
-      <label-form className="col" textLabel="Gênero">
+    <div class="row q-gutter-sm q-mt-sm">
+       <label-form className="col" textLabel="Gênero">
         <q-select
           outlined
           v-model="clientEdit.cliente.genero"
@@ -280,9 +293,6 @@
           placeholder="Selecione"
         />
       </label-form>
-    </div>
-
-    <div class="row q-gutter-sm q-mt-sm">
       <label-form className="col" textLabel="Estado Civil">
         <q-select
           outlined
@@ -303,18 +313,6 @@
           @paste="onPasteText('nacionalidade', $event)"
           dense
           placeholder="Ex: Brasileiro"
-        />
-      </label-form>
-
-      <label-form className="col" textLabel="Valor aproximado dos bens">
-        <q-input
-          outlined
-          v-model="clientEdit.cliente.patrimonio_valor"
-          @blur="onBlurPatrimonio"
-          @input="() => onInputNumeric('patrimonio_valor', true)"
-          dense
-          inputmode="decimal"
-          placeholder="R$ 0,00"
         />
       </label-form>
     </div>
@@ -546,7 +544,7 @@
     </div>
 
     <div class="row q-gutter-sm q-mt-sm">
-      <label-form className="col" textLabel="Rua">
+      <label-form className="col-6" textLabel="Rua">
         <q-input
           outlined
           v-model="clientEdit.cliente.rua"
@@ -569,7 +567,22 @@
         ></q-input>
       </label-form>
 
-      <label-form className="col" textLabel="Bairro / Cidade">
+      <label-form className="col" textLabel="Bairro">
+        <q-input
+          outlined
+          v-model="clientEdit.cliente.bairro"
+          dense
+          placeholder="Bairro"
+          @input="(val) => onInputTextProp('bairro', val)"
+          @blur="onBlurText('bairro')"
+          @keydown="onKeydownText"
+          @paste="onPasteText('bairro', $event)"
+        ></q-input>
+      </label-form>
+    </div>
+
+    <div class="row q-gutter-sm q-mt-sm">
+      <label-form className="col" textLabel="Cidade">
         <q-input
           outlined
           v-model="clientEdit.cliente.cidade"
@@ -581,9 +594,6 @@
           @paste="onPasteText('cidade', $event)"
         ></q-input>
       </label-form>
-    </div>
-
-    <div class="row q-gutter-sm q-mt-sm">
       <label-form className="col" textLabel="Estado">
         <q-input
           outlined
